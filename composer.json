@@ -1,0 +1,26 @@
+{
+    "name": "afridexd/unlimited-schema",
+    "description": "Lightweight, conflict-free JSON-LD schema markup for WordPress.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "yoast/phpunit-polyfills": "^2.0",
+        "wp-phpunit/wp-phpunit": "^6.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "UnlimitedSchema\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:integration": "phpunit -c phpunit-integration.xml.dist"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

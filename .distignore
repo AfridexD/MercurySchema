@@ -1,0 +1,16 @@
+/.git
+/.github
+/tests
+/vendor
+/node_modules
+/build
+.distignore
+.gitignore
+.gitattributes
+.phpunit.result.cache
+composer.json
+composer.lock
+phpunit.xml.dist
+phpunit-integration.xml.dist
+docker-compose.yml
+bin
