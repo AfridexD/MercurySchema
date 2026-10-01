@@ -1,0 +1,48 @@
+/* UnlimitedSchema metabox. Uses WP admin colors; no framework. */
+
+.us-app { font-size: 13px; }
+.us-muted { color: #646970; }
+.us-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 4px 0 12px; }
+.us-type-select { min-width: 220px; }
+
+.us-notice { min-height: 1.4em; margin: 0 0 8px; }
+.us-notice--success { color: #00a32a; }
+.us-notice--error { color: #d63638; }
+
+.us-list { display: flex; flex-direction: column; gap: 8px; }
+.us-empty { margin: 4px 0; }
+
+.us-card { border: 1px solid #dcdcde; border-radius: 4px; background: #fff; }
+.us-card[open] { border-color: #c3c4c7; }
+.us-card__head { display: flex; gap: 10px; align-items: center; padding: 10px 12px; cursor: pointer; list-style: none; }
+.us-card__head::-webkit-details-marker { display: none; }
+.us-card__head::before { content: "\25B8"; color: #646970; transition: transform .15s; }
+.us-card[open] > .us-card__head::before { transform: rotate(90deg); }
+.us-card__head small { margin-left: auto; font-family: monospace; }
+.us-card__status { color: #996800; font-style: italic; }
+.us-card__body { padding: 4px 12px 12px; border-top: 1px solid #f0f0f1; }
+.us-card__actions { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+.us-spacer { flex: 1; }
+
+.us-badge { font-size: 11px; padding: 1px 8px; border-radius: 10px; background: #f0f0f1; color: #50575e; }
+.us-badge--on { background: #edfaef; color: #007017; }
+
+.us-toggle { display: inline-flex; align-items: center; gap: 4px; margin: 8px 0; }
+
+.us-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px 16px; }
+.us-field { display: flex; flex-direction: column; gap: 3px; }
+.us-field--wide { grid-column: 1 / -1; }
+.us-field__label { font-weight: 600; }
+.us-field input, .us-field select, .us-field textarea { width: 100%; max-width: none; }
+.us-field__desc { font-size: 12px; }
+.us-field__error { color: #d63638; font-size: 12px; }
+.us-field__error:empty { display: none; }
+.us-required { color: #d63638; }
+.us-invalid { border-color: #d63638 !important; box-shadow: 0 0 0 1px #d63638; }
+
+.us-conditions { margin-top: 12px; }
+.us-conditions > summary { cursor: pointer; font-weight: 600; }
+.us-conditions p { margin: 6px 0; }
+
+.us-tokens-help { margin-top: 10px; font-size: 12px; }
+.us-tokens-help code { font-size: 11px; word-break: break-word; }
