@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- Unit tests: pure PHP, no WordPress or database needed. -->
+<phpunit
+    bootstrap="vendor/autoload.php"
+    colors="true"
+    beStrictAboutOutputDuringTests="true"
+    failOnRisky="true">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>tests/unit</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

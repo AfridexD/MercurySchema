@@ -1,0 +1,126 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+use UnlimitedSchema\Core\Schema;
+use UnlimitedSchema\Core\SchemaType;
+use UnlimitedSchema\Core\Validator;
+
+class ValidatorTest extends TestCase
+{
+    private Validator $validator;
+
+    protected function setUp(): void
+    {
+        $json = json_decode(file_get_contents(dirname(__DIR__, 2) . '/assets/schema-definitions.json'), true);
+        $types = [];
+        foreach ($json['types'] as $name => $definition) {
+            $types[$name] = new SchemaType($name, $definition);
+        }
+        $this->validator = new Validator($types);
+    }
+
+    private function check(string $type, array $data, bool $partial = false): array
+    {
+        return $this->validator->validate((new Schema($type))->setData($data), $partial);
+    }
+
+    private function errorFields(array $result): array
+    {
+        return array_column($result['errors'], 'field');
+    }
+
+    public function testValidArticle(): void
+    {
+        $result = $this->check('Article', [
+            'headline'      => 'Hello',
+            'author'        => 'Jane',
+            'image'         => 'https://example.com/a.jpg',
+            'datePublished' => '2026-10-02T09:30:00+00:00',
+        ]);
+        $this->assertTrue($result['valid'], json_encode($result['errors']));
+    }
+
+    public function testUnknownType(): void
+    {
+        $result = $this->check('Spaceship', []);
+        $this->assertFalse($result['valid']);
+        $this->assertStringContainsString('Unknown schema type', $result['errors'][0]['message']);
+    }
+
+    public function testMissingRequiredFields(): void
+    {
+        $result = $this->check('Article', ['headline' => '']);
+        $this->assertFalse($result['valid']);
+        $this->assertEqualsCanonicalizing(['headline', 'author'], $this->errorFields($result));
+    }
+
+    public function testPartialSkipsRequired(): void
+    {
+        $this->assertTrue($this->check('Article', [], true)['valid']);
+    }
+
+    public function testPartialStillChecksTypes(): void
+    {
+        $result = $this->check('Article', ['image' => 'not a url'], true);
+        $this->assertSame(['image'], $this->errorFields($result));
+    }
+
+    public function testUnknownField(): void
+    {
+        $result = $this->check('Person', ['name' => 'Jo', 'shoeSize' => '9']);
+        $this->assertSame(['shoeSize'], $this->errorFields($result));
+    }
+
+    /**
+     * @dataProvider invalidValues
+     */
+    public function testInvalidValues(string $type, string $field, $value): void
+    {
+        $result = $this->check($type, [$field => $value], true);
+        $this->assertSame([$field], $this->errorFields($result));
+    }
+
+    public static function invalidValues(): array
+    {
+        return [
+            'ftp url'       => ['Person', 'url', 'ftp://example.com'],
+            'javascript url'=> ['Person', 'url', 'javascript:alert(1)'],
+            'bad date'      => ['Event', 'startDate', 'next tuesday'],
+            'bad number'    => ['Product', 'price', 'cheap'],
+            'bad enum'      => ['Product', 'availability', 'InStock'],
+            'nested array'  => ['Organization', 'sameAs', [['x']]],
+            'array string'  => ['Person', 'name', ['a']],
+        ];
+    }
+
+    /**
+     * @dataProvider validValues
+     */
+    public function testValidValues(string $type, string $field, $value): void
+    {
+        $this->assertTrue($this->check($type, [$field => $value], true)['valid']);
+    }
+
+    public static function validValues(): array
+    {
+        return [
+            'date only'     => ['Event', 'startDate', '2026-11-20'],
+            'datetime Z'    => ['Event', 'startDate', '2026-11-20T19:00:00Z'],
+            'numeric price' => ['Product', 'price', '19.99'],
+            'int price'     => ['Product', 'price', 20],
+            'enum'          => ['Product', 'availability', 'https://schema.org/InStock'],
+            'list'          => ['Organization', 'sameAs', ['https://x.com/a']],
+            'list string'   => ['Organization', 'sameAs', "https://x.com/a\nhttps://y.com/b"],
+        ];
+    }
+
+    public function testTokensSkipTypeChecksButCountAsPresent(): void
+    {
+        $result = $this->check('Article', [
+            'headline' => '{{post_title}}',
+            'author'   => '{{author_name}}',
+            'image'    => '{{featured_image}}',
+        ]);
+        $this->assertTrue($result['valid'], json_encode($result['errors']));
+    }
+}
