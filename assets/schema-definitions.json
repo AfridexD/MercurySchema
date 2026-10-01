@@ -1,0 +1,136 @@
+{
+  "version": "1.0.0",
+  "types": {
+    "Article": {
+      "label": "Article",
+      "nested": { "author": "Person", "publisher": "Organization" },
+      "fields": {
+        "headline": { "type": "string", "required": true, "label": "Headline", "default": "{{post_title}}" },
+        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
+        "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
+        "author": { "type": "string", "required": true, "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
+        "authorUrl": { "type": "url", "label": "Author URL", "path": "author.url", "default": "{{author_url}}" },
+        "datePublished": { "type": "date", "label": "Date published", "description": "ISO 8601 date", "default": "{{post_date}}" },
+        "dateModified": { "type": "date", "label": "Date modified", "default": "{{post_modified}}" },
+        "publisherName": { "type": "string", "label": "Publisher name", "path": "publisher.name", "default": "{{site_name}}" },
+        "publisherLogo": { "type": "url", "label": "Publisher logo URL", "path": "publisher.logo", "default": "{{site_logo}}" }
+      }
+    },
+    "Product": {
+      "label": "Product",
+      "nested": { "brand": "Brand", "offers": "Offer" },
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Product name", "default": "{{post_title}}" },
+        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
+        "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
+        "sku": { "type": "string", "label": "SKU" },
+        "brand": { "type": "string", "label": "Brand", "path": "brand.name" },
+        "price": { "type": "number", "label": "Price", "path": "offers.price" },
+        "priceCurrency": { "type": "string", "label": "Currency (ISO 4217, e.g. USD)", "path": "offers.priceCurrency" },
+        "availability": {
+          "type": "enum",
+          "label": "Availability",
+          "path": "offers.availability",
+          "options": [
+            "https://schema.org/InStock",
+            "https://schema.org/OutOfStock",
+            "https://schema.org/PreOrder",
+            "https://schema.org/BackOrder",
+            "https://schema.org/Discontinued",
+            "https://schema.org/LimitedAvailability",
+            "https://schema.org/OnlineOnly",
+            "https://schema.org/InStoreOnly",
+            "https://schema.org/SoldOut"
+          ]
+        }
+      }
+    },
+    "Event": {
+      "label": "Event",
+      "nested": { "location": "Place" },
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Event name", "default": "{{post_title}}" },
+        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
+        "startDate": { "type": "date", "required": true, "label": "Start date", "description": "ISO 8601, e.g. 2026-11-20T19:00:00+00:00" },
+        "endDate": { "type": "date", "label": "End date" },
+        "location": { "type": "string", "required": true, "label": "Venue name", "path": "location.name" },
+        "locationAddress": { "type": "string", "label": "Venue address", "path": "location.address" },
+        "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
+        "eventStatus": {
+          "type": "enum",
+          "label": "Status",
+          "options": [
+            "https://schema.org/EventScheduled",
+            "https://schema.org/EventPostponed",
+            "https://schema.org/EventRescheduled",
+            "https://schema.org/EventMovedOnline",
+            "https://schema.org/EventCancelled"
+          ]
+        }
+      }
+    },
+    "Organization": {
+      "label": "Organization",
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Name", "default": "{{site_name}}" },
+        "url": { "type": "url", "label": "Website", "default": "{{home_url}}" },
+        "logo": { "type": "url", "label": "Logo URL", "default": "{{site_logo}}" },
+        "description": { "type": "text", "label": "Description", "default": "{{site_description}}" },
+        "email": { "type": "string", "label": "Email" },
+        "telephone": { "type": "string", "label": "Telephone" },
+        "sameAs": { "type": "array", "label": "Profile URLs", "description": "One URL per line (social profiles, Wikipedia, etc.)" }
+      }
+    },
+    "Person": {
+      "label": "Person",
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Name", "default": "{{author_name}}" },
+        "url": { "type": "url", "label": "URL", "default": "{{author_url}}" },
+        "image": { "type": "url", "label": "Image URL" },
+        "jobTitle": { "type": "string", "label": "Job title" },
+        "sameAs": { "type": "array", "label": "Profile URLs", "description": "One URL per line" }
+      }
+    },
+    "LocalBusiness": {
+      "label": "Local Business",
+      "nested": { "address": "PostalAddress" },
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Business name", "default": "{{site_name}}" },
+        "image": { "type": "url", "label": "Image URL", "default": "{{site_logo}}" },
+        "url": { "type": "url", "label": "Website", "default": "{{home_url}}" },
+        "telephone": { "type": "string", "label": "Telephone" },
+        "priceRange": { "type": "string", "label": "Price range", "description": "e.g. $$" },
+        "streetAddress": { "type": "string", "required": true, "label": "Street address", "path": "address.streetAddress" },
+        "addressLocality": { "type": "string", "label": "City", "path": "address.addressLocality" },
+        "addressRegion": { "type": "string", "label": "State / region", "path": "address.addressRegion" },
+        "postalCode": { "type": "string", "label": "Postal code", "path": "address.postalCode" },
+        "addressCountry": { "type": "string", "label": "Country (ISO code, e.g. US)", "path": "address.addressCountry" }
+      }
+    },
+    "Review": {
+      "label": "Review",
+      "nested": { "itemReviewed": "Thing", "reviewRating": "Rating", "author": "Person" },
+      "fields": {
+        "itemReviewedType": {
+          "type": "enum",
+          "required": true,
+          "label": "Reviewed item type",
+          "path": "itemReviewed.@type",
+          "default": "Product",
+          "options": [
+            "Book", "Course", "CreativeWorkSeason", "CreativeWorkSeries", "Episode", "Event", "Game",
+            "LocalBusiness", "MediaObject", "Movie", "MusicPlaylist", "MusicRecording", "Organization",
+            "Product", "Recipe", "SoftwareApplication"
+          ]
+        },
+        "itemReviewed": { "type": "string", "required": true, "label": "Reviewed item name", "path": "itemReviewed.name" },
+        "reviewRating": { "type": "number", "required": true, "label": "Rating", "path": "reviewRating.ratingValue" },
+        "bestRating": { "type": "number", "label": "Best possible rating", "path": "reviewRating.bestRating", "default": "5" },
+        "worstRating": { "type": "number", "label": "Worst possible rating", "path": "reviewRating.worstRating", "default": "1" },
+        "author": { "type": "string", "required": true, "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
+        "reviewBody": { "type": "text", "label": "Review body", "default": "{{post_excerpt}}" },
+        "datePublished": { "type": "date", "label": "Date published", "default": "{{post_date}}" }
+      }
+    }
+  }
+}
