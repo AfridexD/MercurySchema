@@ -72,6 +72,22 @@ class PluginTest extends WP_UnitTestCase
         $this->assertSame([], Loader::getInstance()->output()->buildJsonLd($this->postId));
     }
 
+    public function testCategoryAndAuthorRoleConditions(): void
+    {
+        $news = self::factory()->category->create(['slug' => 'news']);
+        wp_set_post_categories($this->postId, [$news]);
+
+        $this->setSchemas([
+            $this->article(['id' => 'news-slug', 'conditions' => ['categories' => ['news']]]),
+            $this->article(['id' => 'news-id', 'conditions' => ['categories' => [(string) $news]]]),
+            $this->article(['id' => 'sport', 'conditions' => ['categories' => ['sport']]]),
+            $this->article(['id' => 'author-role', 'conditions' => ['user_roles' => ['author']]]),
+            $this->article(['id' => 'admin-role', 'conditions' => ['user_roles' => ['administrator']]]),
+        ]);
+
+        $this->assertCount(3, Loader::getInstance()->output()->buildJsonLd($this->postId));
+    }
+
     public function testFiltersCanVetoAndModify(): void
     {
         $this->setSchemas([$this->article()]);

@@ -17,5 +17,6 @@ require_once $testsDir . '/includes/functions.php';
 tests_add_filter('muplugins_loaded', static function () use ($root) {
     require $root . '/unlimited-schema.php';
 });
+tests_add_filter('unlimited_schema_logging_enabled', '__return_false');
 
 require $testsDir . '/includes/bootstrap.php';

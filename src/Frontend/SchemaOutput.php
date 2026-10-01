@@ -65,19 +65,22 @@ class SchemaOutput
             return [];
         }
 
-        $context = null;
+        $context = [];
         $tokens = null;
-        $validator = $this->registry->validator();
+        $validator = null;
         $output = [];
 
         foreach ($doc['schemas'] as $raw) {
             $schema = Schema::fromArray($raw);
+            if (!$schema->isEnabled()) {
+                continue; // Disabled schemas never load definitions or post data.
+            }
             $type = $this->registry->get($schema->getType());
-            if (!$schema->isEnabled() || $type === null) {
+            if ($type === null) {
                 continue;
             }
 
-            $context ??= $this->conditionContext($post);
+            $context = $this->conditionContext($post, $schema->getConditions(), $context);
             $shouldRender = $this->evaluator->evaluate($schema->getConditions(), $context);
             if (!apply_filters(Hooks::SHOULD_RENDER, $shouldRender, $schema, $postId)) {
                 continue;
@@ -90,6 +93,7 @@ class SchemaOutput
             }
             $resolved = (clone $schema)->setData($data);
 
+            $validator ??= $this->registry->validator();
             $result = $validator->validate($resolved);
             if (!$result['valid']) {
                 Logger::log('Skipped invalid schema.', ['post_id' => $postId, 'schema' => $schema->getId(), 'errors' => $result['errors']]);
@@ -105,25 +109,33 @@ class SchemaOutput
         return $output;
     }
 
-    private function conditionContext(\WP_Post $post): array
+    /**
+     * Build the condition context, loading terms and the author only when a
+     * condition actually needs them. $context carries what earlier schemas loaded.
+     */
+    private function conditionContext(\WP_Post $post, array $conditions, array $context): array
     {
-        $categories = [];
-        $terms = get_the_terms($post, 'category');
-        if (is_array($terms)) {
-            foreach ($terms as $term) {
-                $categories[] = (string) $term->term_id;
-                $categories[] = $term->slug;
+        $conditions = ConditionEvaluator::normalize($conditions);
+        $context += [
+            'post_id'   => (int) $post->ID,
+            'post_type' => $post->post_type,
+        ];
+
+        if ($conditions['categories'] && !isset($context['categories'])) {
+            $context['categories'] = [];
+            $terms = get_the_terms($post, 'category');
+            foreach (is_array($terms) ? $terms : [] as $term) {
+                $context['categories'][] = (string) $term->term_id;
+                $context['categories'][] = $term->slug;
             }
         }
 
-        $author = get_userdata((int) $post->post_author);
+        if ($conditions['user_roles'] && !isset($context['user_roles'])) {
+            $author = get_userdata((int) $post->post_author);
+            $context['user_roles'] = $author ? (array) $author->roles : [];
+        }
 
-        return apply_filters(Hooks::CONDITION_CONTEXT, [
-            'post_id'    => (int) $post->ID,
-            'post_type'  => $post->post_type,
-            'categories' => $categories,
-            'user_roles' => $author ? (array) $author->roles : [],
-        ], $post);
+        return apply_filters(Hooks::CONDITION_CONTEXT, $context, $post);
     }
 
     private function tokenValues(\WP_Post $post): array
