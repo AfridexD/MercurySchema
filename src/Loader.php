@@ -46,6 +46,7 @@ class Loader
         // Translations load automatically (WordPress 4.6+); no load_plugin_textdomain() needed.
         add_action('rest_api_init', [$this, 'registerRestRoutes']);
         add_action('plugins_loaded', [Integrations\WooCommerce::class, 'register']);
+        add_action('plugins_loaded', [Integrations\Elementor::class, 'register'], 20); // After Elementor fires elementor/loaded.
 
         if (is_admin()) {
             (new AdminController())->registerHooks();

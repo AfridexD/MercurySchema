@@ -31,7 +31,7 @@ class Pages
         add_action('admin_menu', [$this, 'addMenu']);
         add_action('admin_init', [$this, 'activationRedirect']);
         add_action('admin_notices', [$this, 'setupNotice']);
-        add_action('admin_head', [$this, 'menuIconStyle']);
+        add_action('admin_enqueue_scripts', [$this, 'menuIconStyle']);
         add_action('in_admin_header', [$this, 'quietWizard'], 1000);
         add_filter('admin_title', [$this, 'wizardTitle']);
     }
@@ -108,12 +108,19 @@ class Pages
         );
     }
 
-    /** The menu icon as a CSS mask, so it follows the admin colour scheme. */
+    /** A highlighted, brand-blue menu item with the white Mercury mark. */
     public function menuIconStyle(): void
     {
-        $svg = rawurlencode(Brand::mark('#000'));
-        echo '<style>#toplevel_page_mercury-schema .wp-menu-image::before{content:"";display:block;width:20px;height:20px;margin:7px auto 0;padding:0;background:currentColor;'
-            . '-webkit-mask:url("data:image/svg+xml,' . esc_attr($svg) . '") center/contain no-repeat;mask:url("data:image/svg+xml,' . esc_attr($svg) . '") center/contain no-repeat}</style>';
+        $mask = 'url("data:image/svg+xml,' . rawurlencode(Brand::mark('#000')) . '") center/contain no-repeat';
+        $item = '#adminmenu #toplevel_page_mercury-schema';
+        // Static CSS from constants, attached to WordPress's own admin-menu stylesheet.
+        wp_add_inline_style('admin-menu', implode('', [
+            "$item>a.menu-top,$item>a.menu-top:focus{background:" . Brand::COLOR . ';color:#fff}',
+            "$item>a.menu-top:hover,$item.opensub>a.menu-top{background:#1A43B8;color:#fff}",
+            "$item>a.menu-top .wp-menu-name{color:#fff}",
+            "$item .wp-menu-image::before{content:'';display:block;width:20px;height:20px;margin:7px auto 0;padding:0;background:#fff;-webkit-mask:$mask;mask:$mask}",
+            "$item.wp-has-current-submenu>a.menu-top{background:" . Brand::COLOR . '}',
+        ]));
     }
 
     private function header(string $active): void

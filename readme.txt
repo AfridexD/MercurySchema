@@ -59,7 +59,7 @@ Yes. Mercury Schema only prints the schema you add, as separate script tags. Yoa
 
 = Does it work with Elementor and other page builders? =
 
-Yes. Schema is printed in the page head, independent of how the content was built. There are no builder-specific modules.
+Yes. Schema is printed in the page head, independent of how the content was built. In the Elementor editor, click the Mercury Schema (M) button in the top bar to edit the page's schema without leaving Elementor. With other builders, use the Schema Markup box on the WordPress edit screen.
 
 = Who can edit schema? =
 
@@ -75,6 +75,7 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 * New: breadcrumbs and site navigation are generated automatically.
 * New: dynamic values {{post_content}} and {{site_language}}.
 * New: Mercury Schema admin menu.
+* New: edit schema from inside the Elementor editor (Mercury Schema button in the top bar).
 * Improved: the editor marks types already added to a page.
 
 = 1.1.0 =

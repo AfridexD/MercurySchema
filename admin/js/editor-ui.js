@@ -18,16 +18,25 @@
     var siteWide = [];
     var dirty = {};
 
+    // Page builders (Elementor) mount the editor into their own container on demand.
+    window.MercurySchemaEditor = {
+        mount: init,
+        isDirty: function () { return Object.keys(dirty).length > 0; }
+    };
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', function () { init(); });
     } else {
         init();
     }
 
     // ---- Boot --------------------------------------------------------------
 
-    function init() {
-        app = document.getElementById('mercury-schema-app');
+    function init(target) {
+        if (app) {
+            return; // Already mounted.
+        }
+        app = target || document.getElementById('mercury-schema-app');
         if (!app) {
             return;
         }

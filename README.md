@@ -37,6 +37,8 @@ Sites upgrading from UnlimitedSchema skip the wizard and keep every type on.
 
 The badge on each card says whether it will print: **Ready**, **Incomplete** (a required field is empty, for example `{{featured_image}}` on a post without one), **Disabled**, or **Unsaved**.
 
+**In Elementor:** the Elementor editor hides WordPress meta boxes, so Mercury Schema adds an **M** button to Elementor's top bar (via `elementorV2.editorAppBar.utilitiesMenu`; on older Elementor versions, an item in the panel menu). It opens the same editor in a dialog. This loads only inside the Elementor editor, for users and post types that have the Schema Markup box.
+
 **Site-wide:** *Mercury Schema → Site-wide Schemas* uses the same editor. Site-wide schemas appear on every page matching their rules, including a **Show on** rule for the front page, single posts and pages, or archives. New Organization, Local Business and Person schemas default to the front page; content types default to single posts. A post's own schema replaces a site-wide schema of the same type on that post.
 
 Built-in types (22), grouped as in the wizard:
@@ -236,7 +238,7 @@ src/Frontend   SchemaRegistry (definitions), SchemaOutput (JSON-LD rendering), G
 src/API        REST routes, schema and setup controllers, hook names
 src/Admin      menu and pages (Pages), metabox and assets, settings form, brand mark
 src/Helpers    DataMapper (tokens), Sanitizer, PostMetaStore, GlobalStore, SetupState, Migrator, Logger
-src/Integrations  WooCommerce tokens (loaded only when WooCommerce is active)
+src/Integrations  WooCommerce tokens; Elementor editor button (each loaded only when that plugin is active)
 admin/         vanilla JS/CSS: editor-ui (schema editor), setup (wizard and Schema Types)
 ```
 

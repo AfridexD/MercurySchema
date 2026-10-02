@@ -79,7 +79,7 @@ class AdminController
             }
             wp_enqueue_style('mercury-schema-admin', MERCURY_SCHEMA_URL . 'admin/css/editor-ui.css', ['dashicons'], MERCURY_SCHEMA_VERSION);
             if ($page === Pages::SITE_WIDE) {
-                $this->enqueueEditor(['scope' => 'global', 'postId' => 0, 'testUrl' => home_url('/')]);
+                self::enqueueEditor(['scope' => 'global', 'postId' => 0, 'testUrl' => home_url('/')]);
             } elseif ($page === Pages::TYPES || $page === Pages::SETUP) {
                 $this->enqueueSetup($page === Pages::SETUP ? 'wizard' : 'types');
             }
@@ -95,7 +95,7 @@ class AdminController
         }
 
         wp_enqueue_style('mercury-schema-admin', MERCURY_SCHEMA_URL . 'admin/css/editor-ui.css', ['dashicons'], MERCURY_SCHEMA_VERSION);
-        $this->enqueueEditor([
+        self::enqueueEditor([
             'scope'       => 'post',
             'postId'      => (int) $post->ID,
             'testUrl'     => $post->post_status === 'publish' ? get_permalink($post) : '',
@@ -127,7 +127,8 @@ class AdminController
         ]);
     }
 
-    private function enqueueEditor(array $scope): void
+    /** Load the schema editor (also used inside the Elementor editor). */
+    public static function enqueueEditor(array $scope): void
     {
         wp_enqueue_script('mercury-schema-admin', MERCURY_SCHEMA_URL . 'admin/js/editor-ui.js', [], MERCURY_SCHEMA_VERSION, true);
 
