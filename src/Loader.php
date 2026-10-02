@@ -16,6 +16,8 @@ use MercurySchema\Frontend\SchemaOutput;
 use MercurySchema\Frontend\SchemaRegistry;
 use MercurySchema\Helpers\GlobalStore;
 use MercurySchema\Helpers\Migrator;
+use MercurySchema\Helpers\SetupState;
+use MercurySchema\API\SetupController;
 use MercurySchema\Helpers\PostMetaStore;
 
 class Loader
@@ -55,14 +57,22 @@ class Loader
 
     public static function activate(): void
     {
-        Migrator::run(); // Before defaults, so migrated settings win.
+        $migrated = Migrator::run(); // Before defaults, so migrated settings win.
         SchemaRegistry::seed();
         add_option(Settings::OPTION, Settings::defaults());
+
+        if ($migrated['options'] || $migrated['meta_rows']) {
+            // Upgrading from UnlimitedSchema: already configured, keep every type on, no wizard.
+            add_option(SetupState::COMPLETE, true);
+        } elseif (!SetupState::isComplete()) {
+            set_transient(SetupState::REDIRECT, 1, 60);
+        }
     }
 
     public function registerRestRoutes(): void
     {
         (new REST(new SchemaController($this->registry(), $this->store(), $this->globalStore(), $this->output())))->register();
+        (new SetupController($this->registry(), $this->globalStore()))->register();
     }
 
     public function outputSchemaMarkup(): void

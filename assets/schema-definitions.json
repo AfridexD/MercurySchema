@@ -1,245 +1,366 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "types": {
-    "Article": {
-      "label": "Article",
-      "description": "Blog posts, news and editorial content.",
-      "icon": "media-document",
-      "nested": { "author": "Person", "publisher": "Organization" },
-      "fields": {
-        "headline": { "type": "string", "required": true, "label": "Headline", "default": "{{post_title}}", "maxLength": 110 },
-        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
-        "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
-        "author": { "type": "string", "required": true, "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
-        "authorUrl": { "type": "url", "label": "Author URL", "path": "author.url", "default": "{{author_url}}" },
-        "datePublished": { "type": "date", "label": "Date published", "description": "ISO 8601 date", "default": "{{post_date}}" },
-        "dateModified": { "type": "date", "label": "Date modified", "default": "{{post_modified}}" },
-        "publisherName": { "type": "string", "label": "Publisher name", "path": "publisher.name", "default": "{{site_name}}" },
-        "publisherLogo": { "type": "url", "label": "Publisher logo URL", "path": "publisher.logo", "default": "{{site_logo}}" }
-      }
-    },
-    "Product": {
-      "label": "Product",
-      "description": "Something you sell, with price and stock.",
-      "icon": "cart",
-      "nested": { "brand": "Brand", "offers": "Offer", "aggregateRating": "AggregateRating" },
-      "fields": {
-        "name": { "type": "string", "required": true, "label": "Product name", "default": "{{post_title}}" },
-        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
-        "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
-        "sku": { "type": "string", "label": "SKU" },
-        "brand": { "type": "string", "label": "Brand", "path": "brand.name" },
-        "price": { "type": "number", "label": "Price", "path": "offers.price" },
-        "priceCurrency": { "type": "string", "label": "Currency (ISO 4217, e.g. USD)", "path": "offers.priceCurrency" },
-        "availability": {
-          "type": "enum",
-          "label": "Availability",
-          "path": "offers.availability",
-          "options": [
-            "https://schema.org/InStock",
-            "https://schema.org/OutOfStock",
-            "https://schema.org/PreOrder",
-            "https://schema.org/BackOrder",
-            "https://schema.org/Discontinued",
-            "https://schema.org/LimitedAvailability",
-            "https://schema.org/OnlineOnly",
-            "https://schema.org/InStoreOnly",
-            "https://schema.org/SoldOut"
-          ]
-        },
-        "ratingValue": { "type": "number", "label": "Average rating", "path": "aggregateRating.ratingValue" },
-        "reviewCount": { "type": "integer", "label": "Number of reviews", "path": "aggregateRating.reviewCount" }
-      }
-    },
-    "Event": {
-      "label": "Event",
-      "description": "Concerts, webinars, meetups and other dated events.",
-      "icon": "calendar-alt",
-      "nested": { "location": "Place" },
-      "fields": {
-        "name": { "type": "string", "required": true, "label": "Event name", "default": "{{post_title}}" },
-        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
-        "startDate": { "type": "date", "required": true, "label": "Start date", "description": "ISO 8601, e.g. 2026-11-20T19:00:00+00:00" },
-        "endDate": { "type": "date", "label": "End date" },
-        "location": { "type": "string", "required": true, "label": "Venue name", "path": "location.name" },
-        "locationAddress": { "type": "string", "label": "Venue address", "path": "location.address" },
-        "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
-        "eventStatus": {
-          "type": "enum",
-          "label": "Status",
-          "options": [
-            "https://schema.org/EventScheduled",
-            "https://schema.org/EventPostponed",
-            "https://schema.org/EventRescheduled",
-            "https://schema.org/EventMovedOnline",
-            "https://schema.org/EventCancelled"
-          ]
-        }
-      }
-    },
-    "FAQPage": {
-      "label": "FAQ",
-      "description": "A list of questions and answers.",
-      "icon": "editor-help",
-      "fields": {
-        "questions": {
-          "type": "objects",
-          "required": true,
-          "label": "Questions",
-          "path": "mainEntity",
-          "itemLabel": "Question",
-          "itemType": "Question",
-          "itemNested": { "acceptedAnswer": "Answer" },
-          "itemFields": {
-            "question": { "type": "string", "required": true, "label": "Question", "path": "name" },
-            "answer": { "type": "text", "required": true, "label": "Answer", "path": "acceptedAnswer.text" }
-          }
-        }
-      }
-    },
-    "Recipe": {
-      "label": "Recipe",
-      "description": "Ingredients, steps, cooking times and nutrition.",
-      "icon": "carrot",
-      "nested": { "author": "Person", "nutrition": "NutritionInformation", "aggregateRating": "AggregateRating" },
-      "fields": {
-        "name": { "type": "string", "required": true, "label": "Recipe name", "default": "{{post_title}}" },
-        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
-        "image": { "type": "url", "required": true, "label": "Image URL", "default": "{{featured_image}}" },
-        "author": { "type": "string", "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
-        "datePublished": { "type": "date", "label": "Date published", "default": "{{post_date}}" },
-        "prepTime": { "type": "duration", "label": "Prep time", "description": "ISO 8601 duration, e.g. PT20M" },
-        "cookTime": { "type": "duration", "label": "Cook time", "description": "e.g. PT1H" },
-        "totalTime": { "type": "duration", "label": "Total time", "description": "e.g. PT1H20M" },
-        "recipeYield": { "type": "string", "label": "Yield", "description": "e.g. 4 servings" },
-        "recipeCategory": { "type": "string", "label": "Category", "description": "e.g. Dessert" },
-        "recipeCuisine": { "type": "string", "label": "Cuisine", "description": "e.g. Italian" },
-        "keywords": { "type": "string", "label": "Keywords", "description": "Comma-separated" },
-        "calories": { "type": "string", "label": "Calories", "path": "nutrition.calories", "description": "e.g. 270 calories" },
-        "recipeIngredient": { "type": "array", "label": "Ingredients", "description": "One ingredient per line" },
-        "steps": {
-          "type": "objects",
-          "label": "Steps",
-          "path": "recipeInstructions",
-          "itemLabel": "Step",
-          "itemType": "HowToStep",
-          "itemFields": {
-            "text": { "type": "text", "required": true, "label": "Instruction", "path": "text" },
-            "name": { "type": "string", "label": "Short title (optional)", "path": "name" }
-          }
-        },
-        "ratingValue": { "type": "number", "label": "Average rating", "path": "aggregateRating.ratingValue" },
-        "ratingCount": { "type": "integer", "label": "Number of ratings", "path": "aggregateRating.ratingCount" }
-      }
-    },
-    "VideoObject": {
-      "label": "Video",
-      "description": "A video hosted on or embedded in the page.",
-      "icon": "video-alt3",
-      "fields": {
-        "name": { "type": "string", "required": true, "label": "Title", "default": "{{post_title}}" },
-        "description": { "type": "text", "required": true, "label": "Description", "default": "{{post_excerpt}}" },
-        "thumbnailUrl": { "type": "url", "required": true, "label": "Thumbnail URL", "default": "{{featured_image}}" },
-        "uploadDate": { "type": "date", "required": true, "label": "Upload date", "default": "{{post_date}}" },
-        "duration": { "type": "duration", "label": "Duration", "description": "ISO 8601, e.g. PT4M30S" },
-        "contentUrl": { "type": "url", "label": "Video file URL" },
-        "embedUrl": { "type": "url", "label": "Embed URL", "description": "e.g. https://www.youtube.com/embed/…" }
-      }
-    },
     "Organization": {
       "label": "Organization",
       "description": "Your company or brand. Best on the front page.",
       "icon": "building",
+      "group": "foundations",
       "fields": {
-        "name": { "type": "string", "required": true, "label": "Name", "default": "{{site_name}}" },
-        "url": { "type": "url", "label": "Website", "default": "{{home_url}}" },
-        "logo": { "type": "url", "label": "Logo URL", "default": "{{site_logo}}" },
-        "description": { "type": "text", "label": "Description", "default": "{{site_description}}" },
-        "email": { "type": "string", "label": "Email" },
-        "telephone": { "type": "string", "label": "Telephone" },
-        "sameAs": { "type": "array", "label": "Profile URLs", "description": "One URL per line (social profiles, Wikipedia, etc.)" }
+        "name": {"type":"string","required":true,"label":"Name","default":"{{site_name}}"},
+        "url": {"type":"url","label":"Website","default":"{{home_url}}"},
+        "logo": {"type":"url","label":"Logo URL","default":"{{site_logo}}"},
+        "description": {"type":"text","label":"Description","default":"{{site_description}}"},
+        "email": {"type":"string","label":"Email"},
+        "telephone": {"type":"string","label":"Telephone"},
+        "sameAs": {"type":"array","label":"Profile URLs","description":"One URL per line (social profiles, Wikipedia, etc.)"}
+      }
+    },
+    "WebSite": {
+      "label": "Website",
+      "description": "Your site name and URL, for the search result site name.",
+      "icon": "admin-site-alt3",
+      "group": "foundations",
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Site name","default":"{{site_name}}"},
+        "alternateName": {"type":"string","label":"Alternate name","description":"e.g. an acronym or shorter name"},
+        "url": {"type":"url","required":true,"label":"Home page URL","default":"{{home_url}}"},
+        "description": {"type":"text","label":"Description","default":"{{site_description}}"},
+        "inLanguage": {"type":"string","label":"Language","default":"{{site_language}}"}
+      }
+    },
+    "WebPage": {
+      "label": "Web Page",
+      "description": "Basic page information for every page.",
+      "icon": "media-default",
+      "group": "foundations",
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Page title","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "url": {"type":"url","label":"URL","default":"{{post_url}}"},
+        "image": {"type":"url","label":"Image URL","path":"primaryImageOfPage","default":"{{featured_image}}"},
+        "datePublished": {"type":"date","label":"Date published","default":"{{post_date}}"},
+        "dateModified": {"type":"date","label":"Date modified","default":"{{post_modified}}"},
+        "inLanguage": {"type":"string","label":"Language","default":"{{site_language}}"}
+      }
+    },
+    "BreadcrumbList": {
+      "label": "Breadcrumbs",
+      "description": "Navigation trail, built automatically from your page hierarchy.",
+      "icon": "arrow-right-alt",
+      "group": "foundations",
+      "generator": "breadcrumbs",
+      "fields": {
+        "homeLabel": {"type":"string","config":true,"label":"Home label","default":"Home","description":"First item of every trail. Built automatically; nothing else to fill in."}
       }
     },
     "Person": {
       "label": "Person",
       "description": "An author, founder or public figure.",
       "icon": "admin-users",
+      "group": "foundations",
       "fields": {
-        "name": { "type": "string", "required": true, "label": "Name", "default": "{{author_name}}" },
-        "url": { "type": "url", "label": "URL", "default": "{{author_url}}" },
-        "image": { "type": "url", "label": "Image URL" },
-        "jobTitle": { "type": "string", "label": "Job title" },
-        "sameAs": { "type": "array", "label": "Profile URLs", "description": "One URL per line" }
+        "name": {"type":"string","required":true,"label":"Name","default":"{{author_name}}"},
+        "url": {"type":"url","label":"URL","default":"{{author_url}}"},
+        "image": {"type":"url","label":"Image URL"},
+        "jobTitle": {"type":"string","label":"Job title"},
+        "sameAs": {"type":"array","label":"Profile URLs","description":"One URL per line"}
       }
     },
-    "LocalBusiness": {
-      "label": "Local Business",
-      "description": "A shop, restaurant or office with an address.",
-      "icon": "store",
-      "nested": { "address": "PostalAddress" },
+    "SiteNavigationElement": {
+      "label": "Site Navigation",
+      "description": "Your main menu links, read automatically from the site menu.",
+      "icon": "menu",
+      "group": "foundations",
+      "generator": "navigation",
       "fields": {
-        "name": { "type": "string", "required": true, "label": "Business name", "default": "{{site_name}}" },
-        "image": { "type": "url", "label": "Image URL", "default": "{{site_logo}}" },
-        "url": { "type": "url", "label": "Website", "default": "{{home_url}}" },
-        "telephone": { "type": "string", "label": "Telephone" },
-        "priceRange": { "type": "string", "label": "Price range", "description": "e.g. $$" },
-        "streetAddress": { "type": "string", "required": true, "label": "Street address", "path": "address.streetAddress" },
-        "addressLocality": { "type": "string", "label": "City", "path": "address.addressLocality" },
-        "addressRegion": { "type": "string", "label": "State / region", "path": "address.addressRegion" },
-        "postalCode": { "type": "string", "label": "Postal code", "path": "address.postalCode" },
-        "addressCountry": { "type": "string", "label": "Country (ISO code, e.g. US)", "path": "address.addressCountry" }
+        "menuLocation": {"type":"string","config":true,"label":"Menu location","default":"primary","description":"Theme menu location. Falls back to the first menu, or the block theme navigation."}
+      }
+    },
+    "Article": {
+      "label": "Article",
+      "description": "Blog posts, news and editorial content.",
+      "icon": "media-document",
+      "group": "content",
+      "nested": {"author":"Person","publisher":"Organization"},
+      "fields": {
+        "headline": {"type":"string","required":true,"label":"Headline","default":"{{post_title}}","maxLength":110},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "image": {"type":"url","label":"Image URL","default":"{{featured_image}}"},
+        "author": {"type":"string","required":true,"label":"Author name","path":"author.name","default":"{{author_name}}"},
+        "authorUrl": {"type":"url","label":"Author URL","path":"author.url","default":"{{author_url}}"},
+        "datePublished": {"type":"date","label":"Date published","description":"ISO 8601 date","default":"{{post_date}}"},
+        "dateModified": {"type":"date","label":"Date modified","default":"{{post_modified}}"},
+        "publisherName": {"type":"string","label":"Publisher name","path":"publisher.name","default":"{{site_name}}"},
+        "publisherLogo": {"type":"url","label":"Publisher logo URL","path":"publisher.logo","default":"{{site_logo}}"}
+      }
+    },
+    "BlogPosting": {
+      "label": "Blog Posting",
+      "description": "A blog post: Article with a blog-specific type.",
+      "icon": "edit",
+      "group": "content",
+      "nested": {"author":"Person","publisher":"Organization"},
+      "fields": {
+        "headline": {"type":"string","required":true,"label":"Headline","default":"{{post_title}}","maxLength":110},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "image": {"type":"url","label":"Image URL","default":"{{featured_image}}"},
+        "author": {"type":"string","required":true,"label":"Author name","path":"author.name","default":"{{author_name}}"},
+        "authorUrl": {"type":"url","label":"Author URL","path":"author.url","default":"{{author_url}}"},
+        "datePublished": {"type":"date","label":"Date published","description":"ISO 8601 date","default":"{{post_date}}"},
+        "dateModified": {"type":"date","label":"Date modified","default":"{{post_modified}}"},
+        "publisherName": {"type":"string","label":"Publisher name","path":"publisher.name","default":"{{site_name}}"},
+        "publisherLogo": {"type":"url","label":"Publisher logo URL","path":"publisher.logo","default":"{{site_logo}}"}
+      }
+    },
+    "NewsArticle": {
+      "label": "News Article",
+      "description": "Timely news reporting.",
+      "icon": "megaphone",
+      "group": "content",
+      "nested": {"author":"Person","publisher":"Organization"},
+      "fields": {
+        "headline": {"type":"string","required":true,"label":"Headline","default":"{{post_title}}","maxLength":110},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "image": {"type":"url","label":"Image URL","default":"{{featured_image}}"},
+        "author": {"type":"string","required":true,"label":"Author name","path":"author.name","default":"{{author_name}}"},
+        "authorUrl": {"type":"url","label":"Author URL","path":"author.url","default":"{{author_url}}"},
+        "datePublished": {"type":"date","label":"Date published","description":"ISO 8601 date","default":"{{post_date}}"},
+        "dateModified": {"type":"date","label":"Date modified","default":"{{post_modified}}"},
+        "publisherName": {"type":"string","label":"Publisher name","path":"publisher.name","default":"{{site_name}}"},
+        "publisherLogo": {"type":"url","label":"Publisher logo URL","path":"publisher.logo","default":"{{site_logo}}"}
+      }
+    },
+    "FAQPage": {
+      "label": "FAQ",
+      "description": "A list of questions and answers.",
+      "icon": "editor-help",
+      "group": "content",
+      "fields": {
+        "questions": {"type":"objects","required":true,"label":"Questions","path":"mainEntity","itemLabel":"Question","itemType":"Question","itemNested":{"acceptedAnswer":"Answer"},"itemFields":{"question":{"type":"string","required":true,"label":"Question","path":"name"},"answer":{"type":"text","required":true,"label":"Answer","path":"acceptedAnswer.text"}}}
+      }
+    },
+    "HowTo": {
+      "label": "How-To",
+      "description": "Step-by-step instructions to get something done.",
+      "icon": "list-view",
+      "group": "content",
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Title","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "image": {"type":"url","label":"Image URL","default":"{{featured_image}}"},
+        "totalTime": {"type":"duration","label":"Total time","description":"ISO 8601 duration, e.g. PT30M"},
+        "supply": {"type":"array","label":"Supplies","description":"One per line"},
+        "tool": {"type":"array","label":"Tools","description":"One per line"},
+        "steps": {"type":"objects","required":true,"label":"Steps","path":"step","itemLabel":"Step","itemType":"HowToStep","itemFields":{"text":{"type":"text","required":true,"label":"Instruction","path":"text"},"name":{"type":"string","label":"Short title (optional)","path":"name"},"image":{"type":"url","label":"Image URL (optional)","path":"image"}}}
+      }
+    },
+    "VideoObject": {
+      "label": "Video",
+      "description": "A video hosted on or embedded in the page.",
+      "icon": "video-alt3",
+      "group": "content",
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Title","default":"{{post_title}}"},
+        "description": {"type":"text","required":true,"label":"Description","default":"{{post_excerpt}}"},
+        "thumbnailUrl": {"type":"url","required":true,"label":"Thumbnail URL","default":"{{featured_image}}"},
+        "uploadDate": {"type":"date","required":true,"label":"Upload date","default":"{{post_date}}"},
+        "duration": {"type":"duration","label":"Duration","description":"ISO 8601, e.g. PT4M30S"},
+        "contentUrl": {"type":"url","label":"Video file URL"},
+        "embedUrl": {"type":"url","label":"Embed URL","description":"e.g. https://www.youtube.com/embed/…"}
+      }
+    },
+    "ImageObject": {
+      "label": "Image",
+      "description": "Image credit and licence details for image search.",
+      "icon": "format-image",
+      "group": "content",
+      "nested": {"creator":"Person"},
+      "fields": {
+        "contentUrl": {"type":"url","required":true,"label":"Image URL","default":"{{featured_image}}"},
+        "name": {"type":"string","label":"Title","default":"{{post_title}}"},
+        "caption": {"type":"text","label":"Caption"},
+        "creator": {"type":"string","label":"Creator","path":"creator.name","default":"{{author_name}}"},
+        "creditText": {"type":"string","label":"Credit line"},
+        "copyrightNotice": {"type":"string","label":"Copyright notice"},
+        "license": {"type":"url","label":"Licence URL"},
+        "acquireLicensePage": {"type":"url","label":"How to license (URL)"}
+      }
+    },
+    "Recipe": {
+      "label": "Recipe",
+      "description": "Ingredients, steps, cooking times and nutrition.",
+      "icon": "carrot",
+      "group": "content",
+      "nested": {"author":"Person","nutrition":"NutritionInformation","aggregateRating":"AggregateRating"},
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Recipe name","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "image": {"type":"url","required":true,"label":"Image URL","default":"{{featured_image}}"},
+        "author": {"type":"string","label":"Author name","path":"author.name","default":"{{author_name}}"},
+        "datePublished": {"type":"date","label":"Date published","default":"{{post_date}}"},
+        "prepTime": {"type":"duration","label":"Prep time","description":"ISO 8601 duration, e.g. PT20M"},
+        "cookTime": {"type":"duration","label":"Cook time","description":"e.g. PT1H"},
+        "totalTime": {"type":"duration","label":"Total time","description":"e.g. PT1H20M"},
+        "recipeYield": {"type":"string","label":"Yield","description":"e.g. 4 servings"},
+        "recipeCategory": {"type":"string","label":"Category","description":"e.g. Dessert"},
+        "recipeCuisine": {"type":"string","label":"Cuisine","description":"e.g. Italian"},
+        "keywords": {"type":"string","label":"Keywords","description":"Comma-separated"},
+        "calories": {"type":"string","label":"Calories","path":"nutrition.calories","description":"e.g. 270 calories"},
+        "recipeIngredient": {"type":"array","label":"Ingredients","description":"One ingredient per line"},
+        "steps": {"type":"objects","label":"Steps","path":"recipeInstructions","itemLabel":"Step","itemType":"HowToStep","itemFields":{"text":{"type":"text","required":true,"label":"Instruction","path":"text"},"name":{"type":"string","label":"Short title (optional)","path":"name"}}},
+        "ratingValue": {"type":"number","label":"Average rating","path":"aggregateRating.ratingValue"},
+        "ratingCount": {"type":"integer","label":"Number of ratings","path":"aggregateRating.ratingCount"}
+      }
+    },
+    "Product": {
+      "label": "Product",
+      "description": "Something you sell, with price and stock.",
+      "icon": "cart",
+      "group": "commerce",
+      "nested": {"brand":"Brand","offers":"Offer","aggregateRating":"AggregateRating"},
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Product name","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "image": {"type":"url","label":"Image URL","default":"{{featured_image}}"},
+        "sku": {"type":"string","label":"SKU"},
+        "brand": {"type":"string","label":"Brand","path":"brand.name"},
+        "price": {"type":"number","label":"Price","path":"offers.price"},
+        "priceCurrency": {"type":"string","label":"Currency (ISO 4217, e.g. USD)","path":"offers.priceCurrency"},
+        "availability": {"type":"enum","label":"Availability","path":"offers.availability","options":["https://schema.org/InStock","https://schema.org/OutOfStock","https://schema.org/PreOrder","https://schema.org/BackOrder","https://schema.org/Discontinued","https://schema.org/LimitedAvailability","https://schema.org/OnlineOnly","https://schema.org/InStoreOnly","https://schema.org/SoldOut"]},
+        "ratingValue": {"type":"number","label":"Average rating","path":"aggregateRating.ratingValue"},
+        "reviewCount": {"type":"integer","label":"Number of reviews","path":"aggregateRating.reviewCount"}
       }
     },
     "Review": {
       "label": "Review",
       "description": "Your review of a product, book, place or other item.",
       "icon": "star-filled",
-      "nested": { "itemReviewed": "Thing", "reviewRating": "Rating", "author": "Person" },
+      "group": "commerce",
+      "nested": {"itemReviewed":"Thing","reviewRating":"Rating","author":"Person"},
       "fields": {
-        "itemReviewedType": {
-          "type": "enum",
-          "required": true,
-          "label": "Reviewed item type",
-          "path": "itemReviewed.@type",
-          "default": "Product",
-          "options": [
-            "Book", "Course", "CreativeWorkSeason", "CreativeWorkSeries", "Episode", "Event", "Game",
-            "LocalBusiness", "MediaObject", "Movie", "MusicPlaylist", "MusicRecording", "Organization",
-            "Product", "Recipe", "SoftwareApplication"
-          ]
-        },
-        "itemReviewed": { "type": "string", "required": true, "label": "Reviewed item name", "path": "itemReviewed.name" },
-        "reviewRating": { "type": "number", "required": true, "label": "Rating", "path": "reviewRating.ratingValue" },
-        "bestRating": { "type": "number", "label": "Best possible rating", "path": "reviewRating.bestRating", "default": "5" },
-        "worstRating": { "type": "number", "label": "Worst possible rating", "path": "reviewRating.worstRating", "default": "1" },
-        "author": { "type": "string", "required": true, "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
-        "reviewBody": { "type": "text", "label": "Review body", "default": "{{post_excerpt}}" },
-        "datePublished": { "type": "date", "label": "Date published", "default": "{{post_date}}" }
+        "itemReviewedType": {"type":"enum","required":true,"label":"Reviewed item type","path":"itemReviewed.@type","default":"Product","options":["Book","Course","CreativeWorkSeason","CreativeWorkSeries","Episode","Event","Game","LocalBusiness","MediaObject","Movie","MusicPlaylist","MusicRecording","Organization","Product","Recipe","SoftwareApplication"]},
+        "itemReviewed": {"type":"string","required":true,"label":"Reviewed item name","path":"itemReviewed.name"},
+        "reviewRating": {"type":"number","required":true,"label":"Rating","path":"reviewRating.ratingValue"},
+        "bestRating": {"type":"number","label":"Best possible rating","path":"reviewRating.bestRating","default":"5"},
+        "worstRating": {"type":"number","label":"Worst possible rating","path":"reviewRating.worstRating","default":"1"},
+        "author": {"type":"string","required":true,"label":"Author name","path":"author.name","default":"{{author_name}}"},
+        "reviewBody": {"type":"text","label":"Review body","default":"{{post_excerpt}}"},
+        "datePublished": {"type":"date","label":"Date published","default":"{{post_date}}"}
+      }
+    },
+    "Service": {
+      "label": "Service",
+      "description": "A service you offer, such as consulting or repairs.",
+      "icon": "hammer",
+      "group": "commerce",
+      "nested": {"provider":"Organization","offers":"Offer"},
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Service name","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "serviceType": {"type":"string","label":"Service type","description":"e.g. Plumbing"},
+        "provider": {"type":"string","label":"Provider","path":"provider.name","default":"{{site_name}}"},
+        "areaServed": {"type":"string","label":"Area served","description":"e.g. Greater London"},
+        "url": {"type":"url","label":"URL","default":"{{post_url}}"},
+        "price": {"type":"number","label":"Price","path":"offers.price"},
+        "priceCurrency": {"type":"string","label":"Currency","path":"offers.priceCurrency"}
       }
     },
     "SoftwareApplication": {
       "label": "Software App",
       "description": "An app or game with price and rating.",
       "icon": "desktop",
-      "nested": { "offers": "Offer", "aggregateRating": "AggregateRating" },
+      "group": "commerce",
+      "nested": {"offers":"Offer","aggregateRating":"AggregateRating"},
       "fields": {
-        "name": { "type": "string", "required": true, "label": "App name", "default": "{{post_title}}" },
-        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
-        "applicationCategory": {
-          "type": "enum",
-          "label": "Category",
-          "options": [
-            "GameApplication", "BusinessApplication", "DeveloperApplication", "DesignApplication",
-            "EducationalApplication", "EntertainmentApplication", "FinanceApplication", "HealthApplication",
-            "LifestyleApplication", "MultimediaApplication", "SecurityApplication", "SocialNetworkingApplication",
-            "TravelApplication", "UtilitiesApplication"
-          ]
-        },
-        "operatingSystem": { "type": "string", "label": "Operating system", "description": "e.g. Windows, macOS, Android" },
-        "price": { "type": "number", "required": true, "label": "Price", "description": "Use 0 for free apps", "path": "offers.price" },
-        "priceCurrency": { "type": "string", "label": "Currency", "path": "offers.priceCurrency", "default": "USD" },
-        "ratingValue": { "type": "number", "label": "Average rating", "path": "aggregateRating.ratingValue" },
-        "ratingCount": { "type": "integer", "label": "Number of ratings", "path": "aggregateRating.ratingCount" }
+        "name": {"type":"string","required":true,"label":"App name","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "applicationCategory": {"type":"enum","label":"Category","options":["GameApplication","BusinessApplication","DeveloperApplication","DesignApplication","EducationalApplication","EntertainmentApplication","FinanceApplication","HealthApplication","LifestyleApplication","MultimediaApplication","SecurityApplication","SocialNetworkingApplication","TravelApplication","UtilitiesApplication"]},
+        "operatingSystem": {"type":"string","label":"Operating system","description":"e.g. Windows, macOS, Android"},
+        "price": {"type":"number","required":true,"label":"Price","description":"Use 0 for free apps","path":"offers.price"},
+        "priceCurrency": {"type":"string","label":"Currency","path":"offers.priceCurrency","default":"USD"},
+        "ratingValue": {"type":"number","label":"Average rating","path":"aggregateRating.ratingValue"},
+        "ratingCount": {"type":"integer","label":"Number of ratings","path":"aggregateRating.ratingCount"}
+      }
+    },
+    "LocalBusiness": {
+      "label": "Local Business",
+      "description": "A shop, restaurant or office with an address.",
+      "icon": "store",
+      "group": "local",
+      "nested": {"address":"PostalAddress"},
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Business name","default":"{{site_name}}"},
+        "image": {"type":"url","label":"Image URL","default":"{{site_logo}}"},
+        "url": {"type":"url","label":"Website","default":"{{home_url}}"},
+        "telephone": {"type":"string","label":"Telephone"},
+        "priceRange": {"type":"string","label":"Price range","description":"e.g. $$"},
+        "streetAddress": {"type":"string","required":true,"label":"Street address","path":"address.streetAddress"},
+        "addressLocality": {"type":"string","label":"City","path":"address.addressLocality"},
+        "addressRegion": {"type":"string","label":"State / region","path":"address.addressRegion"},
+        "postalCode": {"type":"string","label":"Postal code","path":"address.postalCode"},
+        "addressCountry": {"type":"string","label":"Country (ISO code, e.g. US)","path":"address.addressCountry"}
+      }
+    },
+    "Event": {
+      "label": "Event",
+      "description": "Concerts, webinars, meetups and other dated events.",
+      "icon": "calendar-alt",
+      "group": "local",
+      "nested": {"location":"Place"},
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Event name","default":"{{post_title}}"},
+        "description": {"type":"text","label":"Description","default":"{{post_excerpt}}"},
+        "startDate": {"type":"date","required":true,"label":"Start date","description":"ISO 8601, e.g. 2026-11-20T19:00:00+00:00"},
+        "endDate": {"type":"date","label":"End date"},
+        "location": {"type":"string","required":true,"label":"Venue name","path":"location.name"},
+        "locationAddress": {"type":"string","label":"Venue address","path":"location.address"},
+        "image": {"type":"url","label":"Image URL","default":"{{featured_image}}"},
+        "eventStatus": {"type":"enum","label":"Status","options":["https://schema.org/EventScheduled","https://schema.org/EventPostponed","https://schema.org/EventRescheduled","https://schema.org/EventMovedOnline","https://schema.org/EventCancelled"]}
+      }
+    },
+    "Course": {
+      "label": "Course",
+      "description": "An online or in-person course.",
+      "icon": "welcome-learn-more",
+      "group": "local",
+      "nested": {"provider":"Organization","offers":"Offer"},
+      "fields": {
+        "name": {"type":"string","required":true,"label":"Course name","default":"{{post_title}}"},
+        "description": {"type":"text","required":true,"label":"Description","default":"{{post_excerpt}}"},
+        "provider": {"type":"string","label":"Provider","path":"provider.name","default":"{{site_name}}"},
+        "providerUrl": {"type":"url","label":"Provider URL","path":"provider.sameAs","default":"{{home_url}}"},
+        "courseCode": {"type":"string","label":"Course code"},
+        "inLanguage": {"type":"string","label":"Language","default":"{{site_language}}"},
+        "price": {"type":"number","label":"Price","path":"offers.price"},
+        "priceCurrency": {"type":"string","label":"Currency","path":"offers.priceCurrency"}
+      }
+    },
+    "JobPosting": {
+      "label": "Job Posting",
+      "description": "An open role, for Google Jobs.",
+      "icon": "id-alt",
+      "group": "local",
+      "nested": {"hiringOrganization":"Organization","jobLocation":"Place","jobLocation.address":"PostalAddress","baseSalary":"MonetaryAmount","baseSalary.value":"QuantitativeValue","applicantLocationRequirements":"Country"},
+      "fields": {
+        "title": {"type":"string","required":true,"label":"Job title","default":"{{post_title}}"},
+        "description": {"type":"text","required":true,"label":"Description","default":"{{post_content}}","description":"The full job description."},
+        "datePosted": {"type":"date","required":true,"label":"Date posted","default":"{{post_date}}"},
+        "validThrough": {"type":"date","label":"Closing date"},
+        "employmentType": {"type":"enum","label":"Employment type","options":["FULL_TIME","PART_TIME","CONTRACTOR","TEMPORARY","INTERN","VOLUNTEER","PER_DIEM","OTHER"]},
+        "hiringOrganization": {"type":"string","required":true,"label":"Company","path":"hiringOrganization.name","default":"{{site_name}}"},
+        "hiringOrganizationUrl": {"type":"url","label":"Company website","path":"hiringOrganization.sameAs","default":"{{home_url}}"},
+        "hiringOrganizationLogo": {"type":"url","label":"Company logo URL","path":"hiringOrganization.logo","default":"{{site_logo}}"},
+        "streetAddress": {"type":"string","label":"Street address","path":"jobLocation.address.streetAddress"},
+        "addressLocality": {"type":"string","label":"City","path":"jobLocation.address.addressLocality"},
+        "addressRegion": {"type":"string","label":"State / region","path":"jobLocation.address.addressRegion"},
+        "postalCode": {"type":"string","label":"Postal code","path":"jobLocation.address.postalCode"},
+        "addressCountry": {"type":"string","label":"Country (ISO code, e.g. US)","path":"jobLocation.address.addressCountry"},
+        "jobLocationType": {"type":"enum","label":"Remote job","options":["TELECOMMUTE"],"description":"Choose TELECOMMUTE for fully remote roles."},
+        "remoteCountry": {"type":"string","label":"Remote applicants from (country)","path":"applicantLocationRequirements.name"},
+        "salary": {"type":"number","label":"Salary","path":"baseSalary.value.value"},
+        "salaryCurrency": {"type":"string","label":"Salary currency","path":"baseSalary.currency"},
+        "salaryUnit": {"type":"enum","label":"Salary per","path":"baseSalary.value.unitText","options":["HOUR","DAY","WEEK","MONTH","YEAR"]}
       }
     }
   }

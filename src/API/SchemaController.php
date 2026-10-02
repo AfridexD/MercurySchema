@@ -79,7 +79,10 @@ class SchemaController
     /** GET /schemas */
     public function listTypes(): WP_REST_Response
     {
-        $types = array_map(static fn(SchemaType $t) => $t->toArray(), array_values($this->registry->all()));
+        $types = [];
+        foreach ($this->registry->all() as $name => $type) {
+            $types[] = $type->toArray() + ['enabled' => $this->registry->isEnabled($name)];
+        }
         return new WP_REST_Response(['types' => $types]);
     }
 
@@ -88,7 +91,7 @@ class SchemaController
     {
         $types = [];
         foreach ($this->registry->all() as $name => $type) {
-            $definition = $type->toArray();
+            $definition = $type->toArray() + ['enabled' => $this->registry->isEnabled($name)];
             unset($definition['type']);
             $types[$name] = $definition;
         }

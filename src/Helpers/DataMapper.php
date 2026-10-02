@@ -18,6 +18,7 @@ class DataMapper
     public const TOKENS = [
         'post_title',
         'post_excerpt',
+        'post_content',
         'post_url',
         'post_date',
         'post_modified',
@@ -28,6 +29,7 @@ class DataMapper
         'site_description',
         'site_logo',
         'home_url',
+        'site_language',
     ];
 
     public static function hasToken($value): bool

@@ -21,12 +21,15 @@ class SchemaTypeTest extends TestCase
     public function testBundledDefinitionsAreWellFormed(): void
     {
         $this->assertEqualsCanonicalizing(
-            ['Article', 'Product', 'Event', 'FAQPage', 'Recipe', 'VideoObject', 'Organization', 'Person',
-             'LocalBusiness', 'Review', 'SoftwareApplication'],
+            ['Organization', 'WebSite', 'WebPage', 'BreadcrumbList', 'Person', 'SiteNavigationElement',
+             'Article', 'BlogPosting', 'NewsArticle', 'FAQPage', 'HowTo', 'VideoObject', 'ImageObject', 'Recipe',
+             'Product', 'Review', 'Service', 'SoftwareApplication',
+             'LocalBusiness', 'Event', 'Course', 'JobPosting'],
             array_keys(self::$definitions)
         );
         foreach (self::$definitions as $name => $definition) {
             $this->assertNotEmpty($definition['fields'], "$name has no fields");
+            $this->assertContains($definition['group'] ?? '', ['foundations', 'content', 'commerce', 'local'], "$name has no wizard group");
             $this->assertNotEmpty($definition['icon'] ?? '', "$name has no icon");
             $this->assertNotEmpty($definition['description'] ?? '', "$name has no description");
             $this->assertFieldsWellFormed($name, $definition['fields']);
@@ -93,6 +96,41 @@ class SchemaTypeTest extends TestCase
     {
         $ld = $this->type('SoftwareApplication')->toJsonLd(['name' => 'App', 'price' => '0', 'priceCurrency' => 'USD']);
         $this->assertSame(['@type' => 'Offer', 'price' => 0, 'priceCurrency' => 'USD'], $ld['offers']);
+    }
+
+    public function testConfigFieldsAreNeverOutput(): void
+    {
+        $type = $this->type('BreadcrumbList');
+        $this->assertSame('breadcrumbs', $type->getGenerator());
+        $this->assertSame(['@context' => 'https://schema.org', '@type' => 'BreadcrumbList'], $type->toJsonLd(['homeLabel' => 'Start']));
+        $this->assertSame('navigation', $this->type('SiteNavigationElement')->getGenerator());
+        $this->assertSame('', $this->type('Article')->getGenerator());
+    }
+
+    public function testJobPostingNestsLocationAndSalary(): void
+    {
+        $ld = $this->type('JobPosting')->toJsonLd([
+            'title'              => 'Engineer',
+            'hiringOrganization' => 'Acme',
+            'addressLocality'    => 'Berlin',
+            'addressCountry'     => 'DE',
+            'salary'             => '60000',
+            'salaryCurrency'     => 'EUR',
+            'salaryUnit'         => 'YEAR',
+        ]);
+        $this->assertSame(['@type' => 'Place', 'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Berlin', 'addressCountry' => 'DE']], $ld['jobLocation']);
+        $this->assertSame(['@type' => 'MonetaryAmount', 'value' => ['@type' => 'QuantitativeValue', 'value' => 60000, 'unitText' => 'YEAR'], 'currency' => 'EUR'], $ld['baseSalary']);
+        $this->assertSame(['@type' => 'Organization', 'name' => 'Acme'], $ld['hiringOrganization']);
+    }
+
+    public function testHowToStepsAndBlogPostingInheritsArticleFields(): void
+    {
+        $ld = $this->type('HowTo')->toJsonLd(['name' => 'Tie a knot', 'supply' => "Rope\nPatience", 'steps' => [['text' => 'Loop.'], ['text' => 'Pull.', 'image' => 'https://x.com/a.jpg']]]);
+        $this->assertSame(['Rope', 'Patience'], $ld['supply']);
+        $this->assertSame([['@type' => 'HowToStep', 'text' => 'Loop.'], ['@type' => 'HowToStep', 'text' => 'Pull.', 'image' => 'https://x.com/a.jpg']], $ld['step']);
+
+        $this->assertSame(array_keys(self::$definitions['Article']['fields']), array_keys(self::$definitions['BlogPosting']['fields']));
+        $this->assertSame(['@type' => 'Person', 'name' => 'Jo'], $this->type('NewsArticle')->toJsonLd(['author' => 'Jo'])['author']);
     }
 
     public function testToArrayExposesPickerMetadata(): void

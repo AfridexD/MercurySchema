@@ -48,6 +48,9 @@ class Hooks
     /** action( array $schema, int $post_id ) — after create or update. */
     public const SCHEMA_SAVED = 'mercury_schema_schema_saved';
 
+    /** action( string[] $enabled_types, string[]|null $previous ) — after Schema Types change. */
+    public const TYPES_UPDATED = 'mercury_schema_types_updated';
+
     /** action( string $schema_id, int $post_id ) — after delete. */
     public const SCHEMA_DELETED = 'mercury_schema_schema_deleted';
 }

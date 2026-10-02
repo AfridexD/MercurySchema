@@ -4,7 +4,7 @@
  * flat field data into nested JSON-LD.
  *
  * Field config keys: type, required, label, description, default, options,
- * path, maxLength (a soft UI hint).
+ * path, maxLength (a soft UI hint), config (steers a generator; never output).
  * "path" is a dot path into the JSON-LD (e.g. "offers.price"); intermediate
  * objects get their @type from the definition's "nested" map.
  * An "objects" field is a repeatable group: its value is a list of items, each
@@ -56,6 +56,15 @@ class SchemaType
         return $this->getFields()[$key] ?? null;
     }
 
+    /**
+     * Name of the generator that builds part of this type's output from the
+     * site itself (e.g. "breadcrumbs"), or '' for purely field-driven types.
+     */
+    public function getGenerator(): string
+    {
+        return (string) ($this->definition['generator'] ?? '');
+    }
+
     public function getRequiredFields(): array
     {
         return array_keys(array_filter($this->getFields(), static fn($f) => !empty($f['required'])));
@@ -82,6 +91,8 @@ class SchemaType
             'label'       => $this->getLabel(),
             'description' => (string) ($this->definition['description'] ?? ''),
             'icon'        => (string) ($this->definition['icon'] ?? ''),
+            'group'       => (string) ($this->definition['group'] ?? ''),
+            'generator'   => $this->getGenerator(),
             'fields'      => $this->getFields(),
             'nested'      => $this->definition['nested'],
         ];
@@ -114,8 +125,8 @@ class SchemaType
     private function fill(array $node, array $fields, array $nested, array $data): array
     {
         foreach ($fields as $key => $field) {
-            if (!array_key_exists($key, $data)) {
-                continue;
+            if (!array_key_exists($key, $data) || !empty($field['config'])) {
+                continue; // "config" fields steer a generator and are never output.
             }
             $value = $this->castValue($data[$key], $field);
             if (self::isEmpty($value)) {

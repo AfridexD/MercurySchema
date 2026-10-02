@@ -16,6 +16,7 @@ use MercurySchema\API\Hooks;
 use MercurySchema\Core\SchemaType;
 use MercurySchema\Core\Validator;
 use MercurySchema\Helpers\Logger;
+use MercurySchema\Helpers\SetupState;
 
 class SchemaRegistry
 {
@@ -50,6 +51,16 @@ class SchemaRegistry
     public function validator(): Validator
     {
         return new Validator($this->all());
+    }
+
+    /**
+     * Whether a type is switched on in Schema Types. Before the setup wizard
+     * has saved a choice, every type is on.
+     */
+    public function isEnabled(string $name): bool
+    {
+        $enabled = SetupState::enabledTypes();
+        return $enabled === null || in_array($name, $enabled, true);
     }
 
     /**

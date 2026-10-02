@@ -93,7 +93,20 @@ class SchemaOutput
         }
         $data = DataMapper::resolve($schema->getData(), $this->tokenValues($post));
         $result = $this->registry->validator()->validate((clone $schema)->setData($data));
-        return ['json_ld' => $type->toJsonLd($data)] + $result;
+        $jsonLd = $type->toJsonLd($data);
+
+        if ($result['valid'] && $type->getGenerator() !== '') {
+            $generated = Generators::apply($type->getGenerator(), $jsonLd, $data, $post);
+            if ($generated === null) {
+                $result = ['valid' => false, 'errors' => [['field' => '', 'message' => 'Nothing to generate on this page.']]];
+            } else {
+                $jsonLd = $generated;
+            }
+        }
+        if ($result['valid'] && !$this->registry->isEnabled($type->getName())) {
+            $result = ['valid' => false, 'errors' => [['field' => '', 'message' => 'Type switched off.']]];
+        }
+        return ['json_ld' => $jsonLd] + $result;
     }
 
     /**
@@ -149,8 +162,8 @@ class SchemaOutput
                 continue; // Disabled schemas never load definitions or post data.
             }
             $type = $this->registry->get($schema->getType());
-            if ($type === null) {
-                continue;
+            if ($type === null || !$this->registry->isEnabled($type->getName())) {
+                continue; // Types switched off in Schema Types keep their data but don't print.
             }
 
             $context = $this->conditionContext($post, $locations, $schema->getConditions(), $context);
@@ -172,7 +185,15 @@ class SchemaOutput
                 continue;
             }
 
-            $jsonLd = apply_filters(Hooks::JSON_LD_OUTPUT, $type->toJsonLd($data), $postId, $schema);
+            $jsonLd = $type->toJsonLd($data);
+            if ($type->getGenerator() !== '') {
+                $jsonLd = Generators::apply($type->getGenerator(), $jsonLd, $data, $post);
+                if ($jsonLd === null) {
+                    continue; // e.g. breadcrumbs on the front page.
+                }
+            }
+
+            $jsonLd = apply_filters(Hooks::JSON_LD_OUTPUT, $jsonLd, $postId, $schema);
             if (is_array($jsonLd) && $jsonLd) {
                 $output[] = $jsonLd;
             }
@@ -223,6 +244,7 @@ class SchemaOutput
         $values = [
             'post_title'       => '',
             'post_excerpt'     => '',
+            'post_content'     => '',
             'post_url'         => '',
             'post_date'        => '',
             'post_modified'    => '',
@@ -233,6 +255,7 @@ class SchemaOutput
             'site_description' => self::plain((string) get_bloginfo('description')),
             'site_logo'        => $logo ? (string) $logo : (string) get_site_icon_url(),
             'home_url'         => home_url('/'),
+            'site_language'    => (string) get_bloginfo('language'),
         ];
 
         if ($post) {
@@ -244,6 +267,8 @@ class SchemaOutput
             $values = array_merge($values, [
                 'post_title'     => self::plain($post->post_title),
                 'post_excerpt'   => self::plain($excerpt),
+                // Plain text, whitespace collapsed, capped below the validator's text limit.
+                'post_content'   => mb_substr(trim(preg_replace('/\s+/u', ' ', self::plain(strip_shortcodes($post->post_content)))), 0, 5000),
                 'post_url'       => (string) get_permalink($post),
                 'post_date'      => (string) get_post_time('c', true, $post),
                 'post_modified'  => (string) get_post_modified_time('c', true, $post),

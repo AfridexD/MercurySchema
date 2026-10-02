@@ -134,6 +134,7 @@ class AdminController
         return (array) apply_filters(Hooks::TOKENS, [
             'post_title'       => __('Post title', 'mercury-schema'),
             'post_excerpt'     => __('Post excerpt', 'mercury-schema'),
+            'post_content'     => __('Post content (plain text)', 'mercury-schema'),
             'post_url'         => __('Post URL', 'mercury-schema'),
             'post_date'        => __('Publish date', 'mercury-schema'),
             'post_modified'    => __('Last modified date', 'mercury-schema'),
@@ -144,6 +145,7 @@ class AdminController
             'site_description' => __('Site tagline', 'mercury-schema'),
             'site_logo'        => __('Site logo URL', 'mercury-schema'),
             'home_url'         => __('Home page URL', 'mercury-schema'),
+            'site_language'    => __('Site language (e.g. en-US)', 'mercury-schema'),
         ]);
     }
 
