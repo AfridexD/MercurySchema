@@ -18,7 +18,7 @@ foreach ([
     'mercury_schema_preset',
     'mercury_schema_enabled_types',
     'mercury_schema_onboarding_date',
-] as $option) {
-    delete_option($option);
+] as $mercury_schema_option) {
+    delete_option($mercury_schema_option);
 }
 delete_transient('mercury_schema_activation_redirect');

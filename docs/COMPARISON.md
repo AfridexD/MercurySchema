@@ -4,13 +4,13 @@ Measured on 2026-10-02 from each plugin's current release on WordPress.org (`lat
 
 | Plugin | Version | Zip | Unpacked | Files | PHP files | PHP lines |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| **Mercury Schema** | 1.1.0 | **52 KB** | **163 KB** | **27** | 21 | **2,259** |
+| **Mercury Schema** | 1.2.0 | **76 KB** | **248 KB** | **35** | 27 | **3,160** |
 | WP SEO Structured Data Schema | latest | 162 KB | 582 KB | 71 | 14 | 6,620 |
 | All In One Schema Rich Snippets | 1.7.9 | 592 KB | 1,357 KB | 116 | 19 | 8,612 |
 | Schema (by Hesham) | 1.7.9.6 | 1,476 KB | 3,849 KB | 153 | 72 | 16,315 |
 | Schema & Structured Data for WP & AMP | 1.67 | 2,015 KB | 7,895 KB | 347 | 83 | 89,204 |
 
-Mercury Schema's zip is 3–39× smaller than these, its unpacked size 4–48× smaller, and it has 3–39× less PHP. (Version 1.0.0 was 33 KB zipped; 1.1.0 added site-wide schemas, four types, repeatable fields, live preview, WooCommerce values and a redesigned editor for 19 KB.)
+Mercury Schema's zip is 2–27× smaller than these, its unpacked size 2–32× smaller, and it has 2–28× less PHP. Growth by version: 1.0.0 was 33 KB zipped; 1.1.0 (site-wide schemas, repeatable fields, live preview, WooCommerce values, redesigned editor) 52 KB; 1.2.0 (setup wizard, Schema Types screen, 11 more types, generated breadcrumbs and navigation, migration) 76 KB.
 
 ## Runtime cost
 
@@ -34,13 +34,14 @@ Competitor query counts were not measured here. To compare fairly, install each 
 | Page builders | No builder modules. Output is in the page head, independent of how content is built. |
 | WooCommerce | Product price, currency, stock, SKU and rating read from the product through the plugin's own token filter. No WooCommerce module is loaded when WooCommerce is absent. |
 | Invalid schema | Never printed. The editor shows exactly why ("Incomplete: Thumbnail URL is required"). |
-| Extensibility | 14 documented filters and actions; a public REST API. |
-| Tests | 59 unit tests (no WordPress needed) + 32 integration tests, run on WordPress 6.0–7.1 and PHP 8.0–8.4. |
+| Setup | A one-minute wizard (Basic, Smart, Custom) that switches types on and adds the site-wide basics. |
+| Extensibility | 15 documented filters and actions; a public REST API. |
+| Tests | 63 unit tests (no WordPress needed) + 47 integration tests, run on WordPress 6.0–7.1 and PHP 8.0–8.4. |
 
 ## Honest trade-offs
 
-- **Fewer types out of the box.** Eleven types against dozens in the larger plugins. More can be added with a filter, but not through the UI yet.
-- **No breadcrumbs or automatic site graph.** SEO suites generate BreadcrumbList and a linked `@graph` automatically; Mercury Schema prints only the schemas you add.
+- **Fewer types than the biggest suites.** 22 types against dozens in the largest plugins. More can be added with a filter, but not through the UI yet.
+- **No linked `@graph`.** SEO suites connect their schemas into one graph with `@id` references; Mercury Schema prints each schema as its own tag. Breadcrumbs and navigation are generated automatically.
 - **Authors can't edit schema by default.** Editors and administrators can; site-wide schemas are administrator-only. Both are filterable.
 
 ## How to reproduce

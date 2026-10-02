@@ -50,6 +50,7 @@ class Migrator
         delete_option('unlimited_schema_definitions');
 
         // Rename post schema data in a single query, skipping posts that already have new data.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- one-time bulk rename on activation; caches are flushed below.
         $report['meta_rows'] = (int) $wpdb->query($wpdb->prepare(
             "UPDATE {$wpdb->postmeta} AS legacy
              LEFT JOIN {$wpdb->postmeta} AS current
