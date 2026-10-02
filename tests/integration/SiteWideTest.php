@@ -152,6 +152,19 @@ class SiteWideTest extends WP_UnitTestCase
         $this->assertSame('name', $status['bad']['errors'][0]['field']);
     }
 
+    public function testPostStatusResolvesTokensAgainstThePost(): void
+    {
+        // No featured image: the Recipe's {{featured_image}} default leaves its required image empty.
+        $res = $this->request('POST', '/schemas/' . $this->postId, ['type' => 'Recipe']);
+        $this->assertFalse($res->get_data()['status']['valid']);
+        $this->assertSame('image', $res->get_data()['status']['errors'][0]['field']);
+        $this->assertSame([], $this->output()->buildJsonLd($this->postId), 'and it is not printed');
+
+        // Site-wide, the same token counts as filled because it resolves per page.
+        $global = $this->request('POST', '/global', ['type' => 'Recipe']);
+        $this->assertTrue($global->get_data()['status']['valid']);
+    }
+
     public function testPreviewResolvesTokensForThePost(): void
     {
         $res = $this->request('POST', '/preview', [

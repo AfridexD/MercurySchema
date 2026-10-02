@@ -4,13 +4,13 @@ Measured on 2026-10-02 from each plugin's current release on WordPress.org (`lat
 
 | Plugin | Version | Zip | Unpacked | Files | PHP files | PHP lines |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| **UnlimitedSchema** | 1.0.0 | **33 KB** | **94 KB** | **25** | 19 | **1,697** |
+| **UnlimitedSchema** | 1.1.0 | **52 KB** | **163 KB** | **27** | 21 | **2,259** |
 | WP SEO Structured Data Schema | latest | 162 KB | 582 KB | 71 | 14 | 6,620 |
 | All In One Schema Rich Snippets | 1.7.9 | 592 KB | 1,357 KB | 116 | 19 | 8,612 |
 | Schema (by Hesham) | 1.7.9.6 | 1,476 KB | 3,849 KB | 153 | 72 | 16,315 |
 | Schema & Structured Data for WP & AMP | 1.67 | 2,015 KB | 7,895 KB | 347 | 83 | 89,204 |
 
-UnlimitedSchema's zip is 5–61× smaller than these, its unpacked size 6–84× smaller, and it has 4–53× less PHP.
+UnlimitedSchema's zip is 3–39× smaller than these, its unpacked size 4–48× smaller, and it has 3–39× less PHP. (Version 1.0.0 was 33 KB zipped; 1.1.0 added site-wide schemas, four types, repeatable fields, live preview, WooCommerce values and a redesigned editor for 19 KB.)
 
 ## Runtime cost
 
@@ -29,18 +29,18 @@ Competitor query counts were not measured here. To compare fairly, install each 
 | | UnlimitedSchema |
 | --- | --- |
 | Schema definitions | One JSON file, seeded into the database, extendable by filter. No PHP edits to add a type. |
-| Storage | One JSON meta entry per post. |
-| Admin UI | Vanilla JS over a REST API. No build step, no jQuery, no React. |
+| Storage | One JSON meta entry per post; site-wide schemas in one autoloaded option. |
+| Admin UI | Vanilla JS over a REST API. No build step, no jQuery, no React. Editor JS ships at 27 KB. |
 | Page builders | No builder modules. Output is in the page head, independent of how content is built. |
-| Invalid schema | Never printed. Skipped and logged in debug mode. |
-| Extensibility | 12 documented filters and actions; a public REST API. |
-| Tests | 46 unit tests (no WordPress needed) + 17 integration tests, run on WordPress 6.0–7.1 and PHP 8.0–8.4. |
+| WooCommerce | Product price, currency, stock, SKU and rating read from the product through the plugin's own token filter. No WooCommerce module is loaded when WooCommerce is absent. |
+| Invalid schema | Never printed. The editor shows exactly why ("Incomplete: Thumbnail URL is required"). |
+| Extensibility | 13 documented filters and actions; a public REST API. |
+| Tests | 59 unit tests (no WordPress needed) + 29 integration tests, run on WordPress 6.0–7.1 and PHP 8.0–8.4. |
 
 ## Honest trade-offs
 
-- **Fewer types out of the box.** Seven types (Article, Product, Event, Organization, Person, LocalBusiness, Review) against dozens in the larger plugins. More can be added with a filter, but not through the UI yet.
-- **Per-post only.** There are no site-wide or template-wide rules yet (for example "Organization on every page"). Each post gets its own schemas.
-- **No automatic WooCommerce mapping.** Product price and stock are typed in or tokenised, not read from WooCommerce automatically.
+- **Fewer types out of the box.** Eleven types against dozens in the larger plugins. More can be added with a filter, but not through the UI yet.
+- **No breadcrumbs or automatic site graph.** SEO suites generate BreadcrumbList and a linked `@graph` automatically; UnlimitedSchema prints only the schemas you add.
 - **Admin-only editing by default.** Editors and authors can't edit schema unless the capability filter is changed.
 
 ## How to reproduce

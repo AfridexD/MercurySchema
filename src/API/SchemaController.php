@@ -78,11 +78,9 @@ class SchemaController
         }
 
         $doc = $this->load($postId);
-        $validator = $this->registry->validator();
         $status = [];
         foreach ($doc['schemas'] as $raw) {
-            // Tokens count as filled in here; they are re-checked at render time.
-            $status[$raw['id'] ?? ''] = $validator->validate(Schema::fromArray($raw));
+            $status[$raw['id'] ?? ''] = $this->status($raw, $postId);
         }
 
         $response = ['post_id' => $postId] + $doc + ['status' => (object) $status];
@@ -124,7 +122,7 @@ class SchemaController
         if (is_wp_error($saved)) {
             return $saved;
         }
-        return new WP_REST_Response(['success' => true, 'schema' => $saved, 'status' => $this->status($saved)], 201);
+        return new WP_REST_Response(['success' => true, 'schema' => $saved, 'status' => $this->status($saved, $postId)], 201);
     }
 
     /** PUT /schemas/{post_id}/{schema_id} and PUT /global/{schema_id} */
@@ -165,7 +163,7 @@ class SchemaController
         if (is_wp_error($saved)) {
             return $saved;
         }
-        return new WP_REST_Response(['success' => true, 'schema' => $saved, 'status' => $this->status($saved)]);
+        return new WP_REST_Response(['success' => true, 'schema' => $saved, 'status' => $this->status($saved, $postId)]);
     }
 
     /** DELETE /schemas/{post_id}/{schema_id} and DELETE /global/{schema_id} */
@@ -201,7 +199,7 @@ class SchemaController
         return new WP_REST_Response($this->registry->validator()->validate($schema));
     }
 
-    /** POST /preview — the JSON-LD a schema would produce, tokens resolved for the post. */
+    /** POST /preview: the JSON-LD a schema would produce, tokens resolved for the post. */
     public function preview(WP_REST_Request $request)
     {
         $type = $this->type($request->get_param('type'));
@@ -251,8 +249,18 @@ class SchemaController
         return $saved;
     }
 
-    private function status(array $schema): array
+    /**
+     * Whether a schema will actually print. For a post, tokens are resolved
+     * against that post (so an empty {{featured_image}} counts as missing);
+     * site-wide, tokens count as filled because they resolve per page.
+     */
+    private function status(array $schema, int $postId): array
     {
+        $post = $postId ? get_post($postId) : null;
+        if ($post) {
+            $result = $this->output->preview(Schema::fromArray($schema), $post);
+            return ['valid' => $result['valid'], 'errors' => $result['errors']];
+        }
         return $this->registry->validator()->validate(Schema::fromArray($schema));
     }
 

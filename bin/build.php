@@ -43,10 +43,38 @@ foreach ($files as $file) {
     if ($ignored($rel)) {
         continue;
     }
-    $zip->addFile($file->getPathname(), "unlimited-schema/$rel");
+    $ext = pathinfo($rel, PATHINFO_EXTENSION);
+    if ($ext === 'js' || $ext === 'css') {
+        $compact = compact_asset((string) file_get_contents($file->getPathname()), $ext);
+        $zip->addFromString("unlimited-schema/$rel", $compact);
+        $bytes += strlen($compact);
+        printf("  %s: %.1f KB -> %.1f KB\n", $rel, $file->getSize() / 1024, strlen($compact) / 1024);
+    } else {
+        $zip->addFile($file->getPathname(), "unlimited-schema/$rel");
+        $bytes += $file->getSize();
+    }
     $count++;
-    $bytes += $file->getSize();
 }
 $zip->close();
 
 printf("%s: %d files, %.1f KB unpacked, %.1f KB zipped\n", basename($zipPath), $count, $bytes / 1024, filesize($zipPath) / 1024);
+
+/**
+ * Conservative compaction: drop indentation, blank lines and comment-only
+ * lines, but keep every line break so JavaScript semantics cannot change.
+ */
+function compact_asset(string $source, string $ext): string
+{
+    if ($ext === 'css') {
+        $source = preg_replace('#/\*.*?\*/#s', '', $source);
+    }
+    $out = [];
+    foreach (preg_split('/\r\n|\r|\n/', $source) as $line) {
+        $line = trim($line);
+        if ($line === '' || ($ext === 'js' && (strpos($line, '//') === 0 || strpos($line, '* ') === 0 || $line === '*' || $line === '/**' || $line === '*/'))) {
+            continue;
+        }
+        $out[] = $line;
+    }
+    return implode("\n", $out) . "\n";
+}

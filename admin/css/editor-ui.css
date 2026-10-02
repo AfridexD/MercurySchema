@@ -30,7 +30,8 @@
 .us-head__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .us-head__text strong { font-size: 14px; }
 .us-app .button { display: inline-flex; align-items: center; gap: 6px; }
-.us-app .button .dashicons { margin: 0 -2px; color: inherit; }
+/* Elementor's admin CSS colours every ".button .dashicons" with a stronger selector; out-rank it. */
+.wp-core-ui .us-app .button .dashicons.dashicons { margin: 0 -2px; color: inherit; }
 
 /* Type picker */
 .us-picker { border: 1px solid var(--us-line); border-radius: var(--us-radius); background: var(--us-bg); padding: 12px; margin-bottom: 14px; animation: us-in .16s ease-out; }

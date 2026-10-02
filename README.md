@@ -2,7 +2,7 @@
 
 Lightweight, conflict-free JSON-LD schema markup for WordPress.
 
-- **Small.** About 20 PHP files, no runtime dependencies, no build step.
+- **Small.** About 20 PHP files, no runtime dependencies, no build step. The release zip is about 50 KB.
 - **One meta row per post.** All of a post's schemas live in a single `_unlimited_schema_data` JSON entry.
 - **REST-first.** The admin UI is a thin vanilla-JS client of the REST API. Anything the UI does, you can script.
 - **Filterable.** Definitions, conditions, token values and final JSON-LD all pass through filters.
@@ -18,9 +18,17 @@ Requires PHP 8.0+ and WordPress 6.0+.
 
 ## Usage
 
-Open a post. In the **Schema Markup** box, pick a type and click **Add schema**. The new schema is pre-filled with dynamic values such as `{{post_title}}`. Edit fields, click **Validate**, then **Save**. The schema renders as a `<script type="application/ld+json">` tag on the post's page.
+**On a post:** in the **Schema Markup** box, click **Add schema** and pick a type. It is pre-filled with dynamic values such as `{{post_title}}`. Each schema card has three tabs:
 
-Built-in types: Article, Product, Event, Organization, Person, LocalBusiness, Review.
+- **Fields:** edit values. The `{ }` button inserts a dynamic value at the cursor. FAQ questions and recipe steps are repeatable rows you can add, reorder and remove.
+- **Display rules:** optional conditions (post types, categories, author roles).
+- **Preview:** the exact JSON-LD that will print, with copy and **Test in Google** buttons.
+
+The badge on each card says whether it will print: **Ready**, **Incomplete** (a required field is empty, for example `{{featured_image}}` on a post without one), **Disabled**, or **Unsaved**.
+
+**Site-wide:** *Settings → UnlimitedSchema → Site-wide schemas* uses the same editor. Site-wide schemas appear on every page matching their rules, including a **Show on** rule for the front page, single posts and pages, or archives. New Organization, Local Business and Person schemas default to the front page; content types default to single posts. A post's own schema replaces a site-wide schema of the same type on that post.
+
+Built-in types: Article, Product, Event, FAQPage, Recipe, VideoObject, Organization, Person, LocalBusiness, Review, SoftwareApplication.
 
 ### Dynamic values
 
@@ -37,15 +45,17 @@ Any field can contain tokens that are resolved when the page renders:
 | `{{site_name}}`, `{{site_description}}`, `{{home_url}}` | Site info |
 | `{{site_logo}}` | Custom logo, falling back to the site icon |
 
-Add your own with the `unlimited_schema_token_values` filter.
+With WooCommerce active, Product schemas default to `{{product_price}}`, `{{product_currency}}`, `{{product_availability}}`, `{{product_sku}}`, `{{product_rating}}` and `{{product_review_count}}`, read from the product.
+
+Post tokens are empty on pages without a post (front page of posts, archives). Add your own tokens with `unlimited_schema_token_values` (values) and `unlimited_schema_tokens` (labels for the picker).
 
 ### Display conditions
 
-Each schema has optional conditions: `post_types`, `categories` (slugs or IDs), `user_roles` (roles of the post's **author**), and `post_ids`. An empty list means no restriction; every non-empty list must match.
+Each schema has optional conditions: `post_types`, `categories` (slugs or IDs), `user_roles` (roles of the post's **author**), `post_ids`, and `locations` (`front_page`, `singular`, `archive`). An empty list means no restriction; every non-empty list must match.
 
 ### Rendering rules
 
-A schema renders only when it is enabled, its type is known, its conditions match, and it passes full validation after tokens are resolved. Invalid schemas are skipped silently and logged when `WP_DEBUG` or the debug setting is on.
+On each page, site-wide schemas are merged with the current post's own schemas; a post schema replaces any site-wide schema of the same type. A schema renders only when it is enabled, its type is known, its conditions match, and it passes full validation after tokens are resolved. Invalid schemas are skipped silently and logged when `WP_DEBUG` or the debug setting is on.
 
 ## REST API
 
@@ -53,15 +63,18 @@ Namespace `unlimited-schema/v1`. Every endpoint requires the `manage_options` ca
 
 | Method | Route | Purpose |
 | --- | --- | --- |
-| GET | `/schemas` | List types: `{ types: [ { type, label, fields, nested } ] }` |
-| GET | `/schema-types` | Types keyed by name: `{ Article: { label, fields, nested } }` |
-| GET | `/schemas/{post_id}` | `{ post_id, version, schemas: [...] }` |
-| POST | `/schemas/{post_id}` | Create. Body `{ type, data?, conditions?, enabled? }`. Returns `201 { success, schema }`. Omitted or empty `data` gets the type's defaults. |
-| PUT | `/schemas/{post_id}/{schema_id}` | Update. Any of `type`, `data`, `conditions`, `enabled`. Returns `{ success, schema }`. |
+| GET | `/schemas` | List types: `{ types: [ { type, label, description, icon, fields, nested } ] }` |
+| GET | `/schema-types` | Types keyed by name: `{ Article: { label, description, icon, fields, nested } }` |
+| GET | `/schemas/{post_id}` | `{ post_id, version, schemas, status, site_wide }`. `status` maps each schema ID to `{ valid, errors }` with tokens resolved for this post; `site_wide` lists the site-wide schemas whose rules match it. |
+| POST | `/schemas/{post_id}` | Create. Body `{ type, data?, conditions?, enabled? }`. Returns `201 { success, schema, status }`. Omitted or empty `data` gets the type's defaults. |
+| PUT | `/schemas/{post_id}/{schema_id}` | Update. Any of `type`, `data`, `conditions`, `enabled`. Returns `{ success, schema, status }`. |
 | DELETE | `/schemas/{post_id}/{schema_id}` | Returns `{ success, deleted }`. |
-| POST | `/validate` | Full validation. Body `{ type, data }`. Returns `{ valid, errors: [ { field, message } ] }`. |
+| GET, POST | `/global` | Site-wide schemas; same shapes as the per-post routes. |
+| PUT, DELETE | `/global/{schema_id}` | Update or delete a site-wide schema. |
+| POST | `/preview` | Body `{ type, data, post_id? }`. Returns `{ json_ld, valid, errors }` with tokens resolved, without saving. |
+| POST | `/validate` | Full validation, tokens counted as filled. Body `{ type, data }`. Returns `{ valid, errors: [ { field, message } ] }`. |
 
-Saving runs a partial validation: field types are checked, but required fields may be empty so you can save drafts. Errors come back as `400` with `data.errors`.
+Saving runs a partial validation: field types are checked, but required fields may be empty so you can save drafts. Errors come back as `400` with `data.errors`. Errors inside repeatable fields use dotted paths such as `questions.1.answer`.
 
 ```bash
 curl -u admin:APP_PASSWORD -X POST http://localhost:8080/wp-json/unlimited-schema/v1/schemas/123 \
@@ -86,6 +99,8 @@ curl -u admin:APP_PASSWORD -X POST http://localhost:8080/wp-json/unlimited-schem
 }
 ```
 
+Site-wide schemas use the same document shape in the autoloaded `unlimited_schema_global` option, so they cost no extra query.
+
 Type definitions are seeded from `assets/schema-definitions.json` into the `unlimited_schema_definitions` option (not autoloaded) on activation and whenever the plugin version changes. Custom types stored in that option are kept on reseed.
 
 ### Field definitions
@@ -94,9 +109,23 @@ Type definitions are seeded from `assets/schema-definitions.json` into the `unli
 "price": { "type": "number", "label": "Price", "path": "offers.price" }
 ```
 
-- `type`: `string`, `text`, `url`, `integer`, `number`, `date`, `enum`, `array`
-- `required`, `label`, `description`, `default`, `options` (for `enum`)
+- `type`: `string`, `text`, `url`, `integer`, `number`, `date`, `duration` (ISO 8601, e.g. `PT30M`), `enum`, `array`, `objects`
+- `required`, `label`, `description`, `default`, `options` (for `enum`), `maxLength` (soft counter in the editor)
 - `path`: dot path into the JSON-LD output. Intermediate objects get their `@type` from the definition's `nested` map, for example `"nested": { "offers": "Offer" }`.
+- Type-level `label`, `description` and `icon` (a Dashicons name) drive the type picker.
+
+An `objects` field is a repeatable group. Its value is a list of items; each item is built from `itemFields` into an object of type `itemType`:
+
+```json
+"questions": {
+  "type": "objects", "label": "Questions", "path": "mainEntity", "itemLabel": "Question",
+  "itemType": "Question", "itemNested": { "acceptedAnswer": "Answer" },
+  "itemFields": {
+    "question": { "type": "string", "required": true, "path": "name" },
+    "answer":   { "type": "text",   "required": true, "path": "acceptedAnswer.text" }
+  }
+}
+```
 
 ## Hooks
 
@@ -107,23 +136,28 @@ Type definitions are seeded from `assets/schema-definitions.json` into the `unli
 | `unlimited_schema_output_enabled` | filter | `bool $enabled` |
 | `unlimited_schema_should_render` | filter | `bool $render, Schema $schema, int $post_id` |
 | `unlimited_schema_json_ld_output` | filter | `array $json_ld, int $post_id, Schema $schema` |
-| `unlimited_schema_token_values` | filter | `array $values, WP_Post $post` |
-| `unlimited_schema_condition_context` | filter | `array $context, WP_Post $post` |
+| `unlimited_schema_token_values` | filter | `array $values, WP_Post\|null $post` |
+| `unlimited_schema_tokens` | filter | `array $tokens` (name => label, for the editor's picker) |
+| `unlimited_schema_condition_context` | filter | `array $context, WP_Post\|null $post` |
 | `unlimited_schema_rest_capability` | filter | `string $capability` |
 | `unlimited_schema_post_types` | filter | `string[] $post_types` |
 | `unlimited_schema_logging_enabled` | filter | `bool $enabled` |
 | `unlimited_schema_schema_saved` | action | `array $schema, int $post_id` |
 | `unlimited_schema_schema_deleted` | action | `string $schema_id, int $post_id` |
 
-Example: add a `Recipe` type without touching the plugin.
+Example: add a `Course` type without touching the plugin.
 
 ```php
 add_filter('unlimited_schema_definitions', function ($types) {
-    $types['Recipe'] = [
-        'label'  => 'Recipe',
-        'fields' => [
-            'name'  => ['type' => 'string', 'required' => true, 'default' => '{{post_title}}'],
-            'image' => ['type' => 'url', 'default' => '{{featured_image}}'],
+    $types['Course'] = [
+        'label'       => 'Course',
+        'description' => 'An online or in-person course.',
+        'icon'        => 'welcome-learn-more',
+        'nested'      => ['provider' => 'Organization'],
+        'fields'      => [
+            'name'        => ['type' => 'string', 'required' => true, 'label' => 'Course name', 'default' => '{{post_title}}'],
+            'description' => ['type' => 'text', 'required' => true, 'label' => 'Description', 'default' => '{{post_excerpt}}'],
+            'provider'    => ['type' => 'string', 'label' => 'Provider', 'path' => 'provider.name', 'default' => '{{site_name}}'],
         ],
     ];
     return $types;
@@ -173,10 +207,13 @@ Layout:
 src/Core       pure PHP: Schema, SchemaType, Validator, ConditionEvaluator
 src/Frontend   SchemaRegistry (definitions), SchemaOutput (JSON-LD rendering)
 src/API        REST routes, controller, hook names
-src/Admin      metabox, settings page
-src/Helpers    DataMapper (tokens), Sanitizer, PostMetaStore, Logger
-admin/         vanilla JS/CSS for the metabox
+src/Admin      metabox, settings page (site-wide editor + settings)
+src/Helpers    DataMapper (tokens), Sanitizer, PostMetaStore, GlobalStore, Logger
+src/Integrations  WooCommerce tokens (loaded only when WooCommerce is active)
+admin/         vanilla JS/CSS for the editor
 ```
+
+`php bin/build.php` makes the release zip. It strips indentation and comment-only lines from the JS and CSS (keeping line breaks, so behaviour cannot change); the editor JS ships at about 27 KB.
 
 ## License
 
