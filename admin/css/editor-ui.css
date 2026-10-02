@@ -45,6 +45,9 @@
 .ms-tile__icon { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: var(--ms-accent-soft); color: var(--ms-accent); }
 .ms-tile__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .ms-tile__text span { color: var(--ms-muted); font-size: 12px; line-height: 1.4; }
+.ms-tile__text .ms-tile__added { display: none; margin-left: 6px; padding: 0 6px; border-radius: 4px; background: var(--ms-warn-bg); color: var(--ms-warn); font-size: 10px; font-weight: 600; text-transform: uppercase; vertical-align: 1px; }
+.ms-tile.is-added .ms-tile__added { display: inline-block; }
+.ms-picker__more { margin: 10px 2px 0; font-size: 12px; }
 
 /* Site-wide strip */
 .ms-sitewide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; margin-bottom: 12px; border-radius: var(--ms-radius); background: var(--ms-bg); color: var(--ms-muted); }
@@ -192,12 +195,17 @@
 .ms-offscreen { position: fixed; left: -9999px; }
 
 /* Settings page */
-.ms-page__head { display: flex; align-items: center; gap: 14px; margin: 14px 0 6px; }
-.ms-page__head h1 { padding: 0; display: flex; align-items: center; gap: 8px; }
-.ms-page__head p { margin: 2px 0 0; color: #646970; }
-.ms-page__logo.dashicons { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #67e8f9; font-size: 24px; }
-.ms-page__ver { padding: 1px 8px; border-radius: 99px; background: #f0f0f1; color: #646970; font-size: 11px; font-weight: 600; }
-.ms-page__tabs { margin-bottom: 18px; }
+.ms-page__head { display: flex; align-items: center; gap: 14px; margin: 14px 0 10px; }
+.ms-page__head h1 { padding: 0; display: flex; align-items: center; gap: 8px; color: #0D1530; }
+.ms-page__head p { margin: 2px 0 0; color: #4A5272; }
+.ms-logo { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 11px; background: radial-gradient(circle at 0 100%, rgba(244, 246, 252, .35), rgba(244, 246, 252, 0) 62%), #1F4FD6; }
+.ms-logo svg { width: 26px; height: auto; }
+.ms-page__ver { padding: 2px 7px; border-radius: 4px; background: #EAF0FF; color: #1F4FD6; font: 11px ui-monospace, Menlo, Consolas, monospace; }
+.ms-page__tabs { display: flex; gap: 4px; margin: 0 0 20px; border-bottom: 1px solid #DCE2F0; overflow-x: auto; }
+.ms-page__tab { padding: 10px 14px; border-bottom: 2px solid transparent; color: #4A5272; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.ms-page__tab:hover { color: #0D1530; }
+.ms-page__tab.is-active { color: #1F4FD6; border-bottom-color: #1F4FD6; }
+.ms-page__tab:focus { box-shadow: none; outline: 2px solid #1F4FD6; outline-offset: -2px; }
 .ms-app--page { max-width: 1100px; padding: 18px 20px; background: #fff; border: 1px solid #dcdcde; border-radius: 10px; }
 .ms-settings { max-width: 1100px; padding: 4px 20px 8px; background: #fff; border: 1px solid #dcdcde; border-radius: 10px; }
 

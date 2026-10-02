@@ -128,6 +128,24 @@ class SetupTest extends WP_UnitTestCase
         $this->assertCount(5, (new GlobalStore())->get()['schemas']);
     }
 
+    public function testFreshActivationQueuesWizard(): void
+    {
+        delete_transient(SetupState::REDIRECT);
+        Loader::activate();
+        $this->assertSame(1, (int) get_transient(SetupState::REDIRECT));
+        $this->assertFalse(SetupState::isComplete());
+    }
+
+    public function testActivationAfterMigrationSkipsWizard(): void
+    {
+        delete_transient(SetupState::REDIRECT);
+        add_option('unlimited_schema_settings', ['post_types' => ['post'], 'output_location' => 'head', 'debug' => false]);
+        Loader::activate();
+        $this->assertTrue(SetupState::isComplete());
+        $this->assertFalse(get_transient(SetupState::REDIRECT));
+        $this->assertNull(SetupState::enabledTypes(), 'every type stays on for upgraded sites');
+    }
+
     public function testEditorsCannotUseSetup(): void
     {
         wp_set_current_user(self::factory()->user->create(['role' => 'editor']));

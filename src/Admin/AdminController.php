@@ -27,7 +27,7 @@ class AdminController
     public function registerHooks(): void
     {
         add_action('admin_init', [$this->settings, 'register']);
-        add_action('admin_menu', [$this->settings, 'addPage']);
+        (new Pages($this->settings))->registerHooks();
         add_action('add_meta_boxes', [$this, 'addMetaBox']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
         add_filter('plugin_action_links_' . plugin_basename(MERCURY_SCHEMA_FILE), [$this, 'actionLinks']);
@@ -72,13 +72,16 @@ class AdminController
 
     public function enqueueAssets(string $hook): void
     {
-        if ($hook === 'settings_page_' . Settings::PAGE) {
+        $page = Pages::current();
+        if ($page !== '') {
             if (!self::canManageGlobal()) {
                 return;
             }
             wp_enqueue_style('mercury-schema-admin', MERCURY_SCHEMA_URL . 'admin/css/editor-ui.css', ['dashicons'], MERCURY_SCHEMA_VERSION);
-            if (Settings::currentTab() === 'schemas') {
+            if ($page === Pages::SITE_WIDE) {
                 $this->enqueueEditor(['scope' => 'global', 'postId' => 0, 'testUrl' => home_url('/')]);
+            } elseif ($page === Pages::TYPES || $page === Pages::SETUP) {
+                $this->enqueueSetup($page === Pages::SETUP ? 'wizard' : 'types');
             }
             return;
         }
@@ -96,7 +99,31 @@ class AdminController
             'scope'       => 'post',
             'postId'      => (int) $post->ID,
             'testUrl'     => $post->post_status === 'publish' ? get_permalink($post) : '',
-            'settingsUrl' => self::canManageGlobal() ? Settings::url() : '',
+            'settingsUrl' => self::canManageGlobal() ? Pages::url(Pages::SITE_WIDE) : '',
+            'typesUrl'    => self::canManageGlobal() ? Pages::url(Pages::TYPES) : '',
+        ]);
+    }
+
+    private function enqueueSetup(string $mode): void
+    {
+        wp_enqueue_style('mercury-schema-setup', MERCURY_SCHEMA_URL . 'admin/css/setup.css', ['mercury-schema-admin'], MERCURY_SCHEMA_VERSION);
+        wp_enqueue_script('mercury-schema-setup', MERCURY_SCHEMA_URL . 'admin/js/setup.js', [], MERCURY_SCHEMA_VERSION, true);
+
+        $firstPost = get_posts(['post_type' => 'post', 'post_status' => 'publish', 'numberposts' => 1, 'fields' => 'ids']);
+        wp_localize_script('mercury-schema-setup', 'MercurySchemaSetup', [
+            'mode'     => $mode,
+            'restUrl'  => esc_url_raw(rest_url(REST::NAMESPACE . '/')),
+            'nonce'    => wp_create_nonce('wp_rest'),
+            'version'  => MERCURY_SCHEMA_VERSION,
+            'logo'     => Brand::mark('#fff'),
+            'urls'     => [
+                'types'    => Pages::url(Pages::TYPES),
+                'siteWide' => Pages::url(Pages::SITE_WIDE),
+                'setup'    => Pages::url(Pages::SETUP),
+                'post'     => $firstPost ? get_edit_post_link($firstPost[0], 'raw') : admin_url('post-new.php'),
+                'test'     => 'https://search.google.com/test/rich-results?url=' . rawurlencode(home_url('/')),
+            ],
+            'i18n'     => self::setupStrings(),
         ]);
     }
 
@@ -204,6 +231,13 @@ class AdminController
             'invalid_number'    => __('Enter a number, like 19.99.', 'mercury-schema'),
             'invalid_integer'   => __('Enter a whole number.', 'mercury-schema'),
             'invalid_enum'      => __('Choose one of the listed options.', 'mercury-schema'),
+            'added_badge'       => __('Added', 'mercury-schema'),
+            /* translators: %s: number of hidden schema types */
+            'hiddenTypes'       => __('%s more types are switched off.', 'mercury-schema'),
+            'manageTypes'       => __('Manage schema types', 'mercury-schema'),
+            'typeOffPill'       => __('Type off', 'mercury-schema'),
+            'typeOff'           => __('This schema type is switched off, so it isn’t printed. Its data is kept.', 'mercury-schema'),
+            'nothingGenerated'  => __('Nothing to build on this page: breadcrumbs need a page below the home page, and navigation needs a site menu.', 'mercury-schema'),
             /* translators: %s: field label */
             'tooLong'           => __('%s is too long. Shorten it or split it up.', 'mercury-schema'),
             /* translators: %s: field key */
@@ -240,7 +274,73 @@ class AdminController
 
     public function actionLinks(array $links): array
     {
-        array_unshift($links, '<a href="' . esc_url(Settings::url()) . '">' . esc_html__('Settings', 'mercury-schema') . '</a>');
+        array_unshift($links, '<a href="' . esc_url(Pages::url()) . '">' . esc_html__('Schema Types', 'mercury-schema') . '</a>');
         return $links;
+    }
+
+    private static function setupStrings(): array
+    {
+        return [
+            'tabs'          => [__('Getting Started', 'mercury-schema'), __('Configuration', 'mercury-schema'), __('Schemas', 'mercury-schema'), __('Done', 'mercury-schema')],
+            'skipped'       => __('Skipped', 'mercury-schema'),
+            'welcomeTitle'  => __('Get started with Mercury Schema', 'mercury-schema'),
+            'welcomeText'   => __('This short setup adds the right structured data to your site, so search engines and AI answers understand it. It takes about a minute.', 'mercury-schema'),
+            'welcomePoints' => [
+                __('Site-wide basics set up for you: organization, website, pages and breadcrumbs', 'mercury-schema'),
+                __('Works with the block editor, classic editor, Elementor and WooCommerce', 'mercury-schema'),
+                __('Tiny footprint: no front-end scripts, one database row per post', 'mercury-schema'),
+            ],
+            'start'         => __('Start setup', 'mercury-schema'),
+            'skip'          => __('Skip and use the Basic setup', 'mercury-schema'),
+            'presetTitle'   => __('Choose your schema setup', 'mercury-schema'),
+            'presetText'    => __('Pick a starting point. You can switch any schema type on or off later under Schema Types.', 'mercury-schema'),
+            'presets'       => [
+                'basic'  => [__('Basic', 'mercury-schema'), __('The core schemas every site needs. Lightweight and zero configuration.', 'mercury-schema')],
+                'smart'  => [__('Smart', 'mercury-schema'), __('Our pick for most sites. Covers content, products and local search to qualify for more rich results.', 'mercury-schema')],
+                'custom' => [__('Custom', 'mercury-schema'), __('Hand-pick every schema type Mercury outputs. For sites with specific structured data needs.', 'mercury-schema')],
+            ],
+            'recommended'   => __('Recommended', 'mercury-schema'),
+            /* translators: %s: number of schema types */
+            'nSchemas'      => __('%s schemas', 'mercury-schema'),
+            'youChoose'     => __('You choose', 'mercury-schema'),
+            'typesTitle'    => __('Turn on the schemas you need', 'mercury-schema'),
+            'typesText'     => __('Switched-off types are hidden from the editor and not printed. Their saved data is kept.', 'mercury-schema'),
+            'dashTitle'     => __('Schema Types', 'mercury-schema'),
+            'dashText'      => __('Choose which schema types your site uses. Changes save instantly.', 'mercury-schema'),
+            'enableAll'     => __('Enable all', 'mercury-schema'),
+            /* translators: 1: enabled count, 2: total count */
+            'countOn'       => __('%1$s / %2$s on', 'mercury-schema'),
+            'groups'        => [
+                'foundations' => __('Site foundations', 'mercury-schema'),
+                'content'     => __('Content', 'mercury-schema'),
+                'commerce'    => __('Commerce', 'mercury-schema'),
+                'local'       => __('Local & events', 'mercury-schema'),
+                'other'       => __('Other', 'mercury-schema'),
+            ],
+            'doneTitle'     => __('You’re all set', 'mercury-schema'),
+            'doneText'      => __('Mercury Schema is live on your site. Here’s what to do next.', 'mercury-schema'),
+            /* translators: 1: preset name, 2: number of schema types */
+            'summary'       => __('%1$s · %2$s schemas active', 'mercury-schema'),
+            'addedSiteWide' => __('Added site-wide for you:', 'mercury-schema'),
+            'guides'        => [
+                ['tag' => __('Content', 'mercury-schema'), 'title' => __('Add schema to a post', 'mercury-schema'), 'desc' => __('Open a post and use the Schema Markup box to add an FAQ, recipe, product and more.', 'mercury-schema'), 'cta' => __('Open a post', 'mercury-schema'), 'url' => 'post'],
+                ['tag' => __('Site-wide', 'mercury-schema'), 'title' => __('Review site-wide schemas', 'mercury-schema'), 'desc' => __('Fill in your logo, social profiles and contact details for the Organization schema.', 'mercury-schema'), 'cta' => __('Review schemas', 'mercury-schema'), 'url' => 'siteWide'],
+                ['tag' => __('Testing', 'mercury-schema'), 'title' => __('Test with Google', 'mercury-schema'), 'desc' => __('Check your home page in Google’s Rich Results Test once the site is public.', 'mercury-schema'), 'cta' => __('Open the test', 'mercury-schema'), 'url' => 'test', 'external' => true],
+            ],
+            'previous'      => __('← Previous', 'mercury-schema'),
+            'next'          => __('Next →', 'mercury-schema'),
+            'finish'        => __('Finish setup', 'mercury-schema'),
+            'goTypes'       => __('Go to Schema Types', 'mercury-schema'),
+            'saving'        => __('Saving…', 'mercury-schema'),
+            /* translators: %s: schema type label */
+            'enabledToast'  => __('%s enabled', 'mercury-schema'),
+            /* translators: %s: schema type label */
+            'disabledToast' => __('%s switched off', 'mercury-schema'),
+            'allOn'         => __('All schema types enabled', 'mercury-schema'),
+            'allOff'        => __('All schema types switched off', 'mercury-schema'),
+            'rerun'         => __('Run setup wizard again', 'mercury-schema'),
+            'rerunConfirm'  => __('Run the setup wizard again? Your schemas and enabled types are kept until you finish it.', 'mercury-schema'),
+            'error'         => __('Something went wrong. Please try again.', 'mercury-schema'),
+        ];
     }
 }

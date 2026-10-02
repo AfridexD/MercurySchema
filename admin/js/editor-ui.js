@@ -199,17 +199,25 @@
     function buildPicker(addBtn) {
         var grid = el('div', { 'class': 'ms-picker__grid', role: 'list' });
         var search = el('input', { type: 'search', 'class': 'ms-picker__search', placeholder: t.searchTypes, 'aria-label': t.searchTypes });
+        var hidden = 0;
         Object.keys(types).forEach(function (name) {
             var d = types[name];
+            if (d.enabled === false) {
+                hidden++;
+                return; // Switched off under Schema Types.
+            }
             var tile = button([
                 el('span', { 'class': 'ms-tile__icon' }, [icon(d.icon)]),
                 el('span', { 'class': 'ms-tile__text' }, [
-                    el('strong', { text: d.label || name }),
+                    el('strong', {}, [d.label || name, el('span', { 'class': 'ms-tile__added', text: t.added_badge })]),
                     el('span', { text: d.description || '' })
                 ])
-            ], 'ms-tile', function () { addSchema(name); }, { role: 'listitem', 'data-search': (name + ' ' + d.label + ' ' + d.description).toLowerCase() });
+            ], 'ms-tile', function () { addSchema(name); }, { role: 'listitem', 'data-type': name, 'data-search': (name + ' ' + d.label + ' ' + d.description).toLowerCase() });
             grid.appendChild(tile);
         });
+        var more = hidden && cfg.typesUrl
+            ? el('p', { 'class': 'ms-picker__more ms-muted' }, [fmt(t.hiddenTypes, hidden) + ' ', el('a', { href: cfg.typesUrl, text: t.manageTypes })])
+            : null;
         search.addEventListener('input', function () {
             var q = search.value.trim().toLowerCase();
             grid.querySelectorAll('.ms-tile').forEach(function (tile) {
@@ -221,7 +229,8 @@
                 search,
                 button([icon('no-alt')], 'ms-icon-btn', function () { togglePicker(false); addBtn.focus(); }, { 'aria-label': t.close })
             ]),
-            grid
+            grid,
+            more
         ]);
         p.search = search;
         p.addBtn = addBtn;
@@ -235,6 +244,11 @@
         picker.hidden = !open;
         picker.addBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
         if (open) {
+            // Mark types already on this page, so nobody adds a second Product by accident.
+            var used = Array.prototype.map.call(list.querySelectorAll('.ms-card'), function (c) { return c.schema.type; });
+            picker.querySelectorAll('.ms-tile').forEach(function (tile) {
+                tile.classList.toggle('is-added', used.indexOf(tile.getAttribute('data-type')) !== -1);
+            });
             picker.search.value = '';
             picker.search.dispatchEvent(new Event('input'));
             picker.search.focus();
@@ -423,11 +437,18 @@
 
         function setStatus(st) {
             c.status = st || { valid: true, errors: [] };
-            var state = !schema.enabled ? 'off' : (c.status.valid ? 'ok' : 'warn');
+            var typeOff = def.enabled === false;
+            var state = !schema.enabled || typeOff ? 'off' : (c.status.valid ? 'ok' : 'warn');
             pill.className = 'ms-pill is-' + state;
-            pill.textContent = state === 'off' ? t.disabled : (state === 'ok' ? t.valid : t.needsAttention);
+            pill.textContent = typeOff ? t.typeOffPill : (state === 'off' ? t.disabled : (state === 'ok' ? t.valid : t.needsAttention));
             c.setAttribute('data-state', state);
-            showErrors(c.status.valid ? [] : c.status.errors, true);
+            showErrors(c.status.valid || typeOff ? [] : c.status.errors, true);
+            if (typeOff) {
+                notice.hidden = false;
+                notice.className = 'ms-callout is-warn';
+                notice.textContent = '';
+                notice.append(icon('hidden'), el('span', {}, [t.typeOff + ' ', cfg.typesUrl ? el('a', { href: cfg.typesUrl, text: t.manageTypes }) : null]));
+            }
         }
 
         function showErrors(errors, soft) {
@@ -547,6 +568,12 @@
         }
         if (/^Too long/.test(e.message)) {
             return fmt(t.tooLong, label);
+        }
+        if (/^Nothing to generate/.test(e.message)) {
+            return t.nothingGenerated;
+        }
+        if (/^Type switched off/.test(e.message)) {
+            return t.typeOff;
         }
         if (/^Unknown field/.test(e.message)) {
             return fmt(t.unknownField, e.field);

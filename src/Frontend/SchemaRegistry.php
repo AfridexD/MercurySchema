@@ -78,7 +78,7 @@ class SchemaRegistry
 
         $stored = get_option(self::OPTION);
         $existing = is_array($stored) && is_array($stored['types'] ?? null) ? $stored['types'] : [];
-        $types = array_merge($existing, $bundled['types']);
+        $types = $bundled['types'] + $existing; // Bundled order first; custom types kept.
 
         update_option(self::OPTION, [
             'plugin_version' => MERCURY_SCHEMA_VERSION,

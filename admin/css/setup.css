@@ -1,0 +1,132 @@
+/* Mercury Schema setup wizard and Schema Types dashboard. */
+
+.ms-setup {
+    --msb: #1F4FD6;
+    --msb-dark: #1A43B8;
+    --ink: #0D1530;
+    --muted: #4A5272;
+    --muted-2: #6B7390;
+    --line: #E6EAF5;
+    --line-strong: #C9D4F2;
+    --soft: #EAF0FF;
+    --bg: #F4F6FC;
+    --track: #DCE2F0;
+    color: var(--ink);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    max-width: 1100px;
+}
+.ms-setup *, .ms-setup *::before, .ms-setup *::after { box-sizing: border-box; }
+.ms-setup h1 { margin: 0; padding: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--ink); }
+.ms-setup h1:focus { outline: none; }
+.ms-setup p { margin: 0; color: var(--muted); }
+.ms-setup :focus-visible { outline: 2px solid var(--msb); outline-offset: 2px; }
+.ms-page--setup { margin: 20px 20px 0 0; }
+.ms-page--setup .ms-setup { margin: 0 auto; }
+
+.msw-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.msw-pad { padding: 32px; }
+.msw-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; color: var(--muted-2); font-weight: 400; }
+
+/* Step tabs */
+.msw-tabs { display: flex; gap: 4px; padding: 0 12px; overflow-x: auto; border-bottom: 1px solid #EDF0F8; scrollbar-width: none; }
+.msw-tab { display: flex; align-items: center; gap: 10px; flex: none; padding: 16px 14px 14px; background: none; border: 0; border-bottom: 2px solid transparent; font: 500 15px/1 inherit; font-family: inherit; color: var(--ink); cursor: pointer; white-space: nowrap; }
+.msw-tab:disabled { opacity: .45; cursor: default; }
+.msw-tab.is-active { color: var(--msb); border-bottom-color: var(--msb); }
+.msw-tab__num { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #F1F3F9; color: var(--muted); font: 13px ui-monospace, Menlo, Consolas, monospace; }
+.msw-tab.is-active .msw-tab__num { background: var(--soft); color: var(--msb); }
+.msw-badge { padding: 3px 6px; border-radius: 4px; background: var(--bg); color: var(--muted-2); font: 10px ui-monospace, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; }
+
+.msw-body { animation: msw-in .2s ease-out; }
+.msw-center { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; padding: 52px 24px 60px; }
+.msw-lead { max-width: 520px; font-size: 16px; line-height: 1.6; }
+
+/* Brand */
+.ms-mark { display: inline-flex; }
+.ms-mark svg { height: 100%; width: auto; }
+.msw-brand { display: flex; align-items: center; gap: 12px; height: 92px; padding: 0 30px; border-radius: 12px; color: #fff; background: radial-gradient(circle at 0 100%, rgba(244, 246, 252, .38), rgba(244, 246, 252, 0) 62%), var(--msb); }
+.msw-brand .ms-mark { height: 24px; }
+.msw-brand__name { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+.msw-brand__name strong { font-weight: 800; }
+.msw-chip { padding: 3px 6px; border-radius: 4px; background: #fff; color: var(--msb); font: 11px ui-monospace, Menlo, monospace; }
+.msw-icon { display: grid; place-items: center; flex: none; width: 52px; height: 52px; border-radius: 13px; background: var(--msb); }
+.msw-icon .ms-mark { height: 22px; }
+.msw-icon.is-soft { background: var(--soft); }
+.msw-icon.is-soft .ms-mark svg * { stroke: var(--msb); }
+.msw-icon.is-soft .ms-mark svg path { fill: var(--msb); }
+.msw-icon.is-ok svg { width: 26px; height: 26px; }
+.msw-icon.is-ok polyline { fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Welcome points */
+.msw-points { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; padding: 0; list-style: none; text-align: left; }
+.msw-points li { display: flex; align-items: flex-start; gap: 10px; margin: 0; font-size: 14px; color: var(--muted); }
+.msw-points svg { flex: none; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: var(--soft); }
+.msw-points polyline, .msw-radio polyline { fill: none; stroke: var(--msb); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.msw-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; margin-top: 10px; }
+
+/* Buttons */
+.msw-btn { display: inline-flex; align-items: center; height: 46px; padding: 0 22px; border: 0; border-radius: 8px; background: var(--msb); color: #fff !important; font: 600 15px/1 inherit; font-family: inherit; text-decoration: none; cursor: pointer; transition: background .15s; }
+.msw-btn:hover { background: var(--msb-dark); }
+.msw-btn:disabled { opacity: .7; cursor: progress; }
+.msw-link { padding: 0; border: 0; background: none; font: 15px inherit; font-family: inherit; color: var(--muted); cursor: pointer; }
+.msw-link:hover { color: var(--ink); text-decoration: underline; }
+
+/* Presets */
+.msw-presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; width: 100%; max-width: 780px; margin-top: 18px; text-align: left; }
+.msw-preset { display: flex; flex-direction: column; gap: 10px; padding: 22px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-family: inherit; color: var(--ink); text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.msw-preset:hover { border-color: var(--line-strong); }
+.msw-preset.is-on { border-color: var(--msb); box-shadow: 0 0 0 3px rgba(31, 79, 214, .12); }
+.msw-preset__top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.msw-radio { display: grid; place-items: center; width: 24px; height: 24px; border: 1.5px solid #C5CCDF; border-radius: 50%; background: #fff; }
+.msw-radio svg { width: 14px; height: 14px; opacity: 0; }
+.msw-preset.is-on .msw-radio { border-color: var(--msb); background: var(--msb); }
+.msw-preset.is-on .msw-radio svg { opacity: 1; }
+.msw-preset.is-on .msw-radio polyline { stroke: #fff; }
+.msw-preset__title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; font-size: 17px; font-weight: 700; }
+.msw-preset__desc { font-size: 14px; line-height: 1.55; color: var(--muted); }
+.msw-pill { padding: 3px 7px; border-radius: 4px; background: var(--soft); color: var(--msb); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+
+/* Type toggles */
+.msw-typeshead, .msw-donehead { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.msw-typeshead__text { display: flex; align-items: flex-start; gap: 16px; }
+.msw-typeshead__text h1 { font-size: 22px; }
+.msw-typeshead__text p { max-width: 460px; margin-top: 6px; font-size: 15px; line-height: 1.55; }
+.msw-typeshead__tools { display: flex; align-items: center; gap: 14px; }
+.msw-scroll { max-height: 460px; overflow-y: auto; padding: 20px; border: 1px solid var(--line); border-radius: 10px; }
+.msw-groups { display: flex; flex-direction: column; gap: 26px; }
+.msw-group h2 { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; padding: 0; font-size: 16px; font-weight: 700; color: var(--ink); }
+.msw-toggles { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.msw-toggle, .msw-all { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-family: inherit; text-align: left; cursor: pointer; transition: border-color .15s; }
+.msw-toggle:hover, .msw-all:hover { border-color: var(--line-strong); }
+.msw-all { height: 38px; padding: 0 14px; font-size: 14px; font-weight: 500; color: var(--ink); }
+.msw-toggle__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.msw-toggle__text strong { font-size: 14px; font-weight: 500; color: var(--muted-2); }
+.msw-toggle.is-on .msw-toggle__text strong { color: var(--ink); }
+.msw-toggle__text span { font-size: 12px; line-height: 1.4; color: var(--muted-2); }
+.msw-switch { position: relative; flex: none; width: 36px; height: 20px; border-radius: 10px; background: var(--track); transition: background .16s; }
+.msw-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(13, 21, 48, .2); transition: left .16s; }
+.is-on > .msw-switch { background: var(--msb); }
+.is-on > .msw-switch::after { left: 18px; }
+
+/* Done */
+.msw-summary { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--bg); font: 12px ui-monospace, Menlo, Consolas, monospace; }
+.msw-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--msb); }
+.msw-added { margin: -8px 0 22px !important; }
+.msw-guides { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.msw-guide { display: flex; flex-direction: column; gap: 10px; padding: 24px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; transition: border-color .15s; }
+.msw-guide:hover { border-color: var(--msb); color: var(--ink); }
+.msw-guide strong { font-size: 18px; letter-spacing: -0.01em; }
+.msw-guide span { font-size: 14px; line-height: 1.55; color: var(--muted); }
+.msw-guide .msw-guide__tag { font: 11px ui-monospace, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--msb); }
+.msw-guide .msw-guide__cta { margin-top: auto; padding-top: 6px; font-weight: 600; color: var(--msb); }
+
+.msw-foot { display: flex; justify-content: flex-end; align-items: center; gap: 22px; margin-top: 20px; }
+
+@keyframes msw-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ms-setup * { animation: none !important; transition: none !important; } }
+@media (max-width: 600px) {
+    .msw-pad { padding: 20px; }
+    .msw-center { padding: 36px 16px 40px; }
+    .msw-brand { height: 72px; padding: 0 18px; }
+    .msw-brand__name { font-size: 20px; }
+}

@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin settings page (Settings → Mercury Schema): a "Site-wide schemas"
- * tab hosting the JS editor, and a "Settings" tab for the stored options.
+ * Stored plugin settings (one option) and the form that edits them on
+ * Mercury Schema → Settings. Pages are registered in Pages.
  *
  * @package MercurySchema
  */
@@ -42,17 +42,6 @@ class Settings
         ]);
     }
 
-    public function addPage(): void
-    {
-        add_options_page(
-            __('Mercury Schema', 'mercury-schema'),
-            __('Mercury Schema', 'mercury-schema'),
-            'manage_options',
-            self::PAGE,
-            [$this, 'renderPage']
-        );
-    }
-
     public function sanitize($input): array
     {
         $input = is_array($input) ? $input : [];
@@ -66,55 +55,7 @@ class Settings
         ];
     }
 
-    public static function url(string $tab = ''): string
-    {
-        $url = admin_url('options-general.php?page=' . self::PAGE);
-        return $tab ? add_query_arg('tab', $tab, $url) : $url;
-    }
-
-    public static function currentTab(): string
-    {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab switch.
-        return isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'settings' : 'schemas';
-    }
-
-    public function renderPage(): void
-    {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-        $tab = self::currentTab();
-        $tabs = [
-            'schemas'  => __('Site-wide schemas', 'mercury-schema'),
-            'settings' => __('Settings', 'mercury-schema'),
-        ];
-        ?>
-        <div class="wrap ms-page">
-            <header class="ms-page__head">
-                <span class="ms-page__logo dashicons dashicons-editor-code" aria-hidden="true"></span>
-                <div>
-                    <h1><?php esc_html_e('Mercury Schema', 'mercury-schema'); ?> <span class="ms-page__ver"><?php echo esc_html(MERCURY_SCHEMA_VERSION); ?></span></h1>
-                    <p><?php esc_html_e('Lightweight JSON-LD structured data for rich results.', 'mercury-schema'); ?></p>
-                </div>
-            </header>
-            <nav class="nav-tab-wrapper ms-page__tabs" aria-label="<?php esc_attr_e('Mercury Schema sections', 'mercury-schema'); ?>">
-                <?php foreach ($tabs as $key => $label) : ?>
-                    <a href="<?php echo esc_url(self::url($key === 'schemas' ? '' : $key)); ?>" class="nav-tab<?php echo $tab === $key ? ' nav-tab-active' : ''; ?>"<?php echo $tab === $key ? ' aria-current="page"' : ''; ?>><?php echo esc_html($label); ?></a>
-                <?php endforeach; ?>
-            </nav>
-            <?php if ($tab === 'schemas') : ?>
-                <div id="mercury-schema-app" class="ms-app ms-app--page">
-                    <p class="ms-muted"><?php esc_html_e('Loading…', 'mercury-schema'); ?></p>
-                </div>
-                <noscript><p><?php esc_html_e('Mercury Schema needs JavaScript to edit schema markup.', 'mercury-schema'); ?></p></noscript>
-            <?php else : ?>
-                <?php $this->renderSettingsForm(); ?>
-            <?php endif; ?>
-        </div>
-        <?php
-    }
-
-    private function renderSettingsForm(): void
+    public function renderForm(): void
     {
         $settings = self::all();
         $postTypes = get_post_types(['public' => true], 'objects');

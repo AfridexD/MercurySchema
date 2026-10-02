@@ -1,7 +1,8 @@
 <?php
 /**
- * Removes plugin options on uninstall. Per-post schema data
- * (_mercury_schema_data) is kept so reinstalling restores it.
+ * Removes plugin settings on uninstall. Schema data (post meta
+ * _mercury_schema_data and site-wide schemas) is kept, so reinstalling
+ * restores it.
  *
  * @package MercurySchema
  */
@@ -10,5 +11,14 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
     exit;
 }
 
-delete_option('mercury_schema_settings');
-delete_option('mercury_schema_definitions');
+foreach ([
+    'mercury_schema_settings',
+    'mercury_schema_definitions',
+    'mercury_schema_setup_complete',
+    'mercury_schema_preset',
+    'mercury_schema_enabled_types',
+    'mercury_schema_onboarding_date',
+] as $option) {
+    delete_option($option);
+}
+delete_transient('mercury_schema_activation_redirect');
