@@ -9,7 +9,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: unlimited-schema\n"
 
-#: admin/views/metabox.php:14 src/Admin/AdminController.php:224 src/Admin/Settings.php:107
+#: admin/views/metabox.php:14 src/Admin/AdminController.php:226 src/Admin/Settings.php:107
 msgid "Loading…"
 msgstr ""
 
@@ -17,36 +17,45 @@ msgstr ""
 msgid "UnlimitedSchema needs JavaScript to edit schema markup."
 msgstr ""
 
-#: src/API/SchemaController.php:56
+#: src/API/SchemaController.php:61
+msgid "You are not allowed to manage site-wide schema markup."
+msgstr ""
+
+#: src/API/SchemaController.php:69
 msgid "You are not allowed to manage schema markup."
 msgstr ""
 
-#: src/API/SchemaController.php:61
+#: src/API/SchemaController.php:74
 msgid "You are not allowed to edit this post."
 msgstr ""
 
-#: src/API/SchemaController.php:239
+#: src/API/SchemaController.php:252
 msgid "Schema data is invalid."
 msgstr ""
 
-#: src/API/SchemaController.php:303
+#. translators: %d: maximum number of schemas
+#: src/API/SchemaController.php:264
+msgid "A page can have at most %d schemas."
+msgstr ""
+
+#: src/API/SchemaController.php:320
 msgid "Post not found."
 msgstr ""
 
 #. translators: %s: schema type name
-#: src/API/SchemaController.php:315
+#: src/API/SchemaController.php:332
 msgid "Unknown schema type: %s"
 msgstr ""
 
-#: src/API/SchemaController.php:316
+#: src/API/SchemaController.php:333
 msgid "Schema type is required."
 msgstr ""
 
-#: src/API/SchemaController.php:334
+#: src/API/SchemaController.php:351
 msgid "Schema not found."
 msgstr ""
 
-#: src/API/SchemaController.php:339
+#: src/API/SchemaController.php:356
 msgid "Could not save schema data."
 msgstr ""
 
@@ -304,107 +313,112 @@ msgstr ""
 msgid "Choose one of the listed options."
 msgstr ""
 
-#. translators: %s: field key
+#. translators: %s: field label
 #: src/Admin/AdminController.php:206
+msgid "%s is too long. Shorten it or split it up."
+msgstr ""
+
+#. translators: %s: field key
+#: src/Admin/AdminController.php:208
 msgid "“%s” is not a field of this schema type."
 msgstr ""
 
 #. translators: %s: number of questions
-#: src/Admin/AdminController.php:208
+#: src/Admin/AdminController.php:210
 msgid "%s question(s)"
 msgstr ""
 
-#: src/Admin/AdminController.php:209
+#: src/Admin/AdminController.php:211
 msgid "Item"
 msgstr ""
 
 #. translators: %s: item label, e.g. "question"
-#: src/Admin/AdminController.php:211
+#: src/Admin/AdminController.php:213
 msgid "Add %s"
 msgstr ""
 
-#: src/Admin/AdminController.php:212
+#: src/Admin/AdminController.php:214
 msgid "Move up"
 msgstr ""
 
-#: src/Admin/AdminController.php:213
+#: src/Admin/AdminController.php:215
 msgid "Move down"
 msgstr ""
 
-#: src/Admin/AdminController.php:214
+#: src/Admin/AdminController.php:216
 msgid "Remove"
 msgstr ""
 
-#: src/Admin/AdminController.php:215
+#: src/Admin/AdminController.php:217
 msgid "Insert dynamic value"
 msgstr ""
 
-#: src/Admin/AdminController.php:216
+#: src/Admin/AdminController.php:218
 msgid "Optionally limit when this schema is printed. Leave everything empty to always print it on this page."
 msgstr ""
 
-#: src/Admin/AdminController.php:217
+#: src/Admin/AdminController.php:219
 msgid "Choose where this schema appears. Empty groups mean no restriction."
 msgstr ""
 
-#: src/Admin/AdminController.php:218
+#: src/Admin/AdminController.php:220
 msgid "Show on"
 msgstr ""
 
-#: src/Admin/AdminController.php:219 src/Admin/Settings.php:128
+#: src/Admin/AdminController.php:221 src/Admin/Settings.php:128
 msgid "Post types"
 msgstr ""
 
-#: src/Admin/AdminController.php:220
+#: src/Admin/AdminController.php:222
 msgid "Categories (slugs or IDs)"
 msgstr ""
 
-#: src/Admin/AdminController.php:221
+#: src/Admin/AdminController.php:223
 msgid "Author roles"
 msgstr ""
 
-#: src/Admin/AdminController.php:222
+#: src/Admin/AdminController.php:224
 msgid "Only these post IDs"
 msgstr ""
 
-#: src/Admin/AdminController.php:223
+#: src/Admin/AdminController.php:225
 msgid "Comma-separated."
 msgstr ""
 
-#: src/Admin/AdminController.php:225
+#: src/Admin/AdminController.php:227
 msgid "Valid. This is the JSON-LD search engines will see."
 msgstr ""
 
 #. translators: %s: number of problems
-#: src/Admin/AdminController.php:227
+#: src/Admin/AdminController.php:229
 msgid "%s problem(s). This schema won’t be printed until they’re fixed:"
 msgstr ""
 
-#: src/Admin/AdminController.php:228
+#: src/Admin/AdminController.php:230
 msgid "Dynamic values are filled in from this post. The preview uses your unsaved changes."
 msgstr ""
 
-#: src/Admin/AdminController.php:229
+#: src/Admin/AdminController.php:231
 msgid "Post-based dynamic values are filled in per page on the live site."
 msgstr ""
 
-#: src/Admin/AdminController.php:230
+#: src/Admin/AdminController.php:232
 msgid "Copy"
 msgstr ""
 
-#: src/Admin/AdminController.php:231
+#: src/Admin/AdminController.php:233
 msgid "Copied to clipboard."
 msgstr ""
 
-#: src/Admin/AdminController.php:232
+#: src/Admin/AdminController.php:234
 msgid "Test in Google"
 msgstr ""
 
-#: src/Admin/AdminController.php:233
+#: src/Admin/AdminController.php:235
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: src/Admin/AdminController.php:239 src/Admin/Settings.php:89
+#: src/Admin/AdminController.php:241 src/Admin/Settings.php:89
 msgid "Settings"
 msgstr ""
 

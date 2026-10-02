@@ -142,6 +142,35 @@ class RESTTest extends WP_UnitTestCase
         $this->assertSame(403, $this->request('POST', '/global', ['type' => 'Organization'])->get_status());
     }
 
+    /**
+     * Regression: WordPress matches routes case-insensitively, so scope must
+     * never be inferred from the URL text.
+     */
+    public function testEditorsCannotReachSiteWideRoutesViaCaseVariants(): void
+    {
+        wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
+        foreach (['/unlimited-schema/v1/GLOBAL', '/unlimited-schema/v1/Global', '/UNLIMITED-SCHEMA/V1/global'] as $route) {
+            $this->assertSame(403, rest_do_request(new WP_REST_Request('GET', $route))->get_status(), "GET $route");
+            $post = new WP_REST_Request('POST', $route);
+            $post->set_param('type', 'Organization');
+            $this->assertSame(403, rest_do_request($post)->get_status(), "POST $route");
+            $this->assertSame(403, rest_do_request(new WP_REST_Request('DELETE', $route . '/organization-1'))->get_status(), "DELETE $route");
+        }
+        $this->assertSame([], (new \UnlimitedSchema\Helpers\GlobalStore())->get()['schemas']);
+    }
+
+    public function testSchemaCountAndSizeLimits(): void
+    {
+        $tooBig = $this->request('POST', '/schemas/' . $this->postId, ['type' => 'Person', 'data' => ['name' => str_repeat('A', 2 * 1024 * 1024)]]);
+        $this->assertSame(400, $tooBig->get_status());
+
+        $schemas = array_map(static fn($i) => ['id' => "p-$i", 'type' => 'Person', 'enabled' => true, 'data' => [], 'conditions' => []], range(1, 50));
+        (new PostMetaStore())->save($this->postId, $schemas);
+        $res = $this->request('POST', '/schemas/' . $this->postId, ['type' => 'Person']);
+        $this->assertSame(400, $res->get_status());
+        $this->assertSame('unlimited_schema_limit', $res->get_data()['code']);
+    }
+
     public function testAuthorsAndContributorsCannotEditSchemas(): void
     {
         $author = self::factory()->user->create(['role' => 'author']);

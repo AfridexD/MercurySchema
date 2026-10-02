@@ -157,6 +157,19 @@ class ValidatorTest extends TestCase
         $this->assertTrue($result['valid'], json_encode($result['errors']));
     }
 
+    public function testSizeLimits(): void
+    {
+        $this->assertTrue($this->check('Person', ['name' => str_repeat('a', Validator::MAX_STRING)], true)['valid']);
+        $this->assertSame(['name'], $this->errorFields($this->check('Person', ['name' => str_repeat('a', Validator::MAX_STRING + 1)], true)));
+        $this->assertTrue($this->check('Article', ['description' => str_repeat('é', Validator::MAX_TEXT)], true)['valid'], 'counts characters, not bytes');
+        $this->assertSame(['description'], $this->errorFields($this->check('Article', ['description' => str_repeat('a', Validator::MAX_TEXT + 1)], true)));
+        $this->assertSame(['sameAs'], $this->errorFields($this->check('Organization', ['sameAs' => array_fill(0, Validator::MAX_ITEMS + 1, 'https://x.com')], true)));
+        $this->assertSame(['sameAs'], $this->errorFields($this->check('Organization', ['sameAs' => [str_repeat('a', Validator::MAX_STRING + 1)]], true)));
+        $this->assertSame(['questions'], $this->errorFields($this->check('FAQPage', ['questions' => array_fill(0, Validator::MAX_ITEMS + 1, ['question' => 'q', 'answer' => 'a'])], true)));
+        $this->assertSame(['questions.0.answer'], $this->errorFields($this->check('FAQPage', ['questions' => [['question' => 'q', 'answer' => str_repeat('a', Validator::MAX_TEXT + 1)]]], true)));
+        $this->assertSame(['name'], $this->errorFields($this->check('Person', ['name' => str_repeat('{{post_title}}', 200)], true)), 'tokens do not bypass limits');
+    }
+
     public function testTokensSkipTypeChecksButCountAsPresent(): void
     {
         $result = $this->check('Article', [

@@ -40,18 +40,23 @@ class REST
         ]);
 
         // Per-post collection, and the same callbacks for site-wide schemas.
-        foreach (['/schemas/(?P<post_id>\d+)' => ['post_id' => $postId], '/global' => []] as $route => $scopeArgs) {
+        // Each scope binds its own permission callback; never infer scope from the URL.
+        $scopes = [
+            '/schemas/(?P<post_id>\d+)' => [['post_id' => $postId], $permission],
+            '/global'                   => [[], [$c, 'checkGlobalPermission']],
+        ];
+        foreach ($scopes as $route => [$scopeArgs, $scopePermission]) {
             register_rest_route(self::NAMESPACE, $route, [
                 [
                     'methods'             => WP_REST_Server::READABLE,
                     'callback'            => [$c, 'getPostSchemas'],
-                    'permission_callback' => $permission,
+                    'permission_callback' => $scopePermission,
                     'args'                => $scopeArgs,
                 ],
                 [
                     'methods'             => WP_REST_Server::CREATABLE,
                     'callback'            => [$c, 'createSchema'],
-                    'permission_callback' => $permission,
+                    'permission_callback' => $scopePermission,
                     'args'                => $scopeArgs + [
                         'type'       => ['type' => 'string', 'required' => true],
                         'data'       => ['type' => 'object'],
@@ -65,7 +70,7 @@ class REST
                 [
                     'methods'             => WP_REST_Server::EDITABLE,
                     'callback'            => [$c, 'updateSchema'],
-                    'permission_callback' => $permission,
+                    'permission_callback' => $scopePermission,
                     'args'                => $scopeArgs + [
                         'schema_id'  => $schemaId,
                         'type'       => ['type' => 'string'],
@@ -77,7 +82,7 @@ class REST
                 [
                     'methods'             => WP_REST_Server::DELETABLE,
                     'callback'            => [$c, 'deleteSchema'],
-                    'permission_callback' => $permission,
+                    'permission_callback' => $scopePermission,
                     'args'                => $scopeArgs + ['schema_id' => $schemaId],
                 ],
             ]);

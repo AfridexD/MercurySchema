@@ -202,6 +202,8 @@ class AdminController
             'invalid_number'    => __('Enter a number, like 19.99.', 'unlimited-schema'),
             'invalid_integer'   => __('Enter a whole number.', 'unlimited-schema'),
             'invalid_enum'      => __('Choose one of the listed options.', 'unlimited-schema'),
+            /* translators: %s: field label */
+            'tooLong'           => __('%s is too long. Shorten it or split it up.', 'unlimited-schema'),
             /* translators: %s: field key */
             'unknownField'      => __('“%s” is not a field of this schema type.', 'unlimited-schema'),
             /* translators: %s: number of questions */

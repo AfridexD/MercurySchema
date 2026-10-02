@@ -13,6 +13,11 @@ use UnlimitedSchema\Helpers\DataMapper;
 
 class Validator
 {
+    /** Size limits: generous for real content, small enough to keep pages and rows lean. */
+    public const MAX_TEXT = 10000;   // "text" fields, e.g. FAQ answers
+    public const MAX_STRING = 2000;  // every other scalar field
+    public const MAX_ITEMS = 100;    // entries in an "array" or "objects" field
+
     /** ISO 8601 duration, e.g. PT1H30M or P1D. */
     private const DURATION_PATTERN = '/^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/';
     private const DATE_PATTERN ='/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/';
@@ -75,6 +80,11 @@ class Validator
             }
 
             $expected = $field['type'] ?? 'string';
+            $tooLong = self::tooLong($value, $expected);
+            if ($tooLong !== null) {
+                $errors[] = ['field' => $prefix . $key, 'message' => "Too long: '$key' $tooLong"];
+                continue;
+            }
             if ($expected === 'objects') {
                 if (!is_array($value) || array_values($value) !== $value) {
                     $errors[] = ['field' => $prefix . $key, 'message' => "Invalid value for '$key'. Expected: a list of items"];
@@ -129,6 +139,28 @@ class Validator
             default:
                 return true;
         }
+    }
+
+    /**
+     * A description of the limit exceeded, or null when within limits.
+     */
+    private static function tooLong($value, string $type): ?string
+    {
+        if (is_array($value)) {
+            if (count($value) > self::MAX_ITEMS) {
+                return 'has more than ' . self::MAX_ITEMS . ' items';
+            }
+            if ($type === 'array') {
+                foreach ($value as $item) {
+                    if (is_string($item) && mb_strlen($item) > self::MAX_STRING) {
+                        return 'has an item longer than ' . self::MAX_STRING . ' characters';
+                    }
+                }
+            }
+            return null; // Items of "objects" fields are checked field by field.
+        }
+        $max = $type === 'text' || $type === 'array' ? self::MAX_TEXT : self::MAX_STRING;
+        return is_string($value) && mb_strlen($value) > $max ? "is longer than $max characters" : null;
     }
 
     private static function result(array $errors): array

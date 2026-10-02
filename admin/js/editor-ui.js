@@ -545,6 +545,9 @@
         if (/^Invalid value/.test(e.message) && def) {
             return t['invalid_' + def.type] || fmt(t.invalid, label);
         }
+        if (/^Too long/.test(e.message)) {
+            return fmt(t.tooLong, label);
+        }
         if (/^Unknown field/.test(e.message)) {
             return fmt(t.unknownField, e.field);
         }

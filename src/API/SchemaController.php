@@ -23,6 +23,9 @@ use WP_REST_Response;
 
 class SchemaController
 {
+    /** Per post, and for the site-wide list. */
+    public const MAX_SCHEMAS = 50;
+
     private SchemaRegistry $registry;
     private PostMetaStore $store;
     private GlobalStore $global;
@@ -48,11 +51,21 @@ class SchemaController
         return (string) apply_filters(Hooks::GLOBAL_CAPABILITY, 'manage_options');
     }
 
+    /**
+     * Permission for site-wide routes. Bound per route in REST::register(),
+     * never inferred from the URL (route matching is case-insensitive).
+     */
+    public function checkGlobalPermission(WP_REST_Request $request)
+    {
+        if (!current_user_can(self::globalCapability())) {
+            return new WP_Error('rest_forbidden', __('You are not allowed to manage site-wide schema markup.', 'unlimited-schema'), ['status' => rest_authorization_required_code()]);
+        }
+        return true;
+    }
+
     public function checkPermission(WP_REST_Request $request)
     {
-        $isGlobal = strpos($request->get_route(), '/' . REST::NAMESPACE . '/global') === 0;
-        $capability = $isGlobal ? self::globalCapability() : self::postCapability();
-        if (!current_user_can($capability)) {
+        if (!current_user_can(self::postCapability())) {
             return new WP_Error('rest_forbidden', __('You are not allowed to manage schema markup.', 'unlimited-schema'), ['status' => rest_authorization_required_code()]);
         }
 
@@ -246,6 +259,10 @@ class SchemaController
 
         $schemas = $this->load($postId)['schemas'];
         if ($replaceId === null) {
+            if (count($schemas) >= self::MAX_SCHEMAS) {
+                /* translators: %d: maximum number of schemas */
+                return new WP_Error('unlimited_schema_limit', sprintf(__('A page can have at most %d schemas.', 'unlimited-schema'), self::MAX_SCHEMAS), ['status' => 400]);
+            }
             $schemas[] = $saved;
         } else {
             foreach ($schemas as $i => $existing) {
