@@ -130,6 +130,24 @@ add_filter('unlimited_schema_definitions', function ($types) {
 });
 ```
 
+## Compatibility
+
+Tested on WordPress 7.1 with Yoast SEO 28.6, Elementor 4.3 and WooCommerce 11.1 active together. Results:
+
+- Activates, deactivates and reactivates cleanly. Schema data and settings survive.
+- The metabox works in the block editor, the classic editor and on WooCommerce product screens.
+- No PHP notices, warnings or JavaScript errors from the plugin.
+- Our JSON-LD prints as separate tags next to Yoast's `@graph` and is unaffected by Elementor pages.
+
+**Duplicate types.** UnlimitedSchema only prints what you add, but other plugins print their own. Yoast always adds an `Article` to posts, and WooCommerce adds a `Product` on classic themes. Pick one source per type. To turn off theirs:
+
+```php
+add_filter('wpseo_schema_needs_article', '__return_false');              // Yoast Article
+add_filter('woocommerce_structured_data_product', '__return_empty_array'); // WooCommerce Product
+```
+
+To turn off all of ours on a page, return `false` from `unlimited_schema_output_enabled`.
+
 ## Development
 
 ```bash

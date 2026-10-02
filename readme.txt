@@ -31,7 +31,11 @@ UnlimitedSchema adds JSON-LD structured data to your posts and pages without slo
 
 = Does it work alongside Yoast SEO or Rank Math? =
 
-Yes. UnlimitedSchema only prints the schema you add, as separate script tags. Remove overlapping types in one plugin if you don't want duplicates.
+Yes. UnlimitedSchema only prints the schema you add, as separate script tags. Yoast already adds an Article to posts, and WooCommerce adds a Product on classic themes, so use one source per type. Developers can switch off Yoast's Article with the `wpseo_schema_needs_article` filter, or WooCommerce's Product with `woocommerce_structured_data_product`.
+
+= Does it work with Elementor and other page builders? =
+
+Yes. Schema is printed in the page head, independent of how the content was built. There are no builder-specific modules.
 
 = Who can edit schema? =
 
