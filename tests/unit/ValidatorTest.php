@@ -114,6 +114,49 @@ class ValidatorTest extends TestCase
         ];
     }
 
+    public function testDurations(): void
+    {
+        $this->assertTrue($this->check('Recipe', ['prepTime' => 'PT1H30M'], true)['valid']);
+        $this->assertTrue($this->check('VideoObject', ['duration' => 'PT4M30.5S'], true)['valid']);
+        foreach (['30 minutes', 'P', 'PT', '1H'] as $bad) {
+            $this->assertSame(['prepTime'], $this->errorFields($this->check('Recipe', ['prepTime' => $bad], true)), $bad);
+        }
+    }
+
+    public function testFaqRequiresQuestions(): void
+    {
+        $this->assertSame(['questions'], $this->errorFields($this->check('FAQPage', [])));
+        $this->assertSame(['questions'], $this->errorFields($this->check('FAQPage', ['questions' => [['question' => '', 'answer' => '']]])));
+    }
+
+    public function testFaqItemErrorsUseDottedPaths(): void
+    {
+        $result = $this->check('FAQPage', ['questions' => [
+            ['question' => 'Q1', 'answer' => 'A1'],
+            ['question' => 'Q2'],
+            ['question' => 'Q3', 'answer' => 'A3', 'bogus' => 'x'],
+        ]]);
+        $this->assertEqualsCanonicalizing(['questions.1.answer', 'questions.2.bogus'], $this->errorFields($result));
+    }
+
+    public function testFaqPartialAllowsIncompleteItems(): void
+    {
+        $this->assertTrue($this->check('FAQPage', ['questions' => [['question' => 'Draft']]], true)['valid']);
+    }
+
+    public function testObjectsMustBeAList(): void
+    {
+        $this->assertSame(['questions'], $this->errorFields($this->check('FAQPage', ['questions' => 'nope'], true)));
+        $this->assertSame(['questions'], $this->errorFields($this->check('FAQPage', ['questions' => ['a' => ['question' => 'x']]], true)));
+        $this->assertSame(['questions.0'], $this->errorFields($this->check('FAQPage', ['questions' => ['x']], true)));
+    }
+
+    public function testTokensInsideItemsSkipTypeChecks(): void
+    {
+        $result = $this->check('FAQPage', ['questions' => [['question' => '{{post_title}}', 'answer' => '{{post_excerpt}}']]]);
+        $this->assertTrue($result['valid'], json_encode($result['errors']));
+    }
+
     public function testTokensSkipTypeChecksButCountAsPresent(): void
     {
         $result = $this->check('Article', [

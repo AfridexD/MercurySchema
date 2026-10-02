@@ -24,8 +24,11 @@ class Hooks
     /** filter( array $json_ld, int $post_id, Schema $schema ) — return [] to drop it. */
     public const JSON_LD_OUTPUT = 'unlimited_schema_json_ld_output';
 
-    /** filter( array $values, WP_Post $post ) — token name => value for {{tokens}}. */
+    /** filter( array $values, WP_Post|null $post ) — token name => value for {{tokens}}. $post is null off singular pages. */
     public const TOKEN_VALUES = 'unlimited_schema_token_values';
+
+    /** filter( array $tokens ) — token name => label, offered in the editor's token picker. */
+    public const TOKENS = 'unlimited_schema_tokens';
 
     /** filter( array $context, WP_Post $post ) — data handed to ConditionEvaluator. */
     public const CONDITION_CONTEXT = 'unlimited_schema_condition_context';

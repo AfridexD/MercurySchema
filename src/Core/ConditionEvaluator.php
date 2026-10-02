@@ -10,6 +10,7 @@
  *   post_type   string
  *   categories  string[]  term IDs and slugs of the post's categories
  *   user_roles  string[]  roles of the post's author
+ *   locations   string[]  where the page is: front_page, singular, archive
  *
  * @package UnlimitedSchema
  */
@@ -18,12 +19,16 @@ namespace UnlimitedSchema\Core;
 
 class ConditionEvaluator
 {
-    public const KEYS = ['post_types', 'categories', 'user_roles', 'post_ids'];
+    public const KEYS = ['post_types', 'categories', 'user_roles', 'post_ids', 'locations'];
+    public const LOCATIONS = ['front_page', 'singular', 'archive'];
 
     public function evaluate(array $conditions, array $context): bool
     {
         $conditions = self::normalize($conditions);
 
+        if ($conditions['locations'] && !self::intersects($conditions['locations'], $context['locations'] ?? [])) {
+            return false;
+        }
         if ($conditions['post_types'] && !in_array((string) ($context['post_type'] ?? ''), $conditions['post_types'], true)) {
             return false;
         }
@@ -57,6 +62,8 @@ class ConditionEvaluator
             $list = array_filter(array_map(static fn($v) => is_scalar($v) ? trim((string) $v) : '', $list), 'strlen');
             if ($key === 'post_ids') {
                 $list = array_filter(array_map('intval', $list));
+            } elseif ($key === 'locations') {
+                $list = array_intersect($list, self::LOCATIONS);
             }
             $out[$key] = array_values(array_unique($list));
         }

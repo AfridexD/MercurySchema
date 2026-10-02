@@ -3,9 +3,13 @@
  * One schema type definition (e.g. Article) and the logic to turn
  * flat field data into nested JSON-LD.
  *
- * Field config keys: type, required, label, description, default, options, path.
+ * Field config keys: type, required, label, description, default, options,
+ * path, maxLength (a soft UI hint).
  * "path" is a dot path into the JSON-LD (e.g. "offers.price"); intermediate
  * objects get their @type from the definition's "nested" map.
+ * An "objects" field is a repeatable group: its value is a list of items, each
+ * built from "itemFields" into an object of type "itemType" (with its own
+ * "itemNested" map), e.g. FAQ questions.
  *
  * Pure PHP: no WordPress calls.
  *
@@ -16,7 +20,7 @@ namespace UnlimitedSchema\Core;
 
 class SchemaType
 {
-    public const FIELD_TYPES = ['string', 'text', 'url', 'integer', 'number', 'date', 'enum', 'array'];
+    public const FIELD_TYPES = ['string', 'text', 'url', 'integer', 'number', 'date', 'duration', 'enum', 'array', 'objects'];
 
     private string $name;
     private array $definition;
@@ -74,10 +78,12 @@ class SchemaType
     public function toArray(): array
     {
         return [
-            'type'   => $this->name,
-            'label'  => $this->getLabel(),
-            'fields' => $this->getFields(),
-            'nested' => $this->definition['nested'],
+            'type'        => $this->name,
+            'label'       => $this->getLabel(),
+            'description' => (string) ($this->definition['description'] ?? ''),
+            'icon'        => (string) ($this->definition['icon'] ?? ''),
+            'fields'      => $this->getFields(),
+            'nested'      => $this->definition['nested'],
         ];
     }
 
@@ -91,20 +97,7 @@ class SchemaType
             '@context' => 'https://schema.org',
             '@type'    => $this->name,
         ];
-
-        foreach ($this->getFields() as $key => $field) {
-            if (!array_key_exists($key, $data)) {
-                continue;
-            }
-            $value = $this->castValue($data[$key], $field['type'] ?? 'string');
-            if (self::isEmpty($value)) {
-                continue;
-            }
-            $path = isset($field['path']) && $field['path'] !== '' ? (string) $field['path'] : $key;
-            $this->setPath($out, explode('.', $path), $value, '');
-        }
-
-        return $out;
+        return $this->fill($out, $this->getFields(), (array) $this->definition['nested'], $data);
     }
 
     public static function isEmpty($value): bool
@@ -115,9 +108,28 @@ class SchemaType
         return $value === null || $value === '' || $value === false;
     }
 
-    private function castValue($value, string $type)
+    /**
+     * Write each field's value into $node at its path.
+     */
+    private function fill(array $node, array $fields, array $nested, array $data): array
     {
-        switch ($type) {
+        foreach ($fields as $key => $field) {
+            if (!array_key_exists($key, $data)) {
+                continue;
+            }
+            $value = $this->castValue($data[$key], $field);
+            if (self::isEmpty($value)) {
+                continue;
+            }
+            $path = isset($field['path']) && $field['path'] !== '' ? (string) $field['path'] : (string) $key;
+            self::setPath($node, explode('.', $path), $value, '', $nested);
+        }
+        return $node;
+    }
+
+    private function castValue($value, array $field)
+    {
+        switch ($field['type'] ?? 'string') {
             case 'integer':
                 return is_numeric($value) ? (int) $value : $value;
             case 'number':
@@ -126,12 +138,30 @@ class SchemaType
                 $items = is_array($value) ? $value : preg_split('/\r\n|\r|\n/', (string) $value);
                 $items = array_map(static fn($v) => is_scalar($v) ? trim((string) $v) : '', $items);
                 return array_values(array_filter($items, static fn($v) => $v !== ''));
+            case 'objects':
+                // Repeatable group: each item becomes a typed object, e.g. a Question.
+                $items = [];
+                foreach (is_array($value) ? $value : [] as $item) {
+                    if (!is_array($item)) {
+                        continue;
+                    }
+                    $object = $this->fill(
+                        ['@type' => (string) ($field['itemType'] ?? 'Thing')],
+                        (array) ($field['itemFields'] ?? []),
+                        (array) ($field['itemNested'] ?? []),
+                        $item
+                    );
+                    if (count($object) > 1) {
+                        $items[] = $object;
+                    }
+                }
+                return $items;
             default:
                 return is_scalar($value) ? trim((string) $value) : $value;
         }
     }
 
-    private function setPath(array &$node, array $segments, $value, string $prefix): void
+    private static function setPath(array &$node, array $segments, $value, string $prefix, array $nested): void
     {
         $key = array_shift($segments);
         if (!$segments) {
@@ -141,9 +171,8 @@ class SchemaType
 
         $fullPath = $prefix === '' ? $key : $prefix . '.' . $key;
         if (!isset($node[$key]) || !is_array($node[$key])) {
-            $nested = $this->definition['nested'][$fullPath] ?? 'Thing';
-            $node[$key] = ['@type' => $nested];
+            $node[$key] = ['@type' => $nested[$fullPath] ?? 'Thing'];
         }
-        $this->setPath($node[$key], $segments, $value, $fullPath);
+        self::setPath($node[$key], $segments, $value, $fullPath, $nested);
     }
 }

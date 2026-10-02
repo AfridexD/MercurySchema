@@ -13,7 +13,9 @@ use UnlimitedSchema\Helpers\DataMapper;
 
 class Validator
 {
-    private const DATE_PATTERN = '/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/';
+    /** ISO 8601 duration, e.g. PT1H30M or P1D. */
+    private const DURATION_PATTERN = '/^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/';
+    private const DATE_PATTERN ='/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/';
 
     /** @var array<string, SchemaType> */
     private array $types;
@@ -42,33 +44,61 @@ class Validator
             return self::result([['field' => '', 'message' => 'Unknown schema type: ' . $schema->getType()]]);
         }
 
-        $data = $schema->getData();
+        return self::result($this->checkFields($type->getFields(), $schema->getData(), $partial, ''));
+    }
+
+    /**
+     * Check $data against $fields. Recurses into "objects" groups; their
+     * errors use dotted paths such as "questions.0.answer".
+     */
+    private function checkFields(array $fields, array $data, bool $partial, string $prefix): array
+    {
         $errors = [];
 
         if (!$partial) {
-            foreach ($type->getRequiredFields() as $key) {
-                if (!array_key_exists($key, $data) || SchemaType::isEmpty($data[$key])) {
-                    $errors[] = ['field' => $key, 'message' => "Required field missing: $key"];
+            foreach ($fields as $key => $field) {
+                if (!empty($field['required']) && (!array_key_exists($key, $data) || SchemaType::isEmpty($data[$key]))) {
+                    $errors[] = ['field' => $prefix . $key, 'message' => "Required field missing: $key"];
                 }
             }
         }
 
         foreach ($data as $key => $value) {
-            $field = $type->getField((string) $key);
+            $key = (string) $key;
+            $field = $fields[$key] ?? null;
             if ($field === null) {
-                $errors[] = ['field' => (string) $key, 'message' => "Unknown field: $key"];
+                $errors[] = ['field' => $prefix . $key, 'message' => "Unknown field: $key"];
                 continue;
             }
-            if (SchemaType::isEmpty($value) || DataMapper::hasToken($value)) {
+            if (SchemaType::isEmpty($value)) {
                 continue;
             }
+
             $expected = $field['type'] ?? 'string';
+            if ($expected === 'objects') {
+                if (!is_array($value) || array_values($value) !== $value) {
+                    $errors[] = ['field' => $prefix . $key, 'message' => "Invalid value for '$key'. Expected: a list of items"];
+                    continue;
+                }
+                foreach ($value as $i => $item) {
+                    if (!is_array($item)) {
+                        $errors[] = ['field' => "$prefix$key.$i", 'message' => "Invalid item in '$key'"];
+                    } elseif (!SchemaType::isEmpty($item)) {
+                        $errors = array_merge($errors, $this->checkFields((array) ($field['itemFields'] ?? []), $item, $partial, "$prefix$key.$i."));
+                    }
+                }
+                continue;
+            }
+
+            if (DataMapper::hasToken($value)) {
+                continue;
+            }
             if (!$this->checkType($value, $expected, $field)) {
-                $errors[] = ['field' => (string) $key, 'message' => "Invalid value for '$key'. Expected: $expected"];
+                $errors[] = ['field' => $prefix . $key, 'message' => "Invalid value for '$key'. Expected: $expected"];
             }
         }
 
-        return self::result($errors);
+        return $errors;
     }
 
     private function checkType($value, string $type, array $field): bool
@@ -87,6 +117,8 @@ class Validator
                 return (is_int($value) || is_float($value) || is_string($value)) && is_numeric($value);
             case 'date':
                 return is_string($value) && preg_match(self::DATE_PATTERN, $value) === 1;
+            case 'duration':
+                return is_string($value) && preg_match(self::DURATION_PATTERN, $value) === 1;
             case 'enum':
                 return in_array($value, $field['options'] ?? [], true);
             case 'array':

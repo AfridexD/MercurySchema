@@ -14,6 +14,7 @@ use UnlimitedSchema\API\REST;
 use UnlimitedSchema\API\SchemaController;
 use UnlimitedSchema\Frontend\SchemaOutput;
 use UnlimitedSchema\Frontend\SchemaRegistry;
+use UnlimitedSchema\Helpers\GlobalStore;
 use UnlimitedSchema\Helpers\PostMetaStore;
 
 class Loader
@@ -22,6 +23,7 @@ class Loader
 
     private ?SchemaRegistry $registry = null;
     private ?PostMetaStore $store = null;
+    private ?GlobalStore $global = null;
     private ?SchemaOutput $output = null;
 
     public static function getInstance(): self
@@ -40,6 +42,7 @@ class Loader
     {
         // Translations load automatically (WordPress 4.6+); no load_plugin_textdomain() needed.
         add_action('rest_api_init', [$this, 'registerRestRoutes']);
+        add_action('plugins_loaded', [Integrations\WooCommerce::class, 'register']);
 
         if (is_admin()) {
             (new AdminController())->registerHooks();
@@ -57,7 +60,7 @@ class Loader
 
     public function registerRestRoutes(): void
     {
-        (new REST(new SchemaController($this->registry(), $this->store())))->register();
+        (new REST(new SchemaController($this->registry(), $this->store(), $this->globalStore(), $this->output())))->register();
     }
 
     public function outputSchemaMarkup(): void
@@ -75,8 +78,13 @@ class Loader
         return $this->store ??= new PostMetaStore();
     }
 
+    public function globalStore(): GlobalStore
+    {
+        return $this->global ??= new GlobalStore();
+    }
+
     public function output(): SchemaOutput
     {
-        return $this->output ??= new SchemaOutput($this->registry(), $this->store());
+        return $this->output ??= new SchemaOutput($this->registry(), $this->store(), $this->globalStore());
     }
 }

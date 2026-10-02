@@ -3,7 +3,7 @@
  * Plugin Name:       UnlimitedSchema
  * Plugin URI:        https://unlimitedschema.com
  * Description:       Lightweight, conflict-free JSON-LD schema markup for WordPress.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            AfridexD
  * Author URI:        https://github.com/AfridexD
  * License:           GPLv2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('UNLIMITED_SCHEMA_VERSION', '1.0.0');
+define('UNLIMITED_SCHEMA_VERSION', '1.1.0');
 define('UNLIMITED_SCHEMA_FILE', __FILE__);
 define('UNLIMITED_SCHEMA_PATH', plugin_dir_path(__FILE__));
 define('UNLIMITED_SCHEMA_URL', plugin_dir_url(__FILE__));

@@ -1,11 +1,13 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "types": {
     "Article": {
       "label": "Article",
+      "description": "Blog posts, news and editorial content.",
+      "icon": "media-document",
       "nested": { "author": "Person", "publisher": "Organization" },
       "fields": {
-        "headline": { "type": "string", "required": true, "label": "Headline", "default": "{{post_title}}" },
+        "headline": { "type": "string", "required": true, "label": "Headline", "default": "{{post_title}}", "maxLength": 110 },
         "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
         "image": { "type": "url", "label": "Image URL", "default": "{{featured_image}}" },
         "author": { "type": "string", "required": true, "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
@@ -18,7 +20,9 @@
     },
     "Product": {
       "label": "Product",
-      "nested": { "brand": "Brand", "offers": "Offer" },
+      "description": "Something you sell, with price and stock.",
+      "icon": "cart",
+      "nested": { "brand": "Brand", "offers": "Offer", "aggregateRating": "AggregateRating" },
       "fields": {
         "name": { "type": "string", "required": true, "label": "Product name", "default": "{{post_title}}" },
         "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
@@ -42,11 +46,15 @@
             "https://schema.org/InStoreOnly",
             "https://schema.org/SoldOut"
           ]
-        }
+        },
+        "ratingValue": { "type": "number", "label": "Average rating", "path": "aggregateRating.ratingValue" },
+        "reviewCount": { "type": "integer", "label": "Number of reviews", "path": "aggregateRating.reviewCount" }
       }
     },
     "Event": {
       "label": "Event",
+      "description": "Concerts, webinars, meetups and other dated events.",
+      "icon": "calendar-alt",
       "nested": { "location": "Place" },
       "fields": {
         "name": { "type": "string", "required": true, "label": "Event name", "default": "{{post_title}}" },
@@ -69,8 +77,79 @@
         }
       }
     },
+    "FAQPage": {
+      "label": "FAQ",
+      "description": "A list of questions and answers.",
+      "icon": "editor-help",
+      "fields": {
+        "questions": {
+          "type": "objects",
+          "required": true,
+          "label": "Questions",
+          "path": "mainEntity",
+          "itemLabel": "Question",
+          "itemType": "Question",
+          "itemNested": { "acceptedAnswer": "Answer" },
+          "itemFields": {
+            "question": { "type": "string", "required": true, "label": "Question", "path": "name" },
+            "answer": { "type": "text", "required": true, "label": "Answer", "path": "acceptedAnswer.text" }
+          }
+        }
+      }
+    },
+    "Recipe": {
+      "label": "Recipe",
+      "description": "Ingredients, steps, cooking times and nutrition.",
+      "icon": "carrot",
+      "nested": { "author": "Person", "nutrition": "NutritionInformation", "aggregateRating": "AggregateRating" },
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Recipe name", "default": "{{post_title}}" },
+        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
+        "image": { "type": "url", "required": true, "label": "Image URL", "default": "{{featured_image}}" },
+        "author": { "type": "string", "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
+        "datePublished": { "type": "date", "label": "Date published", "default": "{{post_date}}" },
+        "prepTime": { "type": "duration", "label": "Prep time", "description": "ISO 8601 duration, e.g. PT20M" },
+        "cookTime": { "type": "duration", "label": "Cook time", "description": "e.g. PT1H" },
+        "totalTime": { "type": "duration", "label": "Total time", "description": "e.g. PT1H20M" },
+        "recipeYield": { "type": "string", "label": "Yield", "description": "e.g. 4 servings" },
+        "recipeCategory": { "type": "string", "label": "Category", "description": "e.g. Dessert" },
+        "recipeCuisine": { "type": "string", "label": "Cuisine", "description": "e.g. Italian" },
+        "keywords": { "type": "string", "label": "Keywords", "description": "Comma-separated" },
+        "calories": { "type": "string", "label": "Calories", "path": "nutrition.calories", "description": "e.g. 270 calories" },
+        "recipeIngredient": { "type": "array", "label": "Ingredients", "description": "One ingredient per line" },
+        "steps": {
+          "type": "objects",
+          "label": "Steps",
+          "path": "recipeInstructions",
+          "itemLabel": "Step",
+          "itemType": "HowToStep",
+          "itemFields": {
+            "text": { "type": "text", "required": true, "label": "Instruction", "path": "text" },
+            "name": { "type": "string", "label": "Short title (optional)", "path": "name" }
+          }
+        },
+        "ratingValue": { "type": "number", "label": "Average rating", "path": "aggregateRating.ratingValue" },
+        "ratingCount": { "type": "integer", "label": "Number of ratings", "path": "aggregateRating.ratingCount" }
+      }
+    },
+    "VideoObject": {
+      "label": "Video",
+      "description": "A video hosted on or embedded in the page.",
+      "icon": "video-alt3",
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "Title", "default": "{{post_title}}" },
+        "description": { "type": "text", "required": true, "label": "Description", "default": "{{post_excerpt}}" },
+        "thumbnailUrl": { "type": "url", "required": true, "label": "Thumbnail URL", "default": "{{featured_image}}" },
+        "uploadDate": { "type": "date", "required": true, "label": "Upload date", "default": "{{post_date}}" },
+        "duration": { "type": "duration", "label": "Duration", "description": "ISO 8601, e.g. PT4M30S" },
+        "contentUrl": { "type": "url", "label": "Video file URL" },
+        "embedUrl": { "type": "url", "label": "Embed URL", "description": "e.g. https://www.youtube.com/embed/…" }
+      }
+    },
     "Organization": {
       "label": "Organization",
+      "description": "Your company or brand. Best on the front page.",
+      "icon": "building",
       "fields": {
         "name": { "type": "string", "required": true, "label": "Name", "default": "{{site_name}}" },
         "url": { "type": "url", "label": "Website", "default": "{{home_url}}" },
@@ -83,6 +162,8 @@
     },
     "Person": {
       "label": "Person",
+      "description": "An author, founder or public figure.",
+      "icon": "admin-users",
       "fields": {
         "name": { "type": "string", "required": true, "label": "Name", "default": "{{author_name}}" },
         "url": { "type": "url", "label": "URL", "default": "{{author_url}}" },
@@ -93,6 +174,8 @@
     },
     "LocalBusiness": {
       "label": "Local Business",
+      "description": "A shop, restaurant or office with an address.",
+      "icon": "store",
       "nested": { "address": "PostalAddress" },
       "fields": {
         "name": { "type": "string", "required": true, "label": "Business name", "default": "{{site_name}}" },
@@ -109,6 +192,8 @@
     },
     "Review": {
       "label": "Review",
+      "description": "Your review of a product, book, place or other item.",
+      "icon": "star-filled",
       "nested": { "itemReviewed": "Thing", "reviewRating": "Rating", "author": "Person" },
       "fields": {
         "itemReviewedType": {
@@ -130,6 +215,31 @@
         "author": { "type": "string", "required": true, "label": "Author name", "path": "author.name", "default": "{{author_name}}" },
         "reviewBody": { "type": "text", "label": "Review body", "default": "{{post_excerpt}}" },
         "datePublished": { "type": "date", "label": "Date published", "default": "{{post_date}}" }
+      }
+    },
+    "SoftwareApplication": {
+      "label": "Software App",
+      "description": "An app or game with price and rating.",
+      "icon": "desktop",
+      "nested": { "offers": "Offer", "aggregateRating": "AggregateRating" },
+      "fields": {
+        "name": { "type": "string", "required": true, "label": "App name", "default": "{{post_title}}" },
+        "description": { "type": "text", "label": "Description", "default": "{{post_excerpt}}" },
+        "applicationCategory": {
+          "type": "enum",
+          "label": "Category",
+          "options": [
+            "GameApplication", "BusinessApplication", "DeveloperApplication", "DesignApplication",
+            "EducationalApplication", "EntertainmentApplication", "FinanceApplication", "HealthApplication",
+            "LifestyleApplication", "MultimediaApplication", "SecurityApplication", "SocialNetworkingApplication",
+            "TravelApplication", "UtilitiesApplication"
+          ]
+        },
+        "operatingSystem": { "type": "string", "label": "Operating system", "description": "e.g. Windows, macOS, Android" },
+        "price": { "type": "number", "required": true, "label": "Price", "description": "Use 0 for free apps", "path": "offers.price" },
+        "priceCurrency": { "type": "string", "label": "Currency", "path": "offers.priceCurrency", "default": "USD" },
+        "ratingValue": { "type": "number", "label": "Average rating", "path": "aggregateRating.ratingValue" },
+        "ratingCount": { "type": "integer", "label": "Number of ratings", "path": "aggregateRating.ratingCount" }
       }
     }
   }

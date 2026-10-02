@@ -1,6 +1,7 @@
 <?php
 /**
- * Plugin settings: stored in one option, edited on Settings → UnlimitedSchema.
+ * Plugin settings page (Settings → UnlimitedSchema): a "Site-wide schemas"
+ * tab hosting the JS editor, and a "Settings" tab for the stored options.
  *
  * @package UnlimitedSchema
  */
@@ -65,19 +66,62 @@ class Settings
         ];
     }
 
+    public static function url(string $tab = ''): string
+    {
+        $url = admin_url('options-general.php?page=' . self::PAGE);
+        return $tab ? add_query_arg('tab', $tab, $url) : $url;
+    }
+
+    public static function currentTab(): string
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab switch.
+        return isset($_GET['tab']) && $_GET['tab'] === 'settings' ? 'settings' : 'schemas';
+    }
+
     public function renderPage(): void
     {
         if (!current_user_can('manage_options')) {
             return;
         }
+        $tab = self::currentTab();
+        $tabs = [
+            'schemas'  => __('Site-wide schemas', 'unlimited-schema'),
+            'settings' => __('Settings', 'unlimited-schema'),
+        ];
+        ?>
+        <div class="wrap us-page">
+            <header class="us-page__head">
+                <span class="us-page__logo dashicons dashicons-editor-code" aria-hidden="true"></span>
+                <div>
+                    <h1><?php esc_html_e('UnlimitedSchema', 'unlimited-schema'); ?> <span class="us-page__ver"><?php echo esc_html(UNLIMITED_SCHEMA_VERSION); ?></span></h1>
+                    <p><?php esc_html_e('Lightweight JSON-LD structured data for rich results.', 'unlimited-schema'); ?></p>
+                </div>
+            </header>
+            <nav class="nav-tab-wrapper us-page__tabs" aria-label="<?php esc_attr_e('UnlimitedSchema sections', 'unlimited-schema'); ?>">
+                <?php foreach ($tabs as $key => $label) : ?>
+                    <a href="<?php echo esc_url(self::url($key === 'schemas' ? '' : $key)); ?>" class="nav-tab<?php echo $tab === $key ? ' nav-tab-active' : ''; ?>"<?php echo $tab === $key ? ' aria-current="page"' : ''; ?>><?php echo esc_html($label); ?></a>
+                <?php endforeach; ?>
+            </nav>
+            <?php if ($tab === 'schemas') : ?>
+                <div id="unlimited-schema-app" class="us-app us-app--page">
+                    <p class="us-muted"><?php esc_html_e('Loading…', 'unlimited-schema'); ?></p>
+                </div>
+                <noscript><p><?php esc_html_e('UnlimitedSchema needs JavaScript to edit schema markup.', 'unlimited-schema'); ?></p></noscript>
+            <?php else : ?>
+                <?php $this->renderSettingsForm(); ?>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
+
+    private function renderSettingsForm(): void
+    {
         $settings = self::all();
         $postTypes = get_post_types(['public' => true], 'objects');
         unset($postTypes['attachment']);
         $name = self::OPTION;
         ?>
-        <div class="wrap">
-            <h1><?php esc_html_e('UnlimitedSchema', 'unlimited-schema'); ?></h1>
-            <form method="post" action="options.php">
+            <form method="post" action="options.php" class="us-settings">
                 <?php settings_fields(self::PAGE); ?>
                 <table class="form-table" role="presentation">
                     <tr>
@@ -110,7 +154,6 @@ class Settings
                 </table>
                 <?php submit_button(); ?>
             </form>
-        </div>
         <?php
     }
 }

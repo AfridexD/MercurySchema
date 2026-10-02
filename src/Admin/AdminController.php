@@ -2,8 +2,9 @@
 /**
  * Admin wiring: settings page, metabox, and editor assets.
  *
- * The metabox is an empty shell; admin/js/editor-ui.js fills it by talking
- * to the REST API, so the admin never touches schema data directly.
+ * The metabox and the site-wide screen are empty shells; admin/js/editor-ui.js
+ * fills them by talking to the REST API, so the admin never touches schema
+ * data directly.
  *
  * @package UnlimitedSchema
  */
@@ -12,7 +13,6 @@ namespace UnlimitedSchema\Admin;
 
 use UnlimitedSchema\API\Hooks;
 use UnlimitedSchema\API\REST;
-use UnlimitedSchema\Helpers\DataMapper;
 
 class AdminController
 {
@@ -66,7 +66,19 @@ class AdminController
 
     public function enqueueAssets(string $hook): void
     {
-        if (!in_array($hook, ['post.php', 'post-new.php'], true) || !self::canManage()) {
+        if (!self::canManage()) {
+            return;
+        }
+
+        if ($hook === 'settings_page_' . Settings::PAGE) {
+            wp_enqueue_style('unlimited-schema-admin', UNLIMITED_SCHEMA_URL . 'admin/css/editor-ui.css', ['dashicons'], UNLIMITED_SCHEMA_VERSION);
+            if (Settings::currentTab() === 'schemas') {
+                $this->enqueueEditor(['scope' => 'global', 'postId' => 0, 'testUrl' => home_url('/')]);
+            }
+            return;
+        }
+
+        if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
             return;
         }
         $post = get_post();
@@ -74,48 +86,142 @@ class AdminController
             return;
         }
 
-        wp_enqueue_style('unlimited-schema-admin', UNLIMITED_SCHEMA_URL . 'admin/css/editor-ui.css', [], UNLIMITED_SCHEMA_VERSION);
+        wp_enqueue_style('unlimited-schema-admin', UNLIMITED_SCHEMA_URL . 'admin/css/editor-ui.css', ['dashicons'], UNLIMITED_SCHEMA_VERSION);
+        $this->enqueueEditor([
+            'scope'       => 'post',
+            'postId'      => (int) $post->ID,
+            'testUrl'     => $post->post_status === 'publish' ? get_permalink($post) : '',
+            'settingsUrl' => Settings::url(),
+        ]);
+    }
+
+    private function enqueueEditor(array $scope): void
+    {
         wp_enqueue_script('unlimited-schema-admin', UNLIMITED_SCHEMA_URL . 'admin/js/editor-ui.js', [], UNLIMITED_SCHEMA_VERSION, true);
 
-        wp_localize_script('unlimited-schema-admin', 'UnlimitedSchemaData', [
-            'restUrl' => esc_url_raw(rest_url(REST::NAMESPACE . '/')),
-            'nonce'   => wp_create_nonce('wp_rest'),
-            'postId'  => (int) $post->ID,
-            'tokens'  => array_map(static fn($t) => '{{' . $t . '}}', DataMapper::TOKENS),
-            'i18n'    => [
-                'selectType'    => __('— Select schema type —', 'unlimited-schema'),
-                'add'           => __('Add schema', 'unlimited-schema'),
-                'save'          => __('Save', 'unlimited-schema'),
-                'validate'      => __('Validate', 'unlimited-schema'),
-                'delete'        => __('Delete', 'unlimited-schema'),
-                'enabled'       => __('Enabled', 'unlimited-schema'),
-                'disabled'      => __('Disabled', 'unlimited-schema'),
-                'conditions'    => __('Display conditions', 'unlimited-schema'),
-                'conditionHelp' => __('Comma-separated. Leave empty for no restriction.', 'unlimited-schema'),
-                'postTypes'     => __('Post types', 'unlimited-schema'),
-                'categories'    => __('Categories (slugs or IDs)', 'unlimited-schema'),
-                'userRoles'     => __('Author roles', 'unlimited-schema'),
-                'postIds'       => __('Post IDs', 'unlimited-schema'),
-                'confirmDelete' => __('Delete this schema?', 'unlimited-schema'),
-                'saved'         => __('Schema saved.', 'unlimited-schema'),
-                'deleted'       => __('Schema deleted.', 'unlimited-schema'),
-                'added'         => __('Schema added.', 'unlimited-schema'),
-                'valid'         => __('Valid. Ready for rich results.', 'unlimited-schema'),
-                'invalid'       => __('Fix the highlighted fields.', 'unlimited-schema'),
-                'empty'         => __('No schema on this post yet.', 'unlimited-schema'),
-                'loading'       => __('Loading…', 'unlimited-schema'),
-                'error'         => __('Something went wrong.', 'unlimited-schema'),
-                'unsaved'       => __('Unsaved changes', 'unlimited-schema'),
-                'required'      => __('Required', 'unlimited-schema'),
-                'tokensHelp'    => __('Dynamic values you can type into any field:', 'unlimited-schema'),
+        $postTypes = [];
+        foreach (get_post_types(['public' => true], 'objects') as $name => $object) {
+            if ($name !== 'attachment') {
+                $postTypes[$name] = $object->labels->singular_name;
+            }
+        }
+
+        wp_localize_script('unlimited-schema-admin', 'UnlimitedSchemaData', $scope + [
+            'restUrl'   => esc_url_raw(rest_url(REST::NAMESPACE . '/')),
+            'nonce'     => wp_create_nonce('wp_rest'),
+            'tokens'    => self::tokens(),
+            'postTypes' => $postTypes,
+            'roles'     => array_map('translate_user_role', wp_roles()->get_names()),
+            'locations' => [
+                'front_page' => __('Front page', 'unlimited-schema'),
+                'singular'   => __('Single posts & pages', 'unlimited-schema'),
+                'archive'    => __('Archives & blog index', 'unlimited-schema'),
             ],
+            'i18n'      => self::strings(),
         ]);
+    }
+
+    /**
+     * Token name => label for the token picker.
+     */
+    public static function tokens(): array
+    {
+        return (array) apply_filters(Hooks::TOKENS, [
+            'post_title'       => __('Post title', 'unlimited-schema'),
+            'post_excerpt'     => __('Post excerpt', 'unlimited-schema'),
+            'post_url'         => __('Post URL', 'unlimited-schema'),
+            'post_date'        => __('Publish date', 'unlimited-schema'),
+            'post_modified'    => __('Last modified date', 'unlimited-schema'),
+            'featured_image'   => __('Featured image URL', 'unlimited-schema'),
+            'author_name'      => __('Author name', 'unlimited-schema'),
+            'author_url'       => __('Author archive URL', 'unlimited-schema'),
+            'site_name'        => __('Site title', 'unlimited-schema'),
+            'site_description' => __('Site tagline', 'unlimited-schema'),
+            'site_logo'        => __('Site logo URL', 'unlimited-schema'),
+            'home_url'         => __('Home page URL', 'unlimited-schema'),
+        ]);
+    }
+
+    private static function strings(): array
+    {
+        return [
+            'title'             => __('Structured data for this page', 'unlimited-schema'),
+            'intro'             => __('Helps search engines understand this content and show rich results.', 'unlimited-schema'),
+            'siteWideTitle'     => __('Site-wide schemas', 'unlimited-schema'),
+            'siteWideIntro'     => __('Added to every page that matches their display rules. A page’s own schema of the same type replaces these.', 'unlimited-schema'),
+            'add'               => __('Add schema', 'unlimited-schema'),
+            'searchTypes'       => __('Search schema types…', 'unlimited-schema'),
+            'close'             => __('Close', 'unlimited-schema'),
+            'emptyTitle'        => __('No schema yet', 'unlimited-schema'),
+            'emptyText'         => __('Add a schema type and it fills itself in from this post. Popular choices:', 'unlimited-schema'),
+            'emptyGlobal'       => __('Describe your organization once and it appears across the site. Popular choices:', 'unlimited-schema'),
+            'siteWideOnPage'    => __('Site-wide on this page:', 'unlimited-schema'),
+            'overridden'        => __('Replaced by this page’s own schema of the same type.', 'unlimited-schema'),
+            'overriddenShort'   => __('replaced', 'unlimited-schema'),
+            'manage'            => __('Manage', 'unlimited-schema'),
+            /* translators: %s: schema type label */
+            'replacesSiteWide'  => __('This replaces the site-wide %s schema on this page.', 'unlimited-schema'),
+            /* translators: %s: schema type label */
+            'added'             => __('%s schema added.', 'unlimited-schema'),
+            'duplicated'        => __('Schema duplicated.', 'unlimited-schema'),
+            'enabled'           => __('Enabled', 'unlimited-schema'),
+            'disabled'          => __('Disabled', 'unlimited-schema'),
+            'nowEnabled'        => __('Schema enabled.', 'unlimited-schema'),
+            'nowDisabled'       => __('Schema disabled. It will not be printed.', 'unlimited-schema'),
+            'actions'           => __('Schema actions', 'unlimited-schema'),
+            'duplicate'         => __('Duplicate', 'unlimited-schema'),
+            'copyJson'          => __('Copy JSON-LD', 'unlimited-schema'),
+            'delete'            => __('Delete', 'unlimited-schema'),
+            'confirmDelete'     => __('Click again to delete', 'unlimited-schema'),
+            'deleted'           => __('Schema deleted.', 'unlimited-schema'),
+            'tabFields'         => __('Fields', 'unlimited-schema'),
+            'tabRules'          => __('Display rules', 'unlimited-schema'),
+            'tabPreview'        => __('Preview', 'unlimited-schema'),
+            'save'              => __('Save changes', 'unlimited-schema'),
+            'saved'             => __('Saved. Ready for rich results.', 'unlimited-schema'),
+            'savedIncomplete'   => __('Saved, but some required fields are empty. It won’t be printed until they’re filled.', 'unlimited-schema'),
+            'unsaved'           => __('Unsaved', 'unlimited-schema'),
+            'valid'             => __('Ready', 'unlimited-schema'),
+            'needsAttention'    => __('Incomplete', 'unlimited-schema'),
+            /* translators: %s: number of problems */
+            'missingSummary'    => __('%s required field(s) still empty. This schema is not printed until they are filled.', 'unlimited-schema'),
+            /* translators: %s: number of problems */
+            'fixSummary'        => __('Couldn’t save: %s field(s) need fixing.', 'unlimited-schema'),
+            /* translators: %s: field label */
+            'required'          => __('%s is required.', 'unlimited-schema'),
+            /* translators: %s: number of questions */
+            'nQuestions'        => __('%s question(s)', 'unlimited-schema'),
+            'item'              => __('Item', 'unlimited-schema'),
+            /* translators: %s: item label, e.g. "question" */
+            'addItem'           => __('Add %s', 'unlimited-schema'),
+            'moveUp'            => __('Move up', 'unlimited-schema'),
+            'moveDown'          => __('Move down', 'unlimited-schema'),
+            'remove'            => __('Remove', 'unlimited-schema'),
+            'insertToken'       => __('Insert dynamic value', 'unlimited-schema'),
+            'rulesIntro'        => __('Optionally limit when this schema is printed. Leave everything empty to always print it on this page.', 'unlimited-schema'),
+            'rulesIntroGlobal'  => __('Choose where this schema appears. Empty groups mean no restriction.', 'unlimited-schema'),
+            'where'             => __('Show on', 'unlimited-schema'),
+            'postTypes'         => __('Post types', 'unlimited-schema'),
+            'categories'        => __('Categories (slugs or IDs)', 'unlimited-schema'),
+            'userRoles'         => __('Author roles', 'unlimited-schema'),
+            'postIds'           => __('Only these post IDs', 'unlimited-schema'),
+            'commaHelp'         => __('Comma-separated.', 'unlimited-schema'),
+            'loading'           => __('Loading…', 'unlimited-schema'),
+            'previewValid'      => __('Valid. This is the JSON-LD search engines will see.', 'unlimited-schema'),
+            /* translators: %s: number of problems */
+            'previewInvalid'    => __('%s problem(s). This schema won’t be printed until they’re fixed:', 'unlimited-schema'),
+            'previewNote'       => __('Dynamic values are filled in from this post. The preview uses your unsaved changes.', 'unlimited-schema'),
+            'previewNoteGlobal' => __('Post-based dynamic values are filled in per page on the live site.', 'unlimited-schema'),
+            'copy'              => __('Copy', 'unlimited-schema'),
+            'copied'            => __('Copied to clipboard.', 'unlimited-schema'),
+            'testGoogle'        => __('Test in Google', 'unlimited-schema'),
+            'error'             => __('Something went wrong. Please try again.', 'unlimited-schema'),
+        ];
     }
 
     public function actionLinks(array $links): array
     {
-        $url = admin_url('options-general.php?page=' . Settings::PAGE);
-        array_unshift($links, '<a href="' . esc_url($url) . '">' . esc_html__('Settings', 'unlimited-schema') . '</a>');
+        array_unshift($links, '<a href="' . esc_url(Settings::url()) . '">' . esc_html__('Settings', 'unlimited-schema') . '</a>');
         return $links;
     }
 }

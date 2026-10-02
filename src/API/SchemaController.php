@@ -2,6 +2,9 @@
 /**
  * Callbacks for the /unlimited-schema/v1 REST routes.
  *
+ * Two scopes share the same callbacks: a post (routes with {post_id}) and
+ * site-wide (/global routes, no post_id). Internally site-wide is post ID 0.
+ *
  * @package UnlimitedSchema
  */
 
@@ -9,7 +12,9 @@ namespace UnlimitedSchema\API;
 
 use UnlimitedSchema\Core\Schema;
 use UnlimitedSchema\Core\SchemaType;
+use UnlimitedSchema\Frontend\SchemaOutput;
 use UnlimitedSchema\Frontend\SchemaRegistry;
+use UnlimitedSchema\Helpers\GlobalStore;
 use UnlimitedSchema\Helpers\PostMetaStore;
 use UnlimitedSchema\Helpers\Sanitizer;
 use WP_Error;
@@ -20,11 +25,15 @@ class SchemaController
 {
     private SchemaRegistry $registry;
     private PostMetaStore $store;
+    private GlobalStore $global;
+    private SchemaOutput $output;
 
-    public function __construct(SchemaRegistry $registry, PostMetaStore $store)
+    public function __construct(SchemaRegistry $registry, PostMetaStore $store, GlobalStore $global, SchemaOutput $output)
     {
         $this->registry = $registry;
         $this->store = $store;
+        $this->global = $global;
+        $this->output = $output;
     }
 
     public function checkPermission(WP_REST_Request $request)
@@ -60,18 +69,33 @@ class SchemaController
         return new WP_REST_Response($types);
     }
 
-    /** GET /schemas/{post_id} */
+    /** GET /schemas/{post_id} and GET /global */
     public function getPostSchemas(WP_REST_Request $request)
     {
         $postId = $this->postId($request);
         if (is_wp_error($postId)) {
             return $postId;
         }
-        $doc = $this->store->get($postId);
-        return new WP_REST_Response(['post_id' => $postId] + $doc);
+
+        $doc = $this->load($postId);
+        $validator = $this->registry->validator();
+        $status = [];
+        foreach ($doc['schemas'] as $raw) {
+            // Tokens count as filled in here; they are re-checked at render time.
+            $status[$raw['id'] ?? ''] = $validator->validate(Schema::fromArray($raw));
+        }
+
+        $response = ['post_id' => $postId] + $doc + ['status' => (object) $status];
+        if ($postId) {
+            $response['site_wide'] = array_map(
+                static fn($s) => ['id' => $s['id'] ?? '', 'type' => $s['type'], 'enabled' => (bool) ($s['enabled'] ?? true)],
+                $this->global->get()['schemas']
+            );
+        }
+        return new WP_REST_Response($response);
     }
 
-    /** POST /schemas/{post_id} */
+    /** POST /schemas/{post_id} and POST /global */
     public function createSchema(WP_REST_Request $request)
     {
         $postId = $this->postId($request);
@@ -96,10 +120,10 @@ class SchemaController
         if (is_wp_error($saved)) {
             return $saved;
         }
-        return new WP_REST_Response(['success' => true, 'schema' => $saved], 201);
+        return new WP_REST_Response(['success' => true, 'schema' => $saved, 'status' => $this->status($saved)], 201);
     }
 
-    /** PUT /schemas/{post_id}/{schema_id} */
+    /** PUT /schemas/{post_id}/{schema_id} and PUT /global/{schema_id} */
     public function updateSchema(WP_REST_Request $request)
     {
         $postId = $this->postId($request);
@@ -114,8 +138,7 @@ class SchemaController
         }
 
         $schema = Schema::fromArray($existing);
-        $typeName = $request->get_param('type') ?? $schema->getType();
-        $type = $this->type($typeName);
+        $type = $this->type($request->get_param('type') ?? $schema->getType());
         if (is_wp_error($type)) {
             return $type;
         }
@@ -138,10 +161,10 @@ class SchemaController
         if (is_wp_error($saved)) {
             return $saved;
         }
-        return new WP_REST_Response(['success' => true, 'schema' => $saved]);
+        return new WP_REST_Response(['success' => true, 'schema' => $saved, 'status' => $this->status($saved)]);
     }
 
-    /** DELETE /schemas/{post_id}/{schema_id} */
+    /** DELETE /schemas/{post_id}/{schema_id} and DELETE /global/{schema_id} */
     public function deleteSchema(WP_REST_Request $request)
     {
         $postId = $this->postId($request);
@@ -150,14 +173,14 @@ class SchemaController
         }
 
         $schemaId = (string) $request->get_param('schema_id');
-        $doc = $this->store->get($postId);
-        $remaining = array_filter($doc['schemas'], static fn($s) => ($s['id'] ?? '') !== $schemaId);
-        if (count($remaining) === count($doc['schemas'])) {
+        $schemas = $this->load($postId)['schemas'];
+        $remaining = array_filter($schemas, static fn($s) => ($s['id'] ?? '') !== $schemaId);
+        if (count($remaining) === count($schemas)) {
             return $this->notFound();
         }
 
-        if (!$this->store->save($postId, $remaining)) {
-            return new WP_Error('unlimited_schema_save_failed', __('Could not save schema data.', 'unlimited-schema'), ['status' => 500]);
+        if (!$this->write($postId, $remaining)) {
+            return $this->saveFailed();
         }
         do_action(Hooks::SCHEMA_DELETED, $schemaId, $postId);
         return new WP_REST_Response(['success' => true, 'deleted' => $schemaId]);
@@ -174,9 +197,23 @@ class SchemaController
         return new WP_REST_Response($this->registry->validator()->validate($schema));
     }
 
+    /** POST /preview — the JSON-LD a schema would produce, tokens resolved for the post. */
+    public function preview(WP_REST_Request $request)
+    {
+        $type = $this->type($request->get_param('type'));
+        if (is_wp_error($type)) {
+            return $type;
+        }
+        $postId = (int) $request->get_param('post_id');
+        $post = $postId ? get_post($postId) : null;
+
+        $schema = (new Schema($type->getName()))->setData((array) ($request->get_param('data') ?? []));
+        return new WP_REST_Response($this->output->preview($schema, $post instanceof \WP_Post ? $post : null));
+    }
+
     /**
      * Validate (partially: required fields may still be empty while editing),
-     * sanitize, and write the schema into the post's document.
+     * sanitize, and write the schema into its document.
      *
      * @return array|WP_Error The saved schema.
      */
@@ -192,7 +229,7 @@ class SchemaController
             ->setConditions(Sanitizer::conditions($schema->getConditions()));
         $saved = $schema->toArray();
 
-        $schemas = $this->store->get($postId)['schemas'];
+        $schemas = $this->load($postId)['schemas'];
         if ($replaceId === null) {
             $schemas[] = $saved;
         } else {
@@ -203,16 +240,38 @@ class SchemaController
             }
         }
 
-        if (!$this->store->save($postId, $schemas)) {
-            return new WP_Error('unlimited_schema_save_failed', __('Could not save schema data.', 'unlimited-schema'), ['status' => 500]);
+        if (!$this->write($postId, $schemas)) {
+            return $this->saveFailed();
         }
         do_action(Hooks::SCHEMA_SAVED, $saved, $postId);
         return $saved;
     }
 
-    /** @return int|WP_Error */
+    private function status(array $schema): array
+    {
+        return $this->registry->validator()->validate(Schema::fromArray($schema));
+    }
+
+    private function load(int $postId): array
+    {
+        return $postId === 0 ? $this->global->get() : $this->store->get($postId);
+    }
+
+    private function write(int $postId, array $schemas): bool
+    {
+        return $postId === 0 ? $this->global->save($schemas) : $this->store->save($postId, $schemas);
+    }
+
+    /**
+     * Post ID for the request, or 0 for the site-wide scope (routes without {post_id}).
+     *
+     * @return int|WP_Error
+     */
     private function postId(WP_REST_Request $request)
     {
+        if (!isset($request->get_url_params()['post_id'])) {
+            return 0;
+        }
         $postId = (int) $request->get_param('post_id');
         $post = $postId ? get_post($postId) : null;
         if (!$post || $post->post_type === 'revision') {
@@ -237,7 +296,7 @@ class SchemaController
 
     private function find(int $postId, string $schemaId): ?array
     {
-        foreach ($this->store->get($postId)['schemas'] as $schema) {
+        foreach ($this->load($postId)['schemas'] as $schema) {
             if (($schema['id'] ?? '') === $schemaId) {
                 return $schema;
             }
@@ -248,5 +307,10 @@ class SchemaController
     private function notFound(): WP_Error
     {
         return new WP_Error('unlimited_schema_not_found', __('Schema not found.', 'unlimited-schema'), ['status' => 404]);
+    }
+
+    private function saveFailed(): WP_Error
+    {
+        return new WP_Error('unlimited_schema_save_failed', __('Could not save schema data.', 'unlimited-schema'), ['status' => 500]);
     }
 }

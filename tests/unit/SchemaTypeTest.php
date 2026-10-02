@@ -21,18 +21,85 @@ class SchemaTypeTest extends TestCase
     public function testBundledDefinitionsAreWellFormed(): void
     {
         $this->assertEqualsCanonicalizing(
-            ['Article', 'Product', 'Event', 'Organization', 'Person', 'LocalBusiness', 'Review'],
+            ['Article', 'Product', 'Event', 'FAQPage', 'Recipe', 'VideoObject', 'Organization', 'Person',
+             'LocalBusiness', 'Review', 'SoftwareApplication'],
             array_keys(self::$definitions)
         );
         foreach (self::$definitions as $name => $definition) {
             $this->assertNotEmpty($definition['fields'], "$name has no fields");
-            foreach ($definition['fields'] as $key => $field) {
-                $this->assertContains($field['type'], SchemaType::FIELD_TYPES, "$name.$key has an unknown type");
-                if ($field['type'] === 'enum') {
-                    $this->assertNotEmpty($field['options'], "$name.$key enum has no options");
-                }
+            $this->assertNotEmpty($definition['icon'] ?? '', "$name has no icon");
+            $this->assertNotEmpty($definition['description'] ?? '', "$name has no description");
+            $this->assertFieldsWellFormed($name, $definition['fields']);
+        }
+    }
+
+    private function assertFieldsWellFormed(string $where, array $fields): void
+    {
+        foreach ($fields as $key => $field) {
+            $this->assertContains($field['type'], SchemaType::FIELD_TYPES, "$where.$key has an unknown type");
+            if ($field['type'] === 'enum') {
+                $this->assertNotEmpty($field['options'], "$where.$key enum has no options");
+            }
+            if ($field['type'] === 'objects') {
+                $this->assertNotEmpty($field['itemType'] ?? '', "$where.$key has no itemType");
+                $this->assertNotEmpty($field['itemFields'] ?? [], "$where.$key has no itemFields");
+                $this->assertFieldsWellFormed("$where.$key", $field['itemFields']);
             }
         }
+    }
+
+    public function testFaqBuildsQuestionsWithAnswers(): void
+    {
+        $ld = $this->type('FAQPage')->toJsonLd([
+            'questions' => [
+                ['question' => 'Is it fast?', 'answer' => 'Yes.'],
+                ['question' => '', 'answer' => ''],
+                ['question' => 'Is it free?', 'answer' => 'Also yes.'],
+            ],
+        ]);
+
+        $this->assertSame([
+            ['@type' => 'Question', 'name' => 'Is it fast?', 'acceptedAnswer' => ['@type' => 'Answer', 'text' => 'Yes.']],
+            ['@type' => 'Question', 'name' => 'Is it free?', 'acceptedAnswer' => ['@type' => 'Answer', 'text' => 'Also yes.']],
+        ], $ld['mainEntity']);
+    }
+
+    public function testRecipeStepsIngredientsAndNutrition(): void
+    {
+        $ld = $this->type('Recipe')->toJsonLd([
+            'name'             => 'Pancakes',
+            'image'            => 'https://example.com/p.jpg',
+            'prepTime'         => 'PT10M',
+            'recipeIngredient' => "2 eggs\n1 cup flour",
+            'calories'         => '300 calories',
+            'steps'            => [['text' => 'Mix.'], ['text' => 'Fry.', 'name' => 'Cook']],
+        ]);
+
+        $this->assertSame(['2 eggs', '1 cup flour'], $ld['recipeIngredient']);
+        $this->assertSame(['@type' => 'NutritionInformation', 'calories' => '300 calories'], $ld['nutrition']);
+        $this->assertSame([
+            ['@type' => 'HowToStep', 'text' => 'Mix.'],
+            ['@type' => 'HowToStep', 'text' => 'Fry.', 'name' => 'Cook'],
+        ], $ld['recipeInstructions']);
+    }
+
+    public function testObjectsFieldWithNoUsableItemsIsOmitted(): void
+    {
+        $ld = $this->type('FAQPage')->toJsonLd(['questions' => [['question' => '', 'answer' => ' '], 'junk']]);
+        $this->assertArrayNotHasKey('mainEntity', $ld);
+    }
+
+    public function testFreeAppKeepsZeroPrice(): void
+    {
+        $ld = $this->type('SoftwareApplication')->toJsonLd(['name' => 'App', 'price' => '0', 'priceCurrency' => 'USD']);
+        $this->assertSame(['@type' => 'Offer', 'price' => 0, 'priceCurrency' => 'USD'], $ld['offers']);
+    }
+
+    public function testToArrayExposesPickerMetadata(): void
+    {
+        $arr = $this->type('FAQPage')->toArray();
+        $this->assertSame('editor-help', $arr['icon']);
+        $this->assertNotSame('', $arr['description']);
     }
 
     public function testRequiredFieldsAndDefaults(): void

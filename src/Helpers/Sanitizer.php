@@ -17,10 +17,26 @@ class Sanitizer
      */
     public static function data(SchemaType $type, array $data): array
     {
+        return self::fields($type->getFields(), $data);
+    }
+
+    private static function fields(array $fields, array $data): array
+    {
         $clean = [];
         foreach ($data as $key => $value) {
-            $field = $type->getField((string) $key);
+            $field = $fields[(string) $key] ?? null;
             if ($field === null) {
+                continue;
+            }
+            if (($field['type'] ?? '') === 'objects') {
+                $items = [];
+                foreach (is_array($value) ? $value : [] as $item) {
+                    $item = is_array($item) ? self::fields((array) ($field['itemFields'] ?? []), $item) : [];
+                    if (!SchemaType::isEmpty($item)) {
+                        $items[] = $item; // Blank rows are dropped.
+                    }
+                }
+                $clean[(string) $key] = $items;
                 continue;
             }
             $clean[(string) $key] = self::value($value, $field['type'] ?? 'string');
@@ -34,6 +50,7 @@ class Sanitizer
         $clean['post_types'] = array_values(array_filter(array_map('sanitize_key', $clean['post_types'])));
         $clean['user_roles'] = array_values(array_filter(array_map('sanitize_key', $clean['user_roles'])));
         $clean['categories'] = array_values(array_filter(array_map('sanitize_title', $clean['categories'])));
+        // locations are already restricted to known values by normalize().
         return $clean;
     }
 

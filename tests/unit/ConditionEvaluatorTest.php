@@ -54,6 +54,22 @@ class ConditionEvaluatorTest extends TestCase
         $this->assertFalse($this->evaluator->evaluate(['post_types' => ['post'], 'user_roles' => ['author']], $this->context));
     }
 
+    public function testLocations(): void
+    {
+        $front = ['post_id' => 0, 'post_type' => '', 'locations' => ['front_page']];
+        $this->assertTrue($this->evaluator->evaluate(['locations' => ['front_page']], $front));
+        $this->assertFalse($this->evaluator->evaluate(['locations' => ['singular']], $front));
+        $this->assertTrue($this->evaluator->evaluate(['locations' => ['singular', 'archive']], ['locations' => ['archive']]));
+        $this->assertFalse($this->evaluator->evaluate(['locations' => ['archive']], $this->context), 'no locations in context');
+    }
+
+    public function testUnknownLocationsAreDropped(): void
+    {
+        $this->assertSame(['front_page'], ConditionEvaluator::normalize(['locations' => ['front_page', 'moon']])['locations']);
+        // An all-unknown list normalises to "no restriction".
+        $this->assertTrue($this->evaluator->evaluate(['locations' => ['moon']], $this->context));
+    }
+
     public function testNormalize(): void
     {
         $this->assertSame([
@@ -61,6 +77,7 @@ class ConditionEvaluatorTest extends TestCase
             'categories' => [],
             'user_roles' => [],
             'post_ids'   => [3],
+            'locations'  => [],
         ], ConditionEvaluator::normalize([
             'post_types' => ' post, page,post',
             'categories' => 123, // Not a list: treated as empty.
