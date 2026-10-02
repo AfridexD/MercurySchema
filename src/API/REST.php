@@ -1,17 +1,17 @@
 <?php
 /**
- * Registers the unlimited-schema/v1 REST routes.
+ * Registers the mercury-schema/v1 REST routes.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\API;
+namespace MercurySchema\API;
 
 use WP_REST_Server;
 
 class REST
 {
-    public const NAMESPACE = 'unlimited-schema/v1';
+    public const NAMESPACE = 'mercury-schema/v1';
 
     private SchemaController $controller;
 

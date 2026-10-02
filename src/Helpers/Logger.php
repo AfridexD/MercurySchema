@@ -3,13 +3,13 @@
  * Debug logging to the PHP error log. Silent unless WP_DEBUG or the
  * plugin's debug setting is on.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Helpers;
+namespace MercurySchema\Helpers;
 
-use UnlimitedSchema\Admin\Settings;
-use UnlimitedSchema\API\Hooks;
+use MercurySchema\Admin\Settings;
+use MercurySchema\API\Hooks;
 
 class Logger
 {
@@ -24,7 +24,7 @@ class Logger
         if (!self::enabled()) {
             return;
         }
-        $line = '[UnlimitedSchema] ' . $message;
+        $line = '[Mercury Schema] ' . $message;
         if ($context) {
             $line .= ' ' . wp_json_encode($context);
         }

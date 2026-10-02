@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use UnlimitedSchema\Helpers\DataMapper;
+use MercurySchema\Helpers\DataMapper;
 
 class DataMapperTest extends TestCase
 {

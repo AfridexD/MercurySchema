@@ -12,10 +12,10 @@
  *   user_roles  string[]  roles of the post's author
  *   locations   string[]  where the page is: front_page, singular, archive
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Core;
+namespace MercurySchema\Core;
 
 class ConditionEvaluator
 {

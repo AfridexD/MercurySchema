@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use UnlimitedSchema\Core\ConditionEvaluator;
+use MercurySchema\Core\ConditionEvaluator;
 
 class ConditionEvaluatorTest extends TestCase
 {

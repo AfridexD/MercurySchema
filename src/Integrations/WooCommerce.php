@@ -5,12 +5,12 @@
  * {{product_review_count}}. Only loaded when WooCommerce is active, and only
  * through the plugin's own public filters.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Integrations;
+namespace MercurySchema\Integrations;
 
-use UnlimitedSchema\API\Hooks;
+use MercurySchema\API\Hooks;
 
 class WooCommerce
 {
@@ -43,12 +43,12 @@ class WooCommerce
     public static function tokens(array $tokens): array
     {
         return $tokens + [
-            'product_price'        => __('Product price', 'unlimited-schema'),
-            'product_currency'     => __('Store currency', 'unlimited-schema'),
-            'product_availability' => __('Product stock status', 'unlimited-schema'),
-            'product_sku'          => __('Product SKU', 'unlimited-schema'),
-            'product_rating'       => __('Product average rating', 'unlimited-schema'),
-            'product_review_count' => __('Product review count', 'unlimited-schema'),
+            'product_price'        => __('Product price', 'mercury-schema'),
+            'product_currency'     => __('Store currency', 'mercury-schema'),
+            'product_availability' => __('Product stock status', 'mercury-schema'),
+            'product_sku'          => __('Product SKU', 'mercury-schema'),
+            'product_rating'       => __('Product average rating', 'mercury-schema'),
+            'product_review_count' => __('Product review count', 'mercury-schema'),
         ];
     }
 

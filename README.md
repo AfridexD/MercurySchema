@@ -1,9 +1,9 @@
-# UnlimitedSchema
+# Mercury Schema
 
 Lightweight, conflict-free JSON-LD schema markup for WordPress.
 
 - **Small.** About 20 PHP files, no runtime dependencies, no build step. The release zip is about 50 KB.
-- **One meta row per post.** All of a post's schemas live in a single `_unlimited_schema_data` JSON entry.
+- **One meta row per post.** All of a post's schemas live in a single `_mercury_schema_data` JSON entry.
 - **REST-first.** The admin UI is a thin vanilla-JS client of the REST API. Anything the UI does, you can script.
 - **Filterable.** Definitions, conditions, token values and final JSON-LD all pass through filters.
 - **Testable.** `src/Core` is plain PHP with no WordPress calls and is covered by unit tests.
@@ -12,9 +12,9 @@ Requires PHP 8.0+ and WordPress 6.0+.
 
 ## Installation
 
-1. Copy this folder to `wp-content/plugins/unlimited-schema`.
-2. Activate **UnlimitedSchema** in *Plugins*.
-3. Optional: choose post types and output location in *Settings → UnlimitedSchema*.
+1. Copy this folder to `wp-content/plugins/mercury-schema`.
+2. Activate **Mercury Schema** in *Plugins*.
+3. Optional: choose post types and output location in *Settings → Mercury Schema*.
 
 ## Usage
 
@@ -26,7 +26,7 @@ Requires PHP 8.0+ and WordPress 6.0+.
 
 The badge on each card says whether it will print: **Ready**, **Incomplete** (a required field is empty, for example `{{featured_image}}` on a post without one), **Disabled**, or **Unsaved**.
 
-**Site-wide:** *Settings → UnlimitedSchema → Site-wide schemas* uses the same editor. Site-wide schemas appear on every page matching their rules, including a **Show on** rule for the front page, single posts and pages, or archives. New Organization, Local Business and Person schemas default to the front page; content types default to single posts. A post's own schema replaces a site-wide schema of the same type on that post.
+**Site-wide:** *Settings → Mercury Schema → Site-wide schemas* uses the same editor. Site-wide schemas appear on every page matching their rules, including a **Show on** rule for the front page, single posts and pages, or archives. New Organization, Local Business and Person schemas default to the front page; content types default to single posts. A post's own schema replaces a site-wide schema of the same type on that post.
 
 Built-in types: Article, Product, Event, FAQPage, Recipe, VideoObject, Organization, Person, LocalBusiness, Review, SoftwareApplication.
 
@@ -47,7 +47,7 @@ Any field can contain tokens that are resolved when the page renders:
 
 With WooCommerce active, Product schemas default to `{{product_price}}`, `{{product_currency}}`, `{{product_availability}}`, `{{product_sku}}`, `{{product_rating}}` and `{{product_review_count}}`, read from the product.
 
-Post tokens are empty on pages without a post (front page of posts, archives). Add your own tokens with `unlimited_schema_token_values` (values) and `unlimited_schema_tokens` (labels for the picker).
+Post tokens are empty on pages without a post (front page of posts, archives). Add your own tokens with `mercury_schema_token_values` (values) and `mercury_schema_tokens` (labels for the picker).
 
 ### Display conditions
 
@@ -59,7 +59,7 @@ On each page, site-wide schemas are merged with the current post's own schemas; 
 
 ## REST API
 
-Namespace `unlimited-schema/v1`. Post endpoints require `edit_others_posts` (editors and administrators, not authors) plus `edit_post` on that post; filter with `unlimited_schema_rest_capability`. The `/global` endpoints require `manage_options` (administrators); filter with `unlimited_schema_global_capability`. Use cookie auth with an `X-WP-Nonce: wp_rest` nonce, or Application Passwords.
+Namespace `mercury-schema/v1`. Post endpoints require `edit_others_posts` (editors and administrators, not authors) plus `edit_post` on that post; filter with `mercury_schema_rest_capability`. The `/global` endpoints require `manage_options` (administrators); filter with `mercury_schema_global_capability`. Use cookie auth with an `X-WP-Nonce: wp_rest` nonce, or Application Passwords.
 
 | Method | Route | Purpose |
 | --- | --- | --- |
@@ -77,7 +77,7 @@ Namespace `unlimited-schema/v1`. Post endpoints require `edit_others_posts` (edi
 Saving runs a partial validation: field types are checked, but required fields may be empty so you can save drafts. Errors come back as `400` with `data.errors`. Errors inside repeatable fields use dotted paths such as `questions.1.answer`.
 
 ```bash
-curl -u admin:APP_PASSWORD -X POST http://localhost:8080/wp-json/unlimited-schema/v1/schemas/123 \
+curl -u admin:APP_PASSWORD -X POST http://localhost:8080/wp-json/mercury-schema/v1/schemas/123 \
   -H "Content-Type: application/json" \
   -d '{"type":"Article","data":{"headline":"Test","author":"{{author_name}}"}}'
 ```
@@ -99,9 +99,9 @@ curl -u admin:APP_PASSWORD -X POST http://localhost:8080/wp-json/unlimited-schem
 }
 ```
 
-Site-wide schemas use the same document shape in the autoloaded `unlimited_schema_global` option, so they cost no extra query.
+Site-wide schemas use the same document shape in the autoloaded `mercury_schema_global` option, so they cost no extra query.
 
-Type definitions are seeded from `assets/schema-definitions.json` into the `unlimited_schema_definitions` option (not autoloaded) on activation and whenever the plugin version changes. Custom types stored in that option are kept on reseed.
+Type definitions are seeded from `assets/schema-definitions.json` into the `mercury_schema_definitions` option (not autoloaded) on activation and whenever the plugin version changes. Custom types stored in that option are kept on reseed.
 
 ### Field definitions
 
@@ -131,25 +131,25 @@ An `objects` field is a repeatable group. Its value is a list of items; each ite
 
 | Hook | Type | Arguments |
 | --- | --- | --- |
-| `unlimited_schema_definitions` | filter | `array $definitions` |
-| `unlimited_schema_type_definition` | filter | `array $definition, string $type` |
-| `unlimited_schema_output_enabled` | filter | `bool $enabled` |
-| `unlimited_schema_should_render` | filter | `bool $render, Schema $schema, int $post_id` |
-| `unlimited_schema_json_ld_output` | filter | `array $json_ld, int $post_id, Schema $schema` |
-| `unlimited_schema_token_values` | filter | `array $values, WP_Post\|null $post` |
-| `unlimited_schema_tokens` | filter | `array $tokens` (name => label, for the editor's picker) |
-| `unlimited_schema_condition_context` | filter | `array $context, WP_Post\|null $post` |
-| `unlimited_schema_rest_capability` | filter | `string $capability` (post schemas; default `edit_others_posts`) |
-| `unlimited_schema_global_capability` | filter | `string $capability` (site-wide schemas; default `manage_options`) |
-| `unlimited_schema_post_types` | filter | `string[] $post_types` |
-| `unlimited_schema_logging_enabled` | filter | `bool $enabled` |
-| `unlimited_schema_schema_saved` | action | `array $schema, int $post_id` |
-| `unlimited_schema_schema_deleted` | action | `string $schema_id, int $post_id` |
+| `mercury_schema_definitions` | filter | `array $definitions` |
+| `mercury_schema_type_definition` | filter | `array $definition, string $type` |
+| `mercury_schema_output_enabled` | filter | `bool $enabled` |
+| `mercury_schema_should_render` | filter | `bool $render, Schema $schema, int $post_id` |
+| `mercury_schema_json_ld_output` | filter | `array $json_ld, int $post_id, Schema $schema` |
+| `mercury_schema_token_values` | filter | `array $values, WP_Post\|null $post` |
+| `mercury_schema_tokens` | filter | `array $tokens` (name => label, for the editor's picker) |
+| `mercury_schema_condition_context` | filter | `array $context, WP_Post\|null $post` |
+| `mercury_schema_rest_capability` | filter | `string $capability` (post schemas; default `edit_others_posts`) |
+| `mercury_schema_global_capability` | filter | `string $capability` (site-wide schemas; default `manage_options`) |
+| `mercury_schema_post_types` | filter | `string[] $post_types` |
+| `mercury_schema_logging_enabled` | filter | `bool $enabled` |
+| `mercury_schema_schema_saved` | action | `array $schema, int $post_id` |
+| `mercury_schema_schema_deleted` | action | `string $schema_id, int $post_id` |
 
 Example: add a `Course` type without touching the plugin.
 
 ```php
-add_filter('unlimited_schema_definitions', function ($types) {
+add_filter('mercury_schema_definitions', function ($types) {
     $types['Course'] = [
         'label'       => 'Course',
         'description' => 'An online or in-person course.',
@@ -174,14 +174,14 @@ Tested on WordPress 7.1 with Yoast SEO 28.6, Elementor 4.3 and WooCommerce 11.1 
 - No PHP notices, warnings or JavaScript errors from the plugin.
 - Our JSON-LD prints as separate tags next to Yoast's `@graph` and is unaffected by Elementor pages.
 
-**Duplicate types.** UnlimitedSchema only prints what you add, but other plugins print their own. Yoast always adds an `Article` to posts, and WooCommerce adds a `Product` on classic themes. Pick one source per type. To turn off theirs:
+**Duplicate types.** Mercury Schema only prints what you add, but other plugins print their own. Yoast always adds an `Article` to posts, and WooCommerce adds a `Product` on classic themes. Pick one source per type. To turn off theirs:
 
 ```php
 add_filter('wpseo_schema_needs_article', '__return_false');              // Yoast Article
 add_filter('woocommerce_structured_data_product', '__return_empty_array'); // WooCommerce Product
 ```
 
-To turn off all of ours on a page, return `false` from `unlimited_schema_output_enabled`.
+To turn off all of ours on a page, return `false` from `mercury_schema_output_enabled`.
 
 ## Development
 
@@ -190,7 +190,7 @@ docker compose up -d                                   # WordPress at http://loc
 docker compose run --rm tests composer install
 docker compose run --rm tests composer test            # unit tests
 docker compose run --rm tests composer test:integration
-docker compose run --rm cli sh wp-content/plugins/unlimited-schema/bin/dev-setup.sh   # seed site (admin/admin, local only)
+docker compose run --rm cli sh wp-content/plugins/mercury-schema/bin/dev-setup.sh   # seed site (admin/admin, local only)
 ```
 
 Other WordPress/PHP versions (the test library is matched to the image's core automatically):

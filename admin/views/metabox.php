@@ -1,8 +1,8 @@
 <?php
 /**
- * Metabox shell. editor-ui.js renders the UI into #unlimited-schema-app.
+ * Metabox shell. editor-ui.js renders the UI into #mercury-schema-app.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  * @var \WP_Post $post
  */
 
@@ -10,9 +10,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 ?>
-<div id="unlimited-schema-app" class="us-app" data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
-    <p class="us-muted"><?php esc_html_e('Loading…', 'unlimited-schema'); ?></p>
+<div id="mercury-schema-app" class="ms-app" data-post-id="<?php echo esc_attr((string) $post->ID); ?>">
+    <p class="ms-muted"><?php esc_html_e('Loading…', 'mercury-schema'); ?></p>
 </div>
 <noscript>
-    <p><?php esc_html_e('UnlimitedSchema needs JavaScript to edit schema markup.', 'unlimited-schema'); ?></p>
+    <p><?php esc_html_e('Mercury Schema needs JavaScript to edit schema markup.', 'mercury-schema'); ?></p>
 </noscript>

@@ -4,12 +4,12 @@
  *
  * Pure PHP: no WordPress calls.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Core;
+namespace MercurySchema\Core;
 
-use UnlimitedSchema\Helpers\DataMapper;
+use MercurySchema\Helpers\DataMapper;
 
 class Validator
 {

@@ -2,19 +2,19 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: UnlimitedSchema 1.1.0\n"
+"Project-Id-Version: Mercury Schema 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/AfridexD/UnlimitedSchema/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Domain: unlimited-schema\n"
+"X-Domain: mercury-schema\n"
 
 #: admin/views/metabox.php:14 src/Admin/AdminController.php:226 src/Admin/Settings.php:107
 msgid "Loading…"
 msgstr ""
 
 #: admin/views/metabox.php:17 src/Admin/Settings.php:109
-msgid "UnlimitedSchema needs JavaScript to edit schema markup."
+msgid "Mercury Schema needs JavaScript to edit schema markup."
 msgstr ""
 
 #: src/API/SchemaController.php:61
@@ -423,7 +423,7 @@ msgid "Settings"
 msgstr ""
 
 #: src/Admin/Settings.php:48 src/Admin/Settings.php:49 src/Admin/Settings.php:96
-msgid "UnlimitedSchema"
+msgid "Mercury Schema"
 msgstr ""
 
 #: src/Admin/Settings.php:97
@@ -431,7 +431,7 @@ msgid "Lightweight JSON-LD structured data for rich results."
 msgstr ""
 
 #: src/Admin/Settings.php:100
-msgid "UnlimitedSchema sections"
+msgid "Mercury Schema sections"
 msgstr ""
 
 #: src/Admin/Settings.php:137

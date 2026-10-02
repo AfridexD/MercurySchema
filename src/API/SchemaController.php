@@ -1,22 +1,22 @@
 <?php
 /**
- * Callbacks for the /unlimited-schema/v1 REST routes.
+ * Callbacks for the /mercury-schema/v1 REST routes.
  *
  * Two scopes share the same callbacks: a post (routes with {post_id}) and
  * site-wide (/global routes, no post_id). Internally site-wide is post ID 0.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\API;
+namespace MercurySchema\API;
 
-use UnlimitedSchema\Core\Schema;
-use UnlimitedSchema\Core\SchemaType;
-use UnlimitedSchema\Frontend\SchemaOutput;
-use UnlimitedSchema\Frontend\SchemaRegistry;
-use UnlimitedSchema\Helpers\GlobalStore;
-use UnlimitedSchema\Helpers\PostMetaStore;
-use UnlimitedSchema\Helpers\Sanitizer;
+use MercurySchema\Core\Schema;
+use MercurySchema\Core\SchemaType;
+use MercurySchema\Frontend\SchemaOutput;
+use MercurySchema\Frontend\SchemaRegistry;
+use MercurySchema\Helpers\GlobalStore;
+use MercurySchema\Helpers\PostMetaStore;
+use MercurySchema\Helpers\Sanitizer;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -58,7 +58,7 @@ class SchemaController
     public function checkGlobalPermission(WP_REST_Request $request)
     {
         if (!current_user_can(self::globalCapability())) {
-            return new WP_Error('rest_forbidden', __('You are not allowed to manage site-wide schema markup.', 'unlimited-schema'), ['status' => rest_authorization_required_code()]);
+            return new WP_Error('rest_forbidden', __('You are not allowed to manage site-wide schema markup.', 'mercury-schema'), ['status' => rest_authorization_required_code()]);
         }
         return true;
     }
@@ -66,12 +66,12 @@ class SchemaController
     public function checkPermission(WP_REST_Request $request)
     {
         if (!current_user_can(self::postCapability())) {
-            return new WP_Error('rest_forbidden', __('You are not allowed to manage schema markup.', 'unlimited-schema'), ['status' => rest_authorization_required_code()]);
+            return new WP_Error('rest_forbidden', __('You are not allowed to manage schema markup.', 'mercury-schema'), ['status' => rest_authorization_required_code()]);
         }
 
         $postId = (int) $request->get_param('post_id');
         if ($postId && get_post($postId) && !current_user_can('edit_post', $postId)) {
-            return new WP_Error('rest_forbidden', __('You are not allowed to edit this post.', 'unlimited-schema'), ['status' => rest_authorization_required_code()]);
+            return new WP_Error('rest_forbidden', __('You are not allowed to edit this post.', 'mercury-schema'), ['status' => rest_authorization_required_code()]);
         }
         return true;
     }
@@ -249,7 +249,7 @@ class SchemaController
     {
         $result = $this->registry->validator()->validate($schema, true);
         if (!$result['valid']) {
-            return new WP_Error('unlimited_schema_invalid', __('Schema data is invalid.', 'unlimited-schema'), ['status' => 400, 'errors' => $result['errors']]);
+            return new WP_Error('mercury_schema_invalid', __('Schema data is invalid.', 'mercury-schema'), ['status' => 400, 'errors' => $result['errors']]);
         }
 
         $type = $this->registry->get($schema->getType());
@@ -261,7 +261,7 @@ class SchemaController
         if ($replaceId === null) {
             if (count($schemas) >= self::MAX_SCHEMAS) {
                 /* translators: %d: maximum number of schemas */
-                return new WP_Error('unlimited_schema_limit', sprintf(__('A page can have at most %d schemas.', 'unlimited-schema'), self::MAX_SCHEMAS), ['status' => 400]);
+                return new WP_Error('mercury_schema_limit', sprintf(__('A page can have at most %d schemas.', 'mercury-schema'), self::MAX_SCHEMAS), ['status' => 400]);
             }
             $schemas[] = $saved;
         } else {
@@ -317,7 +317,7 @@ class SchemaController
         $postId = (int) $request->get_param('post_id');
         $post = $postId ? get_post($postId) : null;
         if (!$post || $post->post_type === 'revision') {
-            return new WP_Error('unlimited_schema_post_not_found', __('Post not found.', 'unlimited-schema'), ['status' => 404]);
+            return new WP_Error('mercury_schema_post_not_found', __('Post not found.', 'mercury-schema'), ['status' => 404]);
         }
         return $postId;
     }
@@ -329,9 +329,9 @@ class SchemaController
         if ($type === null) {
             $message = is_string($name) && $name !== ''
                 /* translators: %s: schema type name */
-                ? sprintf(__('Unknown schema type: %s', 'unlimited-schema'), $name)
-                : __('Schema type is required.', 'unlimited-schema');
-            return new WP_Error('unlimited_schema_invalid_type', $message, ['status' => 400]);
+                ? sprintf(__('Unknown schema type: %s', 'mercury-schema'), $name)
+                : __('Schema type is required.', 'mercury-schema');
+            return new WP_Error('mercury_schema_invalid_type', $message, ['status' => 400]);
         }
         return $type;
     }
@@ -348,11 +348,11 @@ class SchemaController
 
     private function notFound(): WP_Error
     {
-        return new WP_Error('unlimited_schema_not_found', __('Schema not found.', 'unlimited-schema'), ['status' => 404]);
+        return new WP_Error('mercury_schema_not_found', __('Schema not found.', 'mercury-schema'), ['status' => 404]);
     }
 
     private function saveFailed(): WP_Error
     {
-        return new WP_Error('unlimited_schema_save_failed', __('Could not save schema data.', 'unlimited-schema'), ['status' => 500]);
+        return new WP_Error('mercury_schema_save_failed', __('Could not save schema data.', 'mercury-schema'), ['status' => 500]);
     }
 }

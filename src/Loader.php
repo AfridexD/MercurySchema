@@ -3,19 +3,20 @@
  * Plugin bootstrap. Registers hooks only; every object is built lazily
  * when its hook actually fires.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema;
+namespace MercurySchema;
 
-use UnlimitedSchema\Admin\AdminController;
-use UnlimitedSchema\Admin\Settings;
-use UnlimitedSchema\API\REST;
-use UnlimitedSchema\API\SchemaController;
-use UnlimitedSchema\Frontend\SchemaOutput;
-use UnlimitedSchema\Frontend\SchemaRegistry;
-use UnlimitedSchema\Helpers\GlobalStore;
-use UnlimitedSchema\Helpers\PostMetaStore;
+use MercurySchema\Admin\AdminController;
+use MercurySchema\Admin\Settings;
+use MercurySchema\API\REST;
+use MercurySchema\API\SchemaController;
+use MercurySchema\Frontend\SchemaOutput;
+use MercurySchema\Frontend\SchemaRegistry;
+use MercurySchema\Helpers\GlobalStore;
+use MercurySchema\Helpers\Migrator;
+use MercurySchema\Helpers\PostMetaStore;
 
 class Loader
 {
@@ -54,6 +55,7 @@ class Loader
 
     public static function activate(): void
     {
+        Migrator::run(); // Before defaults, so migrated settings win.
         SchemaRegistry::seed();
         add_option(Settings::OPTION, Settings::defaults());
     }

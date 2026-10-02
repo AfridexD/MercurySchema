@@ -17,7 +17,7 @@ for s in schema-and-structured-data-for-wp all-in-one-schemaorg-rich-snippets wp
   unzip -q /tmp/p.zip -d /tmp/p
   measure /tmp/p "$s" "$ver" "$zkb"
 done
-ours=$(ls /build/unlimited-schema-*.zip | sort -V | tail -1)
-ver=$(basename "$ours" .zip | sed 's/unlimited-schema-//')
+ours=$(ls /build/mercury-schema-*.zip | sort -V | tail -1)
+ver=$(basename "$ours" .zip | sed 's/mercury-schema-//')
 rm -rf /tmp/p && mkdir -p /tmp/p && unzip -q "$ours" -d /tmp/p
-measure /tmp/p unlimited-schema "$ver" $(( $(stat -c %s "$ours") / 1024 ))
+measure /tmp/p mercury-schema "$ver" $(( $(stat -c %s "$ours") / 1024 ))

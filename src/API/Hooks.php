@@ -2,52 +2,52 @@
 /**
  * Every public filter and action the plugin fires, in one place.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\API;
+namespace MercurySchema\API;
 
 class Hooks
 {
     /** filter( array $definitions ) — all type definitions, keyed by type name. */
-    public const DEFINITIONS = 'unlimited_schema_definitions';
+    public const DEFINITIONS = 'mercury_schema_definitions';
 
     /** filter( array $definition, string $type ) — one type definition. */
-    public const TYPE_DEFINITION = 'unlimited_schema_type_definition';
+    public const TYPE_DEFINITION = 'mercury_schema_type_definition';
 
     /** filter( bool $enabled ) — return false to stop all front-end output. */
-    public const OUTPUT_ENABLED = 'unlimited_schema_output_enabled';
+    public const OUTPUT_ENABLED = 'mercury_schema_output_enabled';
 
     /** filter( bool $should_render, Schema $schema, int $post_id ) */
-    public const SHOULD_RENDER = 'unlimited_schema_should_render';
+    public const SHOULD_RENDER = 'mercury_schema_should_render';
 
     /** filter( array $json_ld, int $post_id, Schema $schema ) — return [] to drop it. */
-    public const JSON_LD_OUTPUT = 'unlimited_schema_json_ld_output';
+    public const JSON_LD_OUTPUT = 'mercury_schema_json_ld_output';
 
     /** filter( array $values, WP_Post|null $post ) — token name => value for {{tokens}}. $post is null off singular pages. */
-    public const TOKEN_VALUES = 'unlimited_schema_token_values';
+    public const TOKEN_VALUES = 'mercury_schema_token_values';
 
     /** filter( array $tokens ) — token name => label, offered in the editor's token picker. */
-    public const TOKENS = 'unlimited_schema_tokens';
+    public const TOKENS = 'mercury_schema_tokens';
 
     /** filter( array $context, WP_Post $post ) — data handed to ConditionEvaluator. */
-    public const CONDITION_CONTEXT = 'unlimited_schema_condition_context';
+    public const CONDITION_CONTEXT = 'mercury_schema_condition_context';
 
     /** filter( string $capability ) — capability to edit post schemas. Default edit_others_posts (editors and admins). */
-    public const REST_CAPABILITY = 'unlimited_schema_rest_capability';
+    public const REST_CAPABILITY = 'mercury_schema_rest_capability';
 
     /** filter( string $capability ) — capability to edit site-wide schemas. Default manage_options (admins). */
-    public const GLOBAL_CAPABILITY = 'unlimited_schema_global_capability';
+    public const GLOBAL_CAPABILITY = 'mercury_schema_global_capability';
 
     /** filter( string[] $post_types ) — post types that get the metabox. */
-    public const POST_TYPES = 'unlimited_schema_post_types';
+    public const POST_TYPES = 'mercury_schema_post_types';
 
     /** filter( bool $enabled ) — force debug logging on or off. */
-    public const LOGGING_ENABLED = 'unlimited_schema_logging_enabled';
+    public const LOGGING_ENABLED = 'mercury_schema_logging_enabled';
 
     /** action( array $schema, int $post_id ) — after create or update. */
-    public const SCHEMA_SAVED = 'unlimited_schema_schema_saved';
+    public const SCHEMA_SAVED = 'mercury_schema_schema_saved';
 
     /** action( string $schema_id, int $post_id ) — after delete. */
-    public const SCHEMA_DELETED = 'unlimited_schema_schema_deleted';
+    public const SCHEMA_DELETED = 'mercury_schema_schema_deleted';
 }

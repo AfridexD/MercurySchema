@@ -2,13 +2,13 @@
 /**
  * Sanitizes schema input before it is stored.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Helpers;
+namespace MercurySchema\Helpers;
 
-use UnlimitedSchema\Core\ConditionEvaluator;
-use UnlimitedSchema\Core\SchemaType;
+use MercurySchema\Core\ConditionEvaluator;
+use MercurySchema\Core\SchemaType;
 
 class Sanitizer
 {

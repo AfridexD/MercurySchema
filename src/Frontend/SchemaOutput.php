@@ -3,18 +3,18 @@
  * Renders JSON-LD script tags: site-wide schemas on every page, plus the
  * current post's own schemas on singular pages.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Frontend;
+namespace MercurySchema\Frontend;
 
-use UnlimitedSchema\API\Hooks;
-use UnlimitedSchema\Core\ConditionEvaluator;
-use UnlimitedSchema\Core\Schema;
-use UnlimitedSchema\Helpers\DataMapper;
-use UnlimitedSchema\Helpers\GlobalStore;
-use UnlimitedSchema\Helpers\Logger;
-use UnlimitedSchema\Helpers\PostMetaStore;
+use MercurySchema\API\Hooks;
+use MercurySchema\Core\ConditionEvaluator;
+use MercurySchema\Core\Schema;
+use MercurySchema\Helpers\DataMapper;
+use MercurySchema\Helpers\GlobalStore;
+use MercurySchema\Helpers\Logger;
+use MercurySchema\Helpers\PostMetaStore;
 
 class SchemaOutput
 {

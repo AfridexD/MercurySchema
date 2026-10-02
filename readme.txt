@@ -1,4 +1,4 @@
-=== UnlimitedSchema ===
+=== Mercury Schema ===
 Contributors: afridexd
 Tags: schema, structured data, json-ld, rich results, seo
 Requires at least: 6.0
@@ -12,7 +12,7 @@ Lightweight, conflict-free JSON-LD schema markup. One database row per post, no 
 
 == Description ==
 
-UnlimitedSchema adds JSON-LD structured data to your site without slowing it down.
+Mercury Schema adds JSON-LD structured data to your site without slowing it down.
 
 * Eleven built-in types: Article, Product, Event, FAQ, Recipe, Video, Organization, Person, Local Business, Review and Software App.
 * Site-wide schemas: describe your organization once and show it on the front page, or add an Article to every post automatically.
@@ -26,15 +26,15 @@ UnlimitedSchema adds JSON-LD structured data to your site without slowing it dow
 
 == Installation ==
 
-1. Upload the plugin to `/wp-content/plugins/unlimited-schema` or install it from the Plugins screen.
+1. Upload the plugin to `/wp-content/plugins/mercury-schema` or install it from the Plugins screen.
 2. Activate it.
-3. Add site-wide schemas under Settings → UnlimitedSchema, or edit any post and use the Schema Markup box.
+3. Add site-wide schemas under Settings → Mercury Schema, or edit any post and use the Schema Markup box.
 
 == Frequently Asked Questions ==
 
 = What's the difference between site-wide and post schemas? =
 
-Site-wide schemas live under Settings → UnlimitedSchema and appear on every page that matches their display rules (front page, single posts and pages, archives, post types, categories). A post's own schema replaces a site-wide schema of the same type on that post.
+Site-wide schemas live under Settings → Mercury Schema and appear on every page that matches their display rules (front page, single posts and pages, archives, post types, categories). A post's own schema replaces a site-wide schema of the same type on that post.
 
 = Why does a schema say "Incomplete"? =
 
@@ -42,7 +42,7 @@ A required field is empty, often because a dynamic value has nothing to fill in 
 
 = Does it work alongside Yoast SEO or Rank Math? =
 
-Yes. UnlimitedSchema only prints the schema you add, as separate script tags. Yoast already adds an Article to posts, and WooCommerce adds a Product on classic themes, so use one source per type. Developers can switch off Yoast's Article with the `wpseo_schema_needs_article` filter, or WooCommerce's Product with `woocommerce_structured_data_product`.
+Yes. Mercury Schema only prints the schema you add, as separate script tags. Yoast already adds an Article to posts, and WooCommerce adds a Product on classic themes, so use one source per type. Developers can switch off Yoast's Article with the `wpseo_schema_needs_article` filter, or WooCommerce's Product with `woocommerce_structured_data_product`.
 
 = Does it work with Elementor and other page builders? =
 
@@ -50,7 +50,7 @@ Yes. Schema is printed in the page head, independent of how the content was buil
 
 = Who can edit schema? =
 
-Editors and administrators can edit schema on posts they're allowed to edit. Authors and contributors can't. Site-wide schemas are for administrators only. Developers can change this with the unlimited_schema_rest_capability and unlimited_schema_global_capability filters.
+Editors and administrators can edit schema on posts they're allowed to edit. Authors and contributors can't. Site-wide schemas are for administrators only. Developers can change this with the mercury_schema_rest_capability and mercury_schema_global_capability filters.
 
 == Changelog ==
 

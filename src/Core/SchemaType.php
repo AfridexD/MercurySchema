@@ -13,10 +13,10 @@
  *
  * Pure PHP: no WordPress calls.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Core;
+namespace MercurySchema\Core;
 
 class SchemaType
 {

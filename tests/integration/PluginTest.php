@@ -1,7 +1,7 @@
 <?php
 
-use UnlimitedSchema\Helpers\PostMetaStore;
-use UnlimitedSchema\Loader;
+use MercurySchema\Helpers\PostMetaStore;
+use MercurySchema\Loader;
 
 class PluginTest extends WP_UnitTestCase
 {
@@ -35,7 +35,7 @@ class PluginTest extends WP_UnitTestCase
 
     public function testPluginLoaded(): void
     {
-        $this->assertTrue(defined('UNLIMITED_SCHEMA_VERSION'));
+        $this->assertTrue(defined('MERCURY_SCHEMA_VERSION'));
         $this->assertInstanceOf(Loader::class, Loader::getInstance());
     }
 
@@ -93,14 +93,14 @@ class PluginTest extends WP_UnitTestCase
         $this->setSchemas([$this->article()]);
 
         $modify = static fn($ld) => $ld + ['inLanguage' => 'en'];
-        add_filter('unlimited_schema_json_ld_output', $modify);
+        add_filter('mercury_schema_json_ld_output', $modify);
         $docs = Loader::getInstance()->output()->buildJsonLd($this->postId);
-        remove_filter('unlimited_schema_json_ld_output', $modify);
+        remove_filter('mercury_schema_json_ld_output', $modify);
         $this->assertSame('en', $docs[0]['inLanguage']);
 
-        add_filter('unlimited_schema_should_render', '__return_false');
+        add_filter('mercury_schema_should_render', '__return_false');
         $this->assertSame([], Loader::getInstance()->output()->buildJsonLd($this->postId));
-        remove_filter('unlimited_schema_should_render', '__return_false');
+        remove_filter('mercury_schema_should_render', '__return_false');
     }
 
     public function testWpHeadOutputOnSingularOnly(): void

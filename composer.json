@@ -1,5 +1,5 @@
 {
-    "name": "afridexd/unlimited-schema",
+    "name": "afridexd/mercury-schema",
     "description": "Lightweight, conflict-free JSON-LD schema markup for WordPress.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "UnlimitedSchema\\": "src/"
+            "MercurySchema\\": "src/"
         }
     },
     "scripts": {

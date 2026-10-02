@@ -1,13 +1,13 @@
 <?php
 /**
- * Builds build/unlimited-schema-<version>.zip, leaving out everything listed
+ * Builds build/mercury-schema-<version>.zip, leaving out everything listed
  * in .distignore. Needs only PHP with the zip extension.
  *
  *   docker compose run --rm tests php bin/build.php
  */
 
 $root = dirname(__DIR__);
-preg_match("/define\('UNLIMITED_SCHEMA_VERSION', '([^']+)'\)/", file_get_contents("$root/unlimited-schema.php"), $m);
+preg_match("/define\('MERCURY_SCHEMA_VERSION', '([^']+)'\)/", file_get_contents("$root/mercury-schema.php"), $m);
 $version = $m[1] ?? 'dev';
 
 $ignore = array_filter(array_map('trim', file("$root/.distignore")), static fn($l) => $l !== '' && $l[0] !== '#');
@@ -26,7 +26,7 @@ $ignored = static function (string $rel) use ($ignore): bool {
 };
 
 @mkdir("$root/build");
-$zipPath = "$root/build/unlimited-schema-$version.zip";
+$zipPath = "$root/build/mercury-schema-$version.zip";
 @unlink($zipPath);
 
 $zip = new ZipArchive();
@@ -46,11 +46,11 @@ foreach ($files as $file) {
     $ext = pathinfo($rel, PATHINFO_EXTENSION);
     if ($ext === 'js' || $ext === 'css') {
         $compact = compact_asset((string) file_get_contents($file->getPathname()), $ext);
-        $zip->addFromString("unlimited-schema/$rel", $compact);
+        $zip->addFromString("mercury-schema/$rel", $compact);
         $bytes += strlen($compact);
         printf("  %s: %.1f KB -> %.1f KB\n", $rel, $file->getSize() / 1024, strlen($compact) / 1024);
     } else {
-        $zip->addFile($file->getPathname(), "unlimited-schema/$rel");
+        $zip->addFile($file->getPathname(), "mercury-schema/$rel");
         $bytes += $file->getSize();
     }
     $count++;

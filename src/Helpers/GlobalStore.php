@@ -3,14 +3,14 @@
  * Site-wide schemas, stored in one autoloaded option so reading them on
  * every page costs no extra query. Same document shape as PostMetaStore.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Helpers;
+namespace MercurySchema\Helpers;
 
 class GlobalStore
 {
-    public const OPTION = 'unlimited_schema_global';
+    public const OPTION = 'mercury_schema_global';
 
     /**
      * @return array{version: string, schemas: array<int, array>}

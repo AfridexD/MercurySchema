@@ -1,12 +1,12 @@
 <?php
 
-use UnlimitedSchema\Helpers\GlobalStore;
-use UnlimitedSchema\Helpers\PostMetaStore;
-use UnlimitedSchema\Loader;
+use MercurySchema\Helpers\GlobalStore;
+use MercurySchema\Helpers\PostMetaStore;
+use MercurySchema\Loader;
 
 class SiteWideTest extends WP_UnitTestCase
 {
-    private const NS = '/unlimited-schema/v1';
+    private const NS = '/mercury-schema/v1';
 
     private int $postId;
 
@@ -215,8 +215,8 @@ class SiteWideTest extends WP_UnitTestCase
         wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
         $this->assertSame(403, $this->request('GET', '/global')->get_status());
 
-        add_filter('unlimited_schema_global_capability', $cap = static fn() => 'edit_others_posts');
+        add_filter('mercury_schema_global_capability', $cap = static fn() => 'edit_others_posts');
         $this->assertSame(200, $this->request('GET', '/global')->get_status());
-        remove_filter('unlimited_schema_global_capability', $cap);
+        remove_filter('mercury_schema_global_capability', $cap);
     }
 }

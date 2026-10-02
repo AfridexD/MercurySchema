@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use UnlimitedSchema\Core\SchemaType;
+use MercurySchema\Core\SchemaType;
 
 class SchemaTypeTest extends TestCase
 {

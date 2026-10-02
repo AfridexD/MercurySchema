@@ -7,19 +7,19 @@
  * version changes. Custom types stored in the option survive reseeding.
  * Nothing is read until a type is actually needed.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Frontend;
+namespace MercurySchema\Frontend;
 
-use UnlimitedSchema\API\Hooks;
-use UnlimitedSchema\Core\SchemaType;
-use UnlimitedSchema\Core\Validator;
-use UnlimitedSchema\Helpers\Logger;
+use MercurySchema\API\Hooks;
+use MercurySchema\Core\SchemaType;
+use MercurySchema\Core\Validator;
+use MercurySchema\Helpers\Logger;
 
 class SchemaRegistry
 {
-    public const OPTION = 'unlimited_schema_definitions';
+    public const OPTION = 'mercury_schema_definitions';
 
     /** @var array<string, SchemaType>|null */
     private ?array $types = null;
@@ -58,7 +58,7 @@ class SchemaRegistry
      */
     public static function seed(): array
     {
-        $file = UNLIMITED_SCHEMA_PATH . 'assets/schema-definitions.json';
+        $file = MERCURY_SCHEMA_PATH . 'assets/schema-definitions.json';
         $bundled = is_readable($file) ? json_decode((string) file_get_contents($file), true) : null;
         if (!is_array($bundled) || !is_array($bundled['types'] ?? null)) {
             Logger::log('Could not read bundled schema definitions.', ['file' => $file]);
@@ -70,7 +70,7 @@ class SchemaRegistry
         $types = array_merge($existing, $bundled['types']);
 
         update_option(self::OPTION, [
-            'plugin_version' => UNLIMITED_SCHEMA_VERSION,
+            'plugin_version' => MERCURY_SCHEMA_VERSION,
             'types'          => $types,
         ], false);
 
@@ -80,7 +80,7 @@ class SchemaRegistry
     private function loadDefinitions(): array
     {
         $stored = get_option(self::OPTION);
-        if (!is_array($stored) || ($stored['plugin_version'] ?? '') !== UNLIMITED_SCHEMA_VERSION) {
+        if (!is_array($stored) || ($stored['plugin_version'] ?? '') !== MERCURY_SCHEMA_VERSION) {
             return self::seed();
         }
         return is_array($stored['types'] ?? null) ? $stored['types'] : [];

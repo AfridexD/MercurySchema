@@ -1,12 +1,12 @@
 /**
- * UnlimitedSchema editor. Vanilla JS, no build step, no dependencies.
+ * Mercury Schema editor. Vanilla JS, no build step, no dependencies.
  * Talks only to the REST API; holds no schema logic of its own.
  * Runs in the post editor (scope "post") and on the settings page (scope "global").
  */
 (function () {
     'use strict';
 
-    var cfg = window.UnlimitedSchemaData;
+    var cfg = window.MercurySchemaData;
     if (!cfg) {
         return;
     }
@@ -27,7 +27,7 @@
     // ---- Boot --------------------------------------------------------------
 
     function init() {
-        app = document.getElementById('unlimited-schema-app');
+        app = document.getElementById('mercury-schema-app');
         if (!app) {
             return;
         }
@@ -42,7 +42,7 @@
             }
         });
         document.addEventListener('click', function (e) {
-            if (!e.target.closest('.us-menu, .us-menu-btn, .us-token-btn, .us-tokens')) {
+            if (!e.target.closest('.ms-menu, .ms-menu-btn, .ms-token-btn, .ms-tokens')) {
                 closeMenus();
             }
         });
@@ -126,16 +126,16 @@
     }
 
     function toast(message, kind) {
-        var n = el('div', { 'class': 'us-toast' + (kind ? ' is-' + kind : ''), role: kind === 'error' ? 'alert' : 'status' }, [message]);
+        var n = el('div', { 'class': 'ms-toast' + (kind ? ' is-' + kind : ''), role: kind === 'error' ? 'alert' : 'status' }, [message]);
         toasts.appendChild(n);
         setTimeout(function () { n.classList.add('is-leaving'); }, kind === 'error' ? 6000 : 3200);
         setTimeout(function () { n.remove(); }, kind === 'error' ? 6400 : 3600);
     }
 
     function closeMenus() {
-        app.querySelectorAll('.us-menu, .us-tokens').forEach(function (m) { m.remove(); });
+        app.querySelectorAll('.ms-menu, .ms-tokens').forEach(function (m) { m.remove(); });
         app.querySelectorAll('[aria-expanded="true"]').forEach(function (b) {
-            if (!b.classList.contains('us-add')) {
+            if (!b.classList.contains('ms-add')) {
                 b.setAttribute('aria-expanded', 'false');
             }
         });
@@ -155,14 +155,14 @@
         app.textContent = '';
         app.classList.add('is-ready');
 
-        var addBtn = button([icon('plus-alt2'), t.add], 'button button-primary us-add', function () {
+        var addBtn = button([icon('plus-alt2'), t.add], 'button button-primary ms-add', function () {
             togglePicker(picker.hidden);
-        }, { 'aria-expanded': 'false', 'aria-controls': 'us-picker' });
+        }, { 'aria-expanded': 'false', 'aria-controls': 'ms-picker' });
 
-        app.appendChild(el('div', { 'class': 'us-head' }, [
-            el('div', { 'class': 'us-head__text' }, [
+        app.appendChild(el('div', { 'class': 'ms-head' }, [
+            el('div', { 'class': 'ms-head__text' }, [
                 el('strong', { text: isGlobal ? t.siteWideTitle : t.title }),
-                el('span', { 'class': 'us-muted', text: isGlobal ? t.siteWideIntro : t.intro })
+                el('span', { 'class': 'ms-muted', text: isGlobal ? t.siteWideIntro : t.intro })
             ]),
             addBtn
         ]));
@@ -171,19 +171,19 @@
         app.appendChild(picker);
 
         if (!isGlobal && siteWide.length) {
-            siteWideBox = el('div', { 'class': 'us-sitewide' });
+            siteWideBox = el('div', { 'class': 'ms-sitewide' });
             app.appendChild(siteWideBox);
         }
 
-        list = el('div', { 'class': 'us-list' });
+        list = el('div', { 'class': 'ms-list' });
         app.appendChild(list);
 
-        empty = el('div', { 'class': 'us-empty' }, [
-            el('span', { 'class': 'us-empty__icon' }, [icon('editor-code')]),
+        empty = el('div', { 'class': 'ms-empty' }, [
+            el('span', { 'class': 'ms-empty__icon' }, [icon('editor-code')]),
             el('strong', { text: t.emptyTitle }),
-            el('span', { 'class': 'us-muted', text: isGlobal ? t.emptyGlobal : t.emptyText })
+            el('span', { 'class': 'ms-muted', text: isGlobal ? t.emptyGlobal : t.emptyText })
         ]);
-        var quick = el('div', { 'class': 'us-quick' });
+        var quick = el('div', { 'class': 'ms-quick' });
         (isGlobal ? ['Organization', 'LocalBusiness', 'Article'] : ['Article', 'Product', 'FAQPage']).forEach(function (name) {
             if (types[name]) {
                 quick.appendChild(button([icon(types[name].icon), types[name].label], 'button', function () { addSchema(name); }));
@@ -192,34 +192,34 @@
         empty.appendChild(quick);
         app.appendChild(empty);
 
-        toasts = el('div', { 'class': 'us-toasts', 'aria-live': 'polite' });
+        toasts = el('div', { 'class': 'ms-toasts', 'aria-live': 'polite' });
         document.body.appendChild(toasts);
     }
 
     function buildPicker(addBtn) {
-        var grid = el('div', { 'class': 'us-picker__grid', role: 'list' });
-        var search = el('input', { type: 'search', 'class': 'us-picker__search', placeholder: t.searchTypes, 'aria-label': t.searchTypes });
+        var grid = el('div', { 'class': 'ms-picker__grid', role: 'list' });
+        var search = el('input', { type: 'search', 'class': 'ms-picker__search', placeholder: t.searchTypes, 'aria-label': t.searchTypes });
         Object.keys(types).forEach(function (name) {
             var d = types[name];
             var tile = button([
-                el('span', { 'class': 'us-tile__icon' }, [icon(d.icon)]),
-                el('span', { 'class': 'us-tile__text' }, [
+                el('span', { 'class': 'ms-tile__icon' }, [icon(d.icon)]),
+                el('span', { 'class': 'ms-tile__text' }, [
                     el('strong', { text: d.label || name }),
                     el('span', { text: d.description || '' })
                 ])
-            ], 'us-tile', function () { addSchema(name); }, { role: 'listitem', 'data-search': (name + ' ' + d.label + ' ' + d.description).toLowerCase() });
+            ], 'ms-tile', function () { addSchema(name); }, { role: 'listitem', 'data-search': (name + ' ' + d.label + ' ' + d.description).toLowerCase() });
             grid.appendChild(tile);
         });
         search.addEventListener('input', function () {
             var q = search.value.trim().toLowerCase();
-            grid.querySelectorAll('.us-tile').forEach(function (tile) {
+            grid.querySelectorAll('.ms-tile').forEach(function (tile) {
                 tile.hidden = q !== '' && tile.getAttribute('data-search').indexOf(q) === -1;
             });
         });
-        var p = el('div', { 'class': 'us-picker', id: 'us-picker', hidden: true }, [
-            el('div', { 'class': 'us-picker__bar' }, [
+        var p = el('div', { 'class': 'ms-picker', id: 'ms-picker', hidden: true }, [
+            el('div', { 'class': 'ms-picker__bar' }, [
                 search,
-                button([icon('no-alt')], 'us-icon-btn', function () { togglePicker(false); addBtn.focus(); }, { 'aria-label': t.close })
+                button([icon('no-alt')], 'ms-icon-btn', function () { togglePicker(false); addBtn.focus(); }, { 'aria-label': t.close })
             ]),
             grid
         ]);
@@ -242,7 +242,7 @@
     }
 
     function refresh() {
-        var cards = list.querySelectorAll('.us-card');
+        var cards = list.querySelectorAll('.ms-card');
         empty.hidden = cards.length > 0;
         if (siteWideBox) {
             var own = [];
@@ -256,7 +256,7 @@
             siteWide.filter(function (s) { return s.enabled; }).forEach(function (s) {
                 var over = own.indexOf(s.type) !== -1;
                 siteWideBox.appendChild(el('span', {
-                    'class': 'us-chip' + (over ? ' is-off' : ''),
+                    'class': 'ms-chip' + (over ? ' is-off' : ''),
                     title: over ? t.overridden : '',
                     text: (types[s.type] ? types[s.type].label : s.type) + (over ? ' · ' + t.overriddenShort : '')
                 }));
@@ -292,7 +292,7 @@
                 c.open = true;
                 refresh();
                 c.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                var first = c.querySelector('.us-field input, .us-field textarea, .us-field select');
+                var first = c.querySelector('.ms-field input, .ms-field textarea, .ms-field select');
                 if (first) {
                     first.focus();
                 }
@@ -305,15 +305,15 @@
 
     function card(schema, status) {
         var def = types[schema.type] || { label: schema.type, fields: {} };
-        var c = el('details', { 'class': 'us-card', 'data-id': schema.id });
+        var c = el('details', { 'class': 'ms-card', 'data-id': schema.id });
         c.schema = schema;
         var fields = {};
 
         // Header
-        var pill = el('span', { 'class': 'us-pill' });
-        var sw = el('input', { type: 'checkbox', role: 'switch', 'class': 'us-switch__input', 'aria-label': t.enabled, checked: schema.enabled });
-        var swWrap = el('label', { 'class': 'us-switch', title: t.enabled }, [sw, el('span', { 'class': 'us-switch__track', 'aria-hidden': 'true' })]);
-        var menuBtn = button([icon('ellipsis')], 'us-icon-btn us-menu-btn', function (e) {
+        var pill = el('span', { 'class': 'ms-pill' });
+        var sw = el('input', { type: 'checkbox', role: 'switch', 'class': 'ms-switch__input', 'aria-label': t.enabled, checked: schema.enabled });
+        var swWrap = el('label', { 'class': 'ms-switch', title: t.enabled }, [sw, el('span', { 'class': 'ms-switch__track', 'aria-hidden': 'true' })]);
+        var menuBtn = button([icon('ellipsis')], 'ms-icon-btn ms-menu-btn', function (e) {
             e.preventDefault();
             e.stopPropagation();
             openMenu(menuBtn);
@@ -323,11 +323,11 @@
             n.addEventListener('click', function (e) { e.stopPropagation(); });
         });
 
-        var head = el('summary', { 'class': 'us-card__head' }, [
-            el('span', { 'class': 'us-card__icon' }, [icon(def.icon)]),
-            el('span', { 'class': 'us-card__title' }, [
+        var head = el('summary', { 'class': 'ms-card__head' }, [
+            el('span', { 'class': 'ms-card__icon' }, [icon(def.icon)]),
+            el('span', { 'class': 'ms-card__title' }, [
                 el('strong', { text: def.label || schema.type }),
-                el('span', { 'class': 'us-muted us-card__sub', text: summaryLine() })
+                el('span', { 'class': 'ms-muted ms-card__sub', text: summaryLine() })
             ]),
             pill,
             swWrap,
@@ -335,20 +335,20 @@
         ]);
 
         // Body: tabs
-        var notice = el('div', { 'class': 'us-callout', hidden: true });
-        var fieldsPanel = el('div', { 'class': 'us-panel' }, [notice, renderFields(def.fields, schema.data || {}, fields, '')]);
+        var notice = el('div', { 'class': 'ms-callout', hidden: true });
+        var fieldsPanel = el('div', { 'class': 'ms-panel' }, [notice, renderFields(def.fields, schema.data || {}, fields, '')]);
         if (!isGlobal && siteWide.some(function (s) { return s.type === schema.type && s.enabled; })) {
-            fieldsPanel.insertBefore(el('p', { 'class': 'us-hint' }, [icon('info-outline'), fmt(t.replacesSiteWide, def.label || schema.type)]), notice);
+            fieldsPanel.insertBefore(el('p', { 'class': 'ms-hint' }, [icon('info-outline'), fmt(t.replacesSiteWide, def.label || schema.type)]), notice);
         }
         var rules = renderRules(schema.conditions || {});
-        var previewPanel = el('div', { 'class': 'us-panel us-preview' });
+        var previewPanel = el('div', { 'class': 'ms-panel ms-preview' });
 
         var tabs = [[t.tabFields, fieldsPanel], [t.tabRules, rules.panel], [t.tabPreview, previewPanel]];
-        var tabBar = el('div', { 'class': 'us-tabs', role: 'tablist' });
-        var panels = el('div', { 'class': 'us-panels' });
+        var tabBar = el('div', { 'class': 'ms-tabs', role: 'tablist' });
+        var panels = el('div', { 'class': 'ms-panels' });
         tabs.forEach(function (pair, i) {
-            var id = 'us-' + schema.id + '-tab' + i;
-            var tab = button(pair[0], 'us-tab', function () { selectTab(i); }, { role: 'tab', id: id, 'aria-selected': i === 0 ? 'true' : 'false' });
+            var id = 'ms-' + schema.id + '-tab' + i;
+            var tab = button(pair[0], 'ms-tab', function () { selectTab(i); }, { role: 'tab', id: id, 'aria-selected': i === 0 ? 'true' : 'false' });
             pair[1].setAttribute('role', 'tabpanel');
             pair[1].setAttribute('aria-labelledby', id);
             pair[1].hidden = i !== 0;
@@ -356,7 +356,7 @@
             panels.appendChild(pair[1]);
         });
         function selectTab(i) {
-            tabBar.querySelectorAll('.us-tab').forEach(function (tab, j) {
+            tabBar.querySelectorAll('.ms-tab').forEach(function (tab, j) {
                 tab.setAttribute('aria-selected', j === i ? 'true' : 'false');
                 tabs[j][1].hidden = j !== i;
             });
@@ -366,8 +366,8 @@
         }
 
         var saveBtn = button(t.save, 'button button-primary', save, { disabled: true });
-        var foot = el('div', { 'class': 'us-card__foot' }, [el('span', { 'class': 'us-muted us-card__id', text: schema.id }), saveBtn]);
-        c.append(head, el('div', { 'class': 'us-card__body' }, [tabBar, panels, foot]));
+        var foot = el('div', { 'class': 'ms-card__foot' }, [el('span', { 'class': 'ms-muted ms-card__id', text: schema.id }), saveBtn]);
+        c.append(head, el('div', { 'class': 'ms-card__body' }, [tabBar, panels, foot]));
 
         setStatus(status);
 
@@ -416,7 +416,7 @@
             saveBtn.disabled = !on;
             c.classList.toggle('is-dirty', on);
             if (on) {
-                pill.className = 'us-pill is-unsaved';
+                pill.className = 'ms-pill is-unsaved';
                 pill.textContent = t.unsaved;
             }
         }
@@ -424,27 +424,27 @@
         function setStatus(st) {
             c.status = st || { valid: true, errors: [] };
             var state = !schema.enabled ? 'off' : (c.status.valid ? 'ok' : 'warn');
-            pill.className = 'us-pill is-' + state;
+            pill.className = 'ms-pill is-' + state;
             pill.textContent = state === 'off' ? t.disabled : (state === 'ok' ? t.valid : t.needsAttention);
             c.setAttribute('data-state', state);
             showErrors(c.status.valid ? [] : c.status.errors, true);
         }
 
         function showErrors(errors, soft) {
-            c.querySelectorAll('.us-invalid').forEach(function (n) { n.classList.remove('us-invalid'); });
-            c.querySelectorAll('.us-field__error').forEach(function (n) { n.textContent = ''; });
+            c.querySelectorAll('.ms-invalid').forEach(function (n) { n.classList.remove('ms-invalid'); });
+            c.querySelectorAll('.ms-field__error').forEach(function (n) { n.textContent = ''; });
             var unmatched = [];
             (errors || []).forEach(function (e) {
                 var f = fields[e.field];
                 if (f) {
-                    f.input.classList.add('us-invalid');
+                    f.input.classList.add('ms-invalid');
                     f.error.textContent = humanError(e, f.def);
                 } else {
                     unmatched.push(humanError(e));
                 }
             });
             notice.hidden = !errors || !errors.length;
-            notice.className = 'us-callout ' + (soft ? 'is-warn' : 'is-error');
+            notice.className = 'ms-callout ' + (soft ? 'is-warn' : 'is-error');
             notice.textContent = '';
             if (errors && errors.length) {
                 notice.append(icon('warning'), el('span', { text: fmt(soft ? t.missingSummary : t.fixSummary, errors.length) + (unmatched.length ? ' ' + unmatched.join(' ') : '') }));
@@ -459,7 +459,7 @@
                 .then(function (res) {
                     schema.data = res.schema.data;
                     schema.conditions = res.schema.conditions;
-                    head.querySelector('.us-card__sub').textContent = summaryLine();
+                    head.querySelector('.ms-card__sub').textContent = summaryLine();
                     setDirty(false);
                     setStatus(res.status);
                     toast(res.status && !res.status.valid ? t.savedIncomplete : t.saved, res.status && !res.status.valid ? 'warn' : 'success');
@@ -482,7 +482,7 @@
 
         function loadPreview() {
             previewPanel.textContent = '';
-            previewPanel.appendChild(el('p', { 'class': 'us-muted', text: t.loading }));
+            previewPanel.appendChild(el('p', { 'class': 'ms-muted', text: t.loading }));
             var body = { type: schema.type, data: collect().data };
             if (!isGlobal) {
                 body.post_id = cfg.postId;
@@ -499,7 +499,7 @@
                 return;
             }
             anchor.setAttribute('aria-expanded', 'true');
-            var del = button([icon('trash'), t['delete']], 'us-menu__item is-danger', function () {
+            var del = button([icon('trash'), t['delete']], 'ms-menu__item is-danger', function () {
                 if (!del.classList.contains('is-confirm')) {
                     del.classList.add('is-confirm');
                     del.lastChild.textContent = t.confirmDelete;
@@ -515,12 +515,12 @@
                     })
                     .catch(function (err) { toast(err.message, 'error'); });
             }, { role: 'menuitem' });
-            var menu = el('div', { 'class': 'us-menu', role: 'menu' }, [
-                button([icon('admin-page'), t.duplicate], 'us-menu__item', function () {
+            var menu = el('div', { 'class': 'ms-menu', role: 'menu' }, [
+                button([icon('admin-page'), t.duplicate], 'ms-menu__item', function () {
                     closeMenus();
                     addSchema(schema.type, { data: collect().data, conditions: collect().conditions, enabled: schema.enabled });
                 }, { role: 'menuitem' }),
-                button([icon('editor-code'), t.copyJson], 'us-menu__item', function () {
+                button([icon('editor-code'), t.copyJson], 'ms-menu__item', function () {
                     closeMenus();
                     var body = { type: schema.type, data: collect().data };
                     if (!isGlobal) {
@@ -557,7 +557,7 @@
     // ---- Fields --------------------------------------------------------------
 
     function renderFields(defs, data, registry, prefix) {
-        var grid = el('div', { 'class': 'us-fields' });
+        var grid = el('div', { 'class': 'ms-fields' });
         Object.keys(defs).forEach(function (key) {
             var def = defs[key];
             var path = prefix + key;
@@ -565,13 +565,13 @@
                 grid.appendChild(renderRepeater(def, data[key], registry, path));
                 return;
             }
-            var id = 'us-f-' + Math.random().toString(36).slice(2, 9);
+            var id = 'ms-f-' + Math.random().toString(36).slice(2, 9);
             var input = buildInput(def, id, data[key]);
-            var error = el('span', { 'class': 'us-field__error', role: 'alert' });
-            var counter = def.maxLength ? el('span', { 'class': 'us-counter' }) : null;
+            var error = el('span', { 'class': 'ms-field__error', role: 'alert' });
+            var counter = def.maxLength ? el('span', { 'class': 'ms-counter' }) : null;
             registry[path] = { input: input, error: error, def: def };
 
-            var control = el('div', { 'class': 'us-control' }, [input]);
+            var control = el('div', { 'class': 'ms-control' }, [input]);
             if (['string', 'url', 'date', 'text', 'number', 'integer', 'duration'].indexOf(def.type || 'string') !== -1) {
                 control.appendChild(tokenButton(input));
             }
@@ -585,16 +585,16 @@
                 update();
             }
             var wide = def.type === 'text' || def.type === 'array';
-            grid.appendChild(el('div', { 'class': 'us-field' + (wide ? ' is-wide' : '') }, [
-                el('div', { 'class': 'us-field__top' }, [
-                    el('label', { 'for': id, 'class': 'us-field__label' }, [
+            grid.appendChild(el('div', { 'class': 'ms-field' + (wide ? ' is-wide' : '') }, [
+                el('div', { 'class': 'ms-field__top' }, [
+                    el('label', { 'for': id, 'class': 'ms-field__label' }, [
                         def.label || key,
-                        def.required ? el('span', { 'class': 'us-req', 'aria-hidden': 'true', text: ' *' }) : null
+                        def.required ? el('span', { 'class': 'ms-req', 'aria-hidden': 'true', text: ' *' }) : null
                     ]),
                     counter
                 ]),
                 control,
-                def.description ? el('span', { 'class': 'us-field__desc', text: def.description }) : null,
+                def.description ? el('span', { 'class': 'ms-field__desc', text: def.description }) : null,
                 error
             ]));
         });
@@ -602,27 +602,27 @@
     }
 
     function renderRepeater(def, items, registry, path) {
-        var wrap = el('div', { 'class': 'us-field is-wide us-repeater' });
-        var rows = el('ol', { 'class': 'us-repeater__rows' });
-        var error = el('span', { 'class': 'us-field__error', role: 'alert' });
+        var wrap = el('div', { 'class': 'ms-field is-wide ms-repeater' });
+        var rows = el('ol', { 'class': 'ms-repeater__rows' });
+        var error = el('span', { 'class': 'ms-field__error', role: 'alert' });
         registry[path] = { input: wrap, error: error, def: def, repeater: rows };
         var itemLabel = def.itemLabel || t.item;
 
         function addRow(data) {
             var rowRegistry = {};
-            var li = el('li', { 'class': 'us-row' });
+            var li = el('li', { 'class': 'ms-row' });
             li.registry = rowRegistry;
-            var num = el('span', { 'class': 'us-row__num' });
-            var tools = el('div', { 'class': 'us-row__tools' }, [
-                button([icon('arrow-up-alt2')], 'us-icon-btn', function () { move(li, -1); }, { 'aria-label': t.moveUp }),
-                button([icon('arrow-down-alt2')], 'us-icon-btn', function () { move(li, 1); }, { 'aria-label': t.moveDown }),
-                button([icon('no-alt')], 'us-icon-btn is-danger', function () {
+            var num = el('span', { 'class': 'ms-row__num' });
+            var tools = el('div', { 'class': 'ms-row__tools' }, [
+                button([icon('arrow-up-alt2')], 'ms-icon-btn', function () { move(li, -1); }, { 'aria-label': t.moveUp }),
+                button([icon('arrow-down-alt2')], 'ms-icon-btn', function () { move(li, 1); }, { 'aria-label': t.moveDown }),
+                button([icon('no-alt')], 'ms-icon-btn is-danger', function () {
                     li.remove();
                     renumber();
                     wrap.dispatchEvent(new Event('input', { bubbles: true }));
                 }, { 'aria-label': t.remove })
             ]);
-            li.append(el('div', { 'class': 'us-row__head' }, [num, tools]), renderFields(def.itemFields || {}, data || {}, rowRegistry, ''));
+            li.append(el('div', { 'class': 'ms-row__head' }, [num, tools]), renderFields(def.itemFields || {}, data || {}, rowRegistry, ''));
             rows.appendChild(li);
             renumber();
             return li;
@@ -637,7 +637,7 @@
         }
         function renumber() {
             Array.prototype.forEach.call(rows.children, function (li, i) {
-                li.querySelector('.us-row__num').textContent = itemLabel + ' ' + (i + 1);
+                li.querySelector('.ms-row__num').textContent = itemLabel + ' ' + (i + 1);
                 Object.keys(li.registry).forEach(function (k) {
                     registry[path + '.' + i + '.' + k] = li.registry[k];
                 });
@@ -646,9 +646,9 @@
 
         (Array.isArray(items) && items.length ? items : [{}]).forEach(addRow);
         wrap.append(
-            el('div', { 'class': 'us-field__top' }, [el('span', { 'class': 'us-field__label' }, [def.label, def.required ? el('span', { 'class': 'us-req', text: ' *' }) : null])]),
+            el('div', { 'class': 'ms-field__top' }, [el('span', { 'class': 'ms-field__label' }, [def.label, def.required ? el('span', { 'class': 'ms-req', text: ' *' }) : null])]),
             rows,
-            button([icon('plus-alt2'), fmt(t.addItem, itemLabel.toLowerCase())], 'button us-repeater__add', function () {
+            button([icon('plus-alt2'), fmt(t.addItem, itemLabel.toLowerCase())], 'button ms-repeater__add', function () {
                 var li = addRow({});
                 li.querySelector('input, textarea').focus();
                 wrap.dispatchEvent(new Event('input', { bubbles: true }));
@@ -732,7 +732,7 @@
     }
 
     function tokenButton(input) {
-        var b = button('{ }', 'us-token-btn', function (e) {
+        var b = button('{ }', 'ms-token-btn', function (e) {
             e.preventDefault();
             var open = b.getAttribute('aria-expanded') === 'true';
             closeMenus();
@@ -740,9 +740,9 @@
                 return;
             }
             b.setAttribute('aria-expanded', 'true');
-            var menu = el('div', { 'class': 'us-tokens', role: 'menu' }, [el('span', { 'class': 'us-tokens__title', text: t.insertToken })]);
+            var menu = el('div', { 'class': 'ms-tokens', role: 'menu' }, [el('span', { 'class': 'ms-tokens__title', text: t.insertToken })]);
             Object.keys(cfg.tokens).forEach(function (name) {
-                menu.appendChild(button([el('span', { text: cfg.tokens[name] }), el('code', { text: '{{' + name + '}}' })], 'us-menu__item', function () {
+                menu.appendChild(button([el('span', { text: cfg.tokens[name] }), el('code', { text: '{{' + name + '}}' })], 'ms-menu__item', function () {
                     insertAtCursor(input, '{{' + name + '}}');
                     closeMenus();
                 }, { role: 'menuitem' }));
@@ -765,13 +765,13 @@
     // ---- Display rules ---------------------------------------------------------
 
     function renderRules(cond) {
-        var panel = el('div', { 'class': 'us-panel' }, [el('p', { 'class': 'us-muted', text: isGlobal ? t.rulesIntroGlobal : t.rulesIntro })]);
+        var panel = el('div', { 'class': 'ms-panel' }, [el('p', { 'class': 'ms-muted', text: isGlobal ? t.rulesIntroGlobal : t.rulesIntro })]);
         var groups = {};
         function chips(key, label, options) {
-            var box = el('fieldset', { 'class': 'us-chips' }, [el('legend', { text: label })]);
+            var box = el('fieldset', { 'class': 'ms-chips' }, [el('legend', { text: label })]);
             var selected = cond[key] || [];
             Object.keys(options).forEach(function (value) {
-                box.appendChild(el('label', { 'class': 'us-chip-toggle' }, [
+                box.appendChild(el('label', { 'class': 'ms-chip-toggle' }, [
                     el('input', { type: 'checkbox', value: value, checked: selected.indexOf(value) !== -1 }),
                     el('span', { text: options[value] })
                 ]));
@@ -786,9 +786,9 @@
             groups[key] = function () {
                 return input.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
             };
-            panel.appendChild(el('label', { 'class': 'us-field' }, [
-                el('span', { 'class': 'us-field__label', text: label }), input,
-                el('span', { 'class': 'us-field__desc', text: help })
+            panel.appendChild(el('label', { 'class': 'ms-field' }, [
+                el('span', { 'class': 'ms-field__label', text: label }), input,
+                el('span', { 'class': 'ms-field__desc', text: help })
             ]));
         }
         if (isGlobal) {
@@ -815,12 +815,12 @@
     function renderPreview(panel, res, fields) {
         panel.textContent = '';
         var json = JSON.stringify(res.json_ld, null, 2);
-        var status = el('div', { 'class': 'us-callout ' + (res.valid ? 'is-ok' : 'is-warn') }, [
+        var status = el('div', { 'class': 'ms-callout ' + (res.valid ? 'is-ok' : 'is-warn') }, [
             icon(res.valid ? 'yes-alt' : 'warning'),
             el('span', { text: res.valid ? t.previewValid : fmt(t.previewInvalid, res.errors.length) })
         ]);
         if (!res.valid) {
-            var ul = el('ul', { 'class': 'us-errlist' });
+            var ul = el('ul', { 'class': 'ms-errlist' });
             res.errors.forEach(function (e) {
                 var f = fields[e.field];
                 var prefix = f && f.def.label && !/^Required/.test(e.message) ? f.def.label + ': ' : '';
@@ -828,7 +828,7 @@
             });
             status.appendChild(ul);
         }
-        var actions = el('div', { 'class': 'us-preview__actions' }, [
+        var actions = el('div', { 'class': 'ms-preview__actions' }, [
             button([icon('admin-page'), t.copy], 'button', function () { copy(json); })
         ]);
         if (cfg.testUrl) {
@@ -839,8 +839,8 @@
                 rel: 'noopener noreferrer'
             }, [icon('external'), t.testGoogle]));
         }
-        panel.append(status, el('pre', { 'class': 'us-code', tabindex: '0' }, [highlight(json)]), actions,
-            el('p', { 'class': 'us-muted us-preview__note', text: isGlobal ? t.previewNoteGlobal : t.previewNote }));
+        panel.append(status, el('pre', { 'class': 'ms-code', tabindex: '0' }, [highlight(json)]), actions,
+            el('p', { 'class': 'ms-muted ms-preview__note', text: isGlobal ? t.previewNoteGlobal : t.previewNote }));
     }
 
     function highlight(json) {
@@ -850,7 +850,7 @@
         while ((m = re.exec(json))) {
             frag.appendChild(document.createTextNode(json.slice(last, m.index)));
             var cls = m[1] ? (m[2] ? 'k' : 's') : (m[3] ? 'b' : 'n');
-            frag.appendChild(el('span', { 'class': 'us-j' + cls, text: m[1] || m[0] }));
+            frag.appendChild(el('span', { 'class': 'ms-j' + cls, text: m[1] || m[0] }));
             if (m[2]) {
                 frag.appendChild(document.createTextNode(m[2]));
             }
@@ -870,7 +870,7 @@
     }
 
     function fallbackCopy(text, done) {
-        var a = el('textarea', { 'class': 'us-offscreen', readonly: true });
+        var a = el('textarea', { 'class': 'ms-offscreen', readonly: true });
         a.value = text;
         document.body.appendChild(a);
         a.select();

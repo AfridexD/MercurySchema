@@ -1,9 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use UnlimitedSchema\Core\Schema;
-use UnlimitedSchema\Core\SchemaType;
-use UnlimitedSchema\Core\Validator;
+use MercurySchema\Core\Schema;
+use MercurySchema\Core\SchemaType;
+use MercurySchema\Core\Validator;
 
 class ValidatorTest extends TestCase
 {

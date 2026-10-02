@@ -5,16 +5,16 @@
  * Pure PHP: the token values are supplied by the caller (see
  * Frontend\SchemaOutput::tokenValues), so this class needs no WordPress.
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Helpers;
+namespace MercurySchema\Helpers;
 
 class DataMapper
 {
     public const TOKEN_PATTERN = '/\{\{\s*([a-z0-9_]+)\s*\}\}/';
 
-    /** Built-in tokens; extend with the unlimited_schema_token_values filter. */
+    /** Built-in tokens; extend with the mercury_schema_token_values filter. */
     public const TOKENS = [
         'post_title',
         'post_excerpt',

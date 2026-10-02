@@ -1,18 +1,18 @@
 <?php
 /**
- * Reads and writes the single _unlimited_schema_data meta entry.
+ * Reads and writes the single _mercury_schema_data meta entry.
  *
  * Every schema for a post lives in one JSON document, so a post costs one
  * meta lookup (and WordPress primes post meta in a single query anyway).
  *
- * @package UnlimitedSchema
+ * @package MercurySchema
  */
 
-namespace UnlimitedSchema\Helpers;
+namespace MercurySchema\Helpers;
 
 class PostMetaStore
 {
-    public const META_KEY = '_unlimited_schema_data';
+    public const META_KEY = '_mercury_schema_data';
     public const DOC_VERSION = '1.0';
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
-use UnlimitedSchema\Helpers\PostMetaStore;
+use MercurySchema\Helpers\PostMetaStore;
 
 class RESTTest extends WP_UnitTestCase
 {
-    private const NS = '/unlimited-schema/v1';
+    private const NS = '/mercury-schema/v1';
 
     private int $postId;
     private int $adminId;
@@ -149,14 +149,14 @@ class RESTTest extends WP_UnitTestCase
     public function testEditorsCannotReachSiteWideRoutesViaCaseVariants(): void
     {
         wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
-        foreach (['/unlimited-schema/v1/GLOBAL', '/unlimited-schema/v1/Global', '/UNLIMITED-SCHEMA/V1/global'] as $route) {
+        foreach (['/mercury-schema/v1/GLOBAL', '/mercury-schema/v1/Global', '/MERCURY-SCHEMA/V1/global'] as $route) {
             $this->assertSame(403, rest_do_request(new WP_REST_Request('GET', $route))->get_status(), "GET $route");
             $post = new WP_REST_Request('POST', $route);
             $post->set_param('type', 'Organization');
             $this->assertSame(403, rest_do_request($post)->get_status(), "POST $route");
             $this->assertSame(403, rest_do_request(new WP_REST_Request('DELETE', $route . '/organization-1'))->get_status(), "DELETE $route");
         }
-        $this->assertSame([], (new \UnlimitedSchema\Helpers\GlobalStore())->get()['schemas']);
+        $this->assertSame([], (new \MercurySchema\Helpers\GlobalStore())->get()['schemas']);
     }
 
     public function testSchemaCountAndSizeLimits(): void
@@ -168,7 +168,7 @@ class RESTTest extends WP_UnitTestCase
         (new PostMetaStore())->save($this->postId, $schemas);
         $res = $this->request('POST', '/schemas/' . $this->postId, ['type' => 'Person']);
         $this->assertSame(400, $res->get_status());
-        $this->assertSame('unlimited_schema_limit', $res->get_data()['code']);
+        $this->assertSame('mercury_schema_limit', $res->get_data()['code']);
     }
 
     public function testAuthorsAndContributorsCannotEditSchemas(): void
@@ -193,9 +193,9 @@ class RESTTest extends WP_UnitTestCase
         $own = self::factory()->post->create(['post_author' => $author]);
         $other = self::factory()->post->create(['post_author' => $this->adminId]);
 
-        add_filter('unlimited_schema_rest_capability', $cap = static fn() => 'edit_posts');
+        add_filter('mercury_schema_rest_capability', $cap = static fn() => 'edit_posts');
         $this->assertSame(200, $this->request('GET', '/schemas/' . $own)->get_status());
         $this->assertSame(403, $this->request('GET', '/schemas/' . $other)->get_status(), 'still needs edit_post on that post');
-        remove_filter('unlimited_schema_rest_capability', $cap);
+        remove_filter('mercury_schema_rest_capability', $cap);
     }
 }
