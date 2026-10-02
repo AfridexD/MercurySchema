@@ -30,7 +30,7 @@
 .us-head__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .us-head__text strong { font-size: 14px; }
 .us-app .button { display: inline-flex; align-items: center; gap: 6px; }
-.us-app .button .dashicons { margin: 0 -2px; }
+.us-app .button .dashicons { margin: 0 -2px; color: inherit; }
 
 /* Type picker */
 .us-picker { border: 1px solid var(--us-line); border-radius: var(--us-radius); background: var(--us-bg); padding: 12px; margin-bottom: 14px; animation: us-in .16s ease-out; }
@@ -108,11 +108,11 @@
 .us-menu__item.is-confirm { background: var(--us-err); color: #fff; }
 
 /* Tabs */
-.us-tabs { display: flex; gap: 2px; padding: 0 10px; border-bottom: 1px solid var(--us-line); overflow-x: auto; }
+.us-tabs { display: flex; gap: 2px; padding: 0 10px; border-bottom: 1px solid var(--us-line); overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
 .us-tab { position: relative; padding: 10px 12px; border: 0; background: none; font: inherit; font-weight: 500; color: var(--us-muted); cursor: pointer; white-space: nowrap; }
 .us-tab:hover { color: var(--us-text); }
 .us-tab[aria-selected="true"] { color: var(--us-accent); }
-.us-tab[aria-selected="true"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--us-accent); }
+.us-tab[aria-selected="true"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; border-radius: 2px; background: var(--us-accent); }
 .us-panel { padding: 14px; }
 .us-panel[hidden] { display: none; }
 .us-panel > p:first-child { margin-top: 0; }
@@ -142,6 +142,7 @@
 /* Repeater */
 .us-repeater__rows { display: flex; flex-direction: column; gap: 10px; margin: 2px 0 0; padding: 0; list-style: none; border-radius: var(--us-radius); }
 .us-row { padding: 10px 12px 12px; border: 1px solid var(--us-line); border-left: 3px solid var(--us-accent); border-radius: var(--us-radius); background: #fcfcfc; }
+.us-row .us-fields { grid-template-columns: 1fr; gap: 10px; }
 .us-row__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .us-row__num { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--us-muted); }
 .us-row__tools { display: flex; gap: 2px; }

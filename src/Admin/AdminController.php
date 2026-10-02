@@ -189,6 +189,16 @@ class AdminController
             'fixSummary'        => __('Couldn’t save: %s field(s) need fixing.', 'unlimited-schema'),
             /* translators: %s: field label */
             'required'          => __('%s is required.', 'unlimited-schema'),
+            /* translators: %s: field label */
+            'invalid'           => __('%s has an invalid value.', 'unlimited-schema'),
+            'invalid_url'       => __('Enter a full URL starting with https://', 'unlimited-schema'),
+            'invalid_date'      => __('Use a date like 2026-10-02 or 2026-10-02T18:30:00+00:00.', 'unlimited-schema'),
+            'invalid_duration'  => __('Use an ISO 8601 duration like PT30M (30 minutes) or PT1H15M.', 'unlimited-schema'),
+            'invalid_number'    => __('Enter a number, like 19.99.', 'unlimited-schema'),
+            'invalid_integer'   => __('Enter a whole number.', 'unlimited-schema'),
+            'invalid_enum'      => __('Choose one of the listed options.', 'unlimited-schema'),
+            /* translators: %s: field key */
+            'unknownField'      => __('“%s” is not a field of this schema type.', 'unlimited-schema'),
             /* translators: %s: number of questions */
             'nQuestions'        => __('%s question(s)', 'unlimited-schema'),
             'item'              => __('Item', 'unlimited-schema'),

@@ -87,10 +87,14 @@ class SchemaController
 
         $response = ['post_id' => $postId] + $doc + ['status' => (object) $status];
         if ($postId) {
-            $response['site_wide'] = array_map(
-                static fn($s) => ['id' => $s['id'] ?? '', 'type' => $s['type'], 'enabled' => (bool) ($s['enabled'] ?? true)],
-                $this->global->get()['schemas']
-            );
+            // Site-wide schemas whose display rules match this post.
+            $post = get_post($postId);
+            $response['site_wide'] = [];
+            foreach ($this->global->get()['schemas'] as $s) {
+                if ($this->output->appliesTo($s, $post)) {
+                    $response['site_wide'][] = ['id' => $s['id'] ?? '', 'type' => $s['type'], 'enabled' => true];
+                }
+            }
         }
         return new WP_REST_Response($response);
     }

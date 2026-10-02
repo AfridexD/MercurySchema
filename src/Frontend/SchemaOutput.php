@@ -96,6 +96,20 @@ class SchemaOutput
         return ['json_ld' => $type->toJsonLd($data)] + $result;
     }
 
+    /**
+     * Whether a site-wide schema's display rules match this post's page.
+     */
+    public function appliesTo(array $raw, \WP_Post $post): bool
+    {
+        $schema = Schema::fromArray($raw);
+        $locations = ['singular'];
+        if ((int) get_option('page_on_front') === (int) $post->ID) {
+            $locations[] = 'front_page';
+        }
+        $context = $this->conditionContext($post, $locations, $schema->getConditions(), []);
+        return $schema->isEnabled() && $this->evaluator->evaluate($schema->getConditions(), $context);
+    }
+
     private function markup(array $documents): string
     {
         $html = '';

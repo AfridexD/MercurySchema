@@ -133,7 +133,12 @@ class SiteWideTest extends WP_UnitTestCase
 
     public function testPostListingReportsSiteWideAndStatus(): void
     {
-        (new GlobalStore())->save([['id' => 'org', 'type' => 'Organization', 'enabled' => true, 'data' => [], 'conditions' => []]]);
+        (new GlobalStore())->save([
+            ['id' => 'org', 'type' => 'Organization', 'enabled' => true, 'data' => [], 'conditions' => []],
+            ['id' => 'home-only', 'type' => 'LocalBusiness', 'enabled' => true, 'data' => [], 'conditions' => ['locations' => ['front_page']]],
+            ['id' => 'pages-only', 'type' => 'Article', 'enabled' => true, 'data' => [], 'conditions' => ['post_types' => ['page']]],
+            ['id' => 'off', 'type' => 'Person', 'enabled' => false, 'data' => [], 'conditions' => []],
+        ]);
         (new PostMetaStore())->save($this->postId, [
             ['id' => 'ok', 'type' => 'Person', 'enabled' => true, 'data' => ['name' => '{{author_name}}'], 'conditions' => []],
             ['id' => 'bad', 'type' => 'Person', 'enabled' => true, 'data' => [], 'conditions' => []],

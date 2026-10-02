@@ -276,8 +276,13 @@
             body.conditions = copyFrom.conditions;
             body.enabled = copyFrom.enabled;
         } else if (isGlobal) {
-            // Sensible default: brand-level types on the front page, content types on posts.
-            body.conditions = { locations: ['Organization', 'LocalBusiness', 'Person'].indexOf(type) !== -1 ? ['front_page'] : ['singular'] };
+            // Sensible defaults: brand-level types on the front page, content types on matching posts.
+            if (['Organization', 'LocalBusiness', 'Person'].indexOf(type) !== -1) {
+                body.conditions = { locations: ['front_page'] };
+            } else {
+                var pt = { Article: 'post', Recipe: 'post', Review: 'post', Product: 'product' }[type];
+                body.conditions = { locations: ['singular'], post_types: pt && cfg.postTypes[pt] ? [pt] : [] };
+            }
         }
         togglePicker(false);
         return api(base, 'POST', body)
@@ -399,7 +404,7 @@
             if (Array.isArray(d.questions)) {
                 first = fmt(t.nQuestions, d.questions.length);
             }
-            return isToken(first) ? first.replace(/\{\{\s*|\s*\}\}/g, '').replace(/_/g, ' ') : first;
+            return isToken(first) ? first.replace(/\{\{\s*([a-z0-9_]+)\s*\}\}/g, function (m, name) { return cfg.tokens[name] || name; }) : first;
         }
 
         function setDirty(on) {
@@ -483,7 +488,7 @@
                 body.post_id = cfg.postId;
             }
             api('preview', 'POST', body)
-                .then(function (res) { renderPreview(previewPanel, res); })
+                .then(function (res) { renderPreview(previewPanel, res, fields); })
                 .catch(function (err) { previewPanel.textContent = err.message; });
         }
 
@@ -533,8 +538,15 @@
     }
 
     function humanError(e, def) {
+        var label = def && def.label ? def.label : e.field;
         if (/^Required field missing/.test(e.message)) {
-            return fmt(t.required, def ? def.label : e.field);
+            return fmt(t.required, label);
+        }
+        if (/^Invalid value/.test(e.message) && def) {
+            return t['invalid_' + def.type] || fmt(t.invalid, label);
+        }
+        if (/^Unknown field/.test(e.message)) {
+            return fmt(t.unknownField, e.field);
         }
         return e.message;
     }
@@ -797,7 +809,7 @@
 
     // ---- Preview -------------------------------------------------------------
 
-    function renderPreview(panel, res) {
+    function renderPreview(panel, res, fields) {
         panel.textContent = '';
         var json = JSON.stringify(res.json_ld, null, 2);
         var status = el('div', { 'class': 'us-callout ' + (res.valid ? 'is-ok' : 'is-warn') }, [
@@ -806,7 +818,11 @@
         ]);
         if (!res.valid) {
             var ul = el('ul', { 'class': 'us-errlist' });
-            res.errors.forEach(function (e) { ul.appendChild(el('li', { text: humanError(e) })); });
+            res.errors.forEach(function (e) {
+                var f = fields[e.field];
+                var prefix = f && f.def.label && !/^Required/.test(e.message) ? f.def.label + ': ' : '';
+                ul.appendChild(el('li', { text: prefix + humanError(e, f && f.def) }));
+            });
             status.appendChild(ul);
         }
         var actions = el('div', { 'class': 'us-preview__actions' }, [
