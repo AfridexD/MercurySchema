@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <!-- JSON braces -->
+  <path d="M92 52c-20 0-28 9-28 27v22c0 12-6 19-20 19v16c14 0 20 7 20 19v22c0 18 8 27 28 27"
+        fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M164 52c20 0 28 9 28 27v22c0 12 6 19 20 19v16c-14 0-20 7-20 19v22c0 18-8 27-28 27"
+        fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- linked-data graph -->
+  <path d="M128 98 L104 150 M128 98 L152 150 M104 150 L152 150" stroke="#67e8f9" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="128" cy="96" r="13" fill="#22d3ee"/>
+  <circle cx="104" cy="152" r="11" fill="#a5f3fc"/>
+  <circle cx="152" cy="152" r="11" fill="#a5f3fc"/>
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1544" height="500" viewBox="0 0 1544 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#ffffff" fill-opacity="0.07"/>
+    </pattern>
+  </defs>
+  <rect width="1544" height="500" fill="url(#bg)"/>
+  <rect width="1544" height="500" fill="url(#dots)"/>
+
+  <!-- Mark, scaled from the icon -->
+  <g transform="translate(120 100) scale(1.17)">
+    <path d="M92 52c-20 0-28 9-28 27v22c0 12-6 19-20 19v16c14 0 20 7 20 19v22c0 18 8 27 28 27"
+          fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M164 52c20 0 28 9 28 27v22c0 12 6 19 20 19v16c-14 0-20 7-20 19v22c0 18-8 27-28 27"
+          fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M128 98 L104 150 M128 98 L152 150 M104 150 L152 150" stroke="#67e8f9" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="128" cy="96" r="13" fill="#22d3ee"/>
+    <circle cx="104" cy="152" r="11" fill="#a5f3fc"/>
+    <circle cx="152" cy="152" r="11" fill="#a5f3fc"/>
+  </g>
+
+  <g font-family="Inter, 'DejaVu Sans', sans-serif">
+    <text x="470" y="230" fill="#ffffff" font-size="92" font-weight="700" letter-spacing="-2">UnlimitedSchema</text>
+    <text x="474" y="300" fill="#cbd5e1" font-size="38" font-weight="400">Lightweight JSON-LD schema markup for WordPress.</text>
+    <g font-size="26" font-weight="600" fill="#67e8f9">
+      <text x="474" y="372">33 KB</text>
+      <text x="572" y="372" fill="#64748b">·</text>
+      <text x="598" y="372">1 meta row per post</text>
+      <text x="866" y="372" fill="#64748b">·</text>
+      <text x="892" y="372">Zero front-end JS</text>
+    </g>
+  </g>
+</svg>
