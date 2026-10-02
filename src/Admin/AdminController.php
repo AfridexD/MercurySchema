@@ -13,6 +13,7 @@ namespace UnlimitedSchema\Admin;
 
 use UnlimitedSchema\API\Hooks;
 use UnlimitedSchema\API\REST;
+use UnlimitedSchema\API\SchemaController;
 
 class AdminController
 {
@@ -39,7 +40,12 @@ class AdminController
 
     public static function canManage(): bool
     {
-        return current_user_can((string) apply_filters(Hooks::REST_CAPABILITY, 'manage_options'));
+        return current_user_can(SchemaController::postCapability());
+    }
+
+    public static function canManageGlobal(): bool
+    {
+        return current_user_can(SchemaController::globalCapability());
     }
 
     public function addMetaBox(): void
@@ -66,11 +72,10 @@ class AdminController
 
     public function enqueueAssets(string $hook): void
     {
-        if (!self::canManage()) {
-            return;
-        }
-
         if ($hook === 'settings_page_' . Settings::PAGE) {
+            if (!self::canManageGlobal()) {
+                return;
+            }
             wp_enqueue_style('unlimited-schema-admin', UNLIMITED_SCHEMA_URL . 'admin/css/editor-ui.css', ['dashicons'], UNLIMITED_SCHEMA_VERSION);
             if (Settings::currentTab() === 'schemas') {
                 $this->enqueueEditor(['scope' => 'global', 'postId' => 0, 'testUrl' => home_url('/')]);
@@ -78,7 +83,7 @@ class AdminController
             return;
         }
 
-        if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
+        if (!in_array($hook, ['post.php', 'post-new.php'], true) || !self::canManage()) {
             return;
         }
         $post = get_post();
@@ -91,7 +96,7 @@ class AdminController
             'scope'       => 'post',
             'postId'      => (int) $post->ID,
             'testUrl'     => $post->post_status === 'publish' ? get_permalink($post) : '',
-            'settingsUrl' => Settings::url(),
+            'settingsUrl' => self::canManageGlobal() ? Settings::url() : '',
         ]);
     }
 

@@ -34,14 +34,14 @@ Competitor query counts were not measured here. To compare fairly, install each 
 | Page builders | No builder modules. Output is in the page head, independent of how content is built. |
 | WooCommerce | Product price, currency, stock, SKU and rating read from the product through the plugin's own token filter. No WooCommerce module is loaded when WooCommerce is absent. |
 | Invalid schema | Never printed. The editor shows exactly why ("Incomplete: Thumbnail URL is required"). |
-| Extensibility | 13 documented filters and actions; a public REST API. |
-| Tests | 59 unit tests (no WordPress needed) + 29 integration tests, run on WordPress 6.0–7.1 and PHP 8.0–8.4. |
+| Extensibility | 14 documented filters and actions; a public REST API. |
+| Tests | 59 unit tests (no WordPress needed) + 32 integration tests, run on WordPress 6.0–7.1 and PHP 8.0–8.4. |
 
 ## Honest trade-offs
 
 - **Fewer types out of the box.** Eleven types against dozens in the larger plugins. More can be added with a filter, but not through the UI yet.
 - **No breadcrumbs or automatic site graph.** SEO suites generate BreadcrumbList and a linked `@graph` automatically; UnlimitedSchema prints only the schemas you add.
-- **Admin-only editing by default.** Editors and authors can't edit schema unless the capability filter is changed.
+- **Authors can't edit schema by default.** Editors and administrators can; site-wide schemas are administrator-only. Both are filterable.
 
 ## How to reproduce
 

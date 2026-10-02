@@ -122,12 +122,51 @@ class RESTTest extends WP_UnitTestCase
         $this->assertSame('author', $response->get_data()['errors'][0]['field']);
     }
 
-    public function testRequiresManageOptions(): void
+    public function testEditorsCanEditPostSchemas(): void
     {
         wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
-        $this->assertSame(403, $this->request('GET', '/schemas/' . $this->postId)->get_status());
+        $this->assertSame(200, $this->request('GET', '/schemas/' . $this->postId)->get_status());
+        $this->assertSame(200, $this->request('GET', '/schema-types')->get_status());
+        $created = $this->request('POST', '/schemas/' . $this->postId, ['type' => 'Person', 'data' => ['name' => 'Jo']]);
+        $this->assertSame(201, $created->get_status());
+        $route = '/schemas/' . $this->postId . '/' . $created->get_data()['schema']['id'];
+        $this->assertSame(200, $this->request('PUT', $route, ['enabled' => false])->get_status());
+        $this->assertSame(200, $this->request('POST', '/preview', ['type' => 'Person', 'post_id' => $this->postId, 'data' => []])->get_status());
+        $this->assertSame(200, $this->request('DELETE', $route)->get_status());
+    }
+
+    public function testEditorsCannotEditSiteWideSchemas(): void
+    {
+        wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
+        $this->assertSame(403, $this->request('GET', '/global')->get_status());
+        $this->assertSame(403, $this->request('POST', '/global', ['type' => 'Organization'])->get_status());
+    }
+
+    public function testAuthorsAndContributorsCannotEditSchemas(): void
+    {
+        $author = self::factory()->user->create(['role' => 'author']);
+        $own = self::factory()->post->create(['post_author' => $author]);
+        foreach (['author' => $author, 'contributor' => self::factory()->user->create(['role' => 'contributor'])] as $role => $user) {
+            wp_set_current_user($user);
+            $this->assertSame(403, $this->request('GET', '/schemas/' . $own)->get_status(), "$role GET own post");
+            $this->assertSame(403, $this->request('POST', '/schemas/' . $own, ['type' => 'Person'])->get_status(), "$role POST");
+            $this->assertSame(403, $this->request('GET', '/schema-types')->get_status(), "$role types");
+        }
 
         wp_set_current_user(0);
         $this->assertSame(401, $this->request('GET', '/schemas')->get_status());
+    }
+
+    public function testCapabilityFiltersStillWork(): void
+    {
+        $author = self::factory()->user->create(['role' => 'author']);
+        wp_set_current_user($author);
+        $own = self::factory()->post->create(['post_author' => $author]);
+        $other = self::factory()->post->create(['post_author' => $this->adminId]);
+
+        add_filter('unlimited_schema_rest_capability', $cap = static fn() => 'edit_posts');
+        $this->assertSame(200, $this->request('GET', '/schemas/' . $own)->get_status());
+        $this->assertSame(403, $this->request('GET', '/schemas/' . $other)->get_status(), 'still needs edit_post on that post');
+        remove_filter('unlimited_schema_rest_capability', $cap);
     }
 }

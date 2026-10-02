@@ -50,11 +50,12 @@ Yes. Schema is printed in the page head, independent of how the content was buil
 
 = Who can edit schema? =
 
-Users with the manage_options capability (administrators). Developers can change this with the unlimited_schema_rest_capability filter.
+Editors and administrators can edit schema on posts they're allowed to edit. Authors and contributors can't. Site-wide schemas are for administrators only. Developers can change this with the unlimited_schema_rest_capability and unlimited_schema_global_capability filters.
 
 == Changelog ==
 
 = 1.1.0 =
+* New: editors can edit post schemas (previously administrators only). Site-wide schemas stay administrator-only.
 * New: site-wide schemas with display rules (front page, singular, archives, post types, categories, author roles).
 * New: FAQ, Recipe, Video and Software App types; Product gains aggregate rating.
 * New: repeatable fields for FAQ questions and recipe steps.

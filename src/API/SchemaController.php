@@ -36,9 +36,22 @@ class SchemaController
         $this->output = $output;
     }
 
+    /** Capability to edit post schemas: editors and admins by default, not authors. */
+    public static function postCapability(): string
+    {
+        return (string) apply_filters(Hooks::REST_CAPABILITY, 'edit_others_posts');
+    }
+
+    /** Capability to edit site-wide schemas: admins by default. */
+    public static function globalCapability(): string
+    {
+        return (string) apply_filters(Hooks::GLOBAL_CAPABILITY, 'manage_options');
+    }
+
     public function checkPermission(WP_REST_Request $request)
     {
-        $capability = (string) apply_filters(Hooks::REST_CAPABILITY, 'manage_options');
+        $isGlobal = strpos($request->get_route(), '/' . REST::NAMESPACE . '/global') === 0;
+        $capability = $isGlobal ? self::globalCapability() : self::postCapability();
         if (!current_user_can($capability)) {
             return new WP_Error('rest_forbidden', __('You are not allowed to manage schema markup.', 'unlimited-schema'), ['status' => rest_authorization_required_code()]);
         }

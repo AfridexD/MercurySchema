@@ -33,8 +33,11 @@ class Hooks
     /** filter( array $context, WP_Post $post ) — data handed to ConditionEvaluator. */
     public const CONDITION_CONTEXT = 'unlimited_schema_condition_context';
 
-    /** filter( string $capability ) — capability required for the REST API. */
+    /** filter( string $capability ) — capability to edit post schemas. Default edit_others_posts (editors and admins). */
     public const REST_CAPABILITY = 'unlimited_schema_rest_capability';
+
+    /** filter( string $capability ) — capability to edit site-wide schemas. Default manage_options (admins). */
+    public const GLOBAL_CAPABILITY = 'unlimited_schema_global_capability';
 
     /** filter( string[] $post_types ) — post types that get the metabox. */
     public const POST_TYPES = 'unlimited_schema_post_types';

@@ -59,7 +59,7 @@ On each page, site-wide schemas are merged with the current post's own schemas; 
 
 ## REST API
 
-Namespace `unlimited-schema/v1`. Every endpoint requires the `manage_options` capability (filterable), and per-post endpoints also require `edit_post` on that post. Use cookie auth with an `X-WP-Nonce: wp_rest` nonce, or Application Passwords.
+Namespace `unlimited-schema/v1`. Post endpoints require `edit_others_posts` (editors and administrators, not authors) plus `edit_post` on that post; filter with `unlimited_schema_rest_capability`. The `/global` endpoints require `manage_options` (administrators); filter with `unlimited_schema_global_capability`. Use cookie auth with an `X-WP-Nonce: wp_rest` nonce, or Application Passwords.
 
 | Method | Route | Purpose |
 | --- | --- | --- |
@@ -139,7 +139,8 @@ An `objects` field is a repeatable group. Its value is a list of items; each ite
 | `unlimited_schema_token_values` | filter | `array $values, WP_Post\|null $post` |
 | `unlimited_schema_tokens` | filter | `array $tokens` (name => label, for the editor's picker) |
 | `unlimited_schema_condition_context` | filter | `array $context, WP_Post\|null $post` |
-| `unlimited_schema_rest_capability` | filter | `string $capability` |
+| `unlimited_schema_rest_capability` | filter | `string $capability` (post schemas; default `edit_others_posts`) |
+| `unlimited_schema_global_capability` | filter | `string $capability` (site-wide schemas; default `manage_options`) |
 | `unlimited_schema_post_types` | filter | `string[] $post_types` |
 | `unlimited_schema_logging_enabled` | filter | `bool $enabled` |
 | `unlimited_schema_schema_saved` | action | `array $schema, int $post_id` |

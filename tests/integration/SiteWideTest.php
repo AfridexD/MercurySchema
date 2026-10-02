@@ -210,10 +210,13 @@ class SiteWideTest extends WP_UnitTestCase
         $this->assertSame('questions.0.extra', $res->get_data()['data']['errors'][0]['field']);
     }
 
-    public function testGlobalRoutesRequireManageOptions(): void
+    public function testGlobalCapabilityFilter(): void
     {
         wp_set_current_user(self::factory()->user->create(['role' => 'editor']));
         $this->assertSame(403, $this->request('GET', '/global')->get_status());
-        $this->assertSame(403, $this->request('POST', '/global', ['type' => 'Organization'])->get_status());
+
+        add_filter('unlimited_schema_global_capability', $cap = static fn() => 'edit_others_posts');
+        $this->assertSame(200, $this->request('GET', '/global')->get_status());
+        remove_filter('unlimited_schema_global_capability', $cap);
     }
 }
