@@ -1,5 +1,11 @@
 # Mercury Schema
 
+<p>
+  <a href="https://github.com/AfridexD/UnlimitedSchema/releases/latest/download/mercury-schema.zip"><img src=".github/download-button.svg" alt="Download Mercury Schema (latest version)" width="372" height="64"></a>
+</p>
+
+[All releases and changelogs](https://github.com/AfridexD/UnlimitedSchema/releases). Install: *Plugins → Add New → Upload Plugin* in WordPress.
+
 Lightweight, conflict-free JSON-LD schema markup for WordPress, with a one-minute setup wizard. Formerly **UnlimitedSchema** (data migrates automatically on activation).
 
 - **Small.** About 30 PHP files, no runtime dependencies, no build step. The release zip is about 75 KB.
@@ -210,6 +216,16 @@ add_filter('woocommerce_structured_data_product', '__return_empty_array'); // Wo
 ```
 
 To turn off all of ours on a page, return `false` from `mercury_schema_output_enabled`.
+
+## Releasing
+
+Releases are automatic. To ship a new version:
+
+1. Bump the version in `mercury-schema.php` (both the `Version:` header and `MERCURY_SCHEMA_VERSION`) and the `Stable tag:` in `readme.txt`.
+2. Add a `= X.Y.Z =` section to the changelog in `readme.txt`.
+3. Push to `main`.
+
+`.github/workflows/release.yml` then checks that the three version numbers match, runs the unit tests, builds the zip with `bin/build.php`, and publishes GitHub Release `vX.Y.Z` with the changelog as notes. Pushes that don't change the version publish nothing. The download button links to `releases/latest/download/mercury-schema.zip`, which GitHub always resolves to the newest release.
 
 ## Development
 

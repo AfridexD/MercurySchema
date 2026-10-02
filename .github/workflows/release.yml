@@ -1,0 +1,96 @@
+# Publishes a GitHub Release whenever the plugin version changes on main.
+#
+# Bump "Version:" / MERCURY_SCHEMA_VERSION in mercury-schema.php (and the
+# changelog in readme.txt), push, and this workflow:
+#   1. runs the unit tests,
+#   2. builds the plugin zip with bin/build.php,
+#   3. creates release vX.Y.Z with two assets:
+#        mercury-schema.zip         (stable name, used by the download button)
+#        mercury-schema-X.Y.Z.zip   (versioned copy)
+#
+# Latest download, always:
+#   https://github.com/AfridexD/UnlimitedSchema/releases/latest/download/mercury-schema.zip
+
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read plugin version
+        id: version
+        run: |
+          version=$(sed -n "s/.*define('MERCURY_SCHEMA_VERSION', '\([^']*\)').*/\1/p" mercury-schema.php)
+          header=$(sed -n 's/^ \* Version: *\(.*\)$/\1/p' mercury-schema.php | tr -d '[:space:]')
+          stable=$(sed -n 's/^Stable tag: *\(.*\)$/\1/p' readme.txt | tr -d '[:space:]')
+          if [ -z "$version" ] || [ "$version" != "$header" ] || [ "$version" != "$stable" ]; then
+            echo "::error::Version mismatch: constant '$version', header '$header', readme Stable tag '$stable'"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v$version already exists; nothing to publish."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up PHP
+        if: steps.version.outputs.exists == 'false'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip, mbstring
+          tools: composer
+
+      - name: Unit tests
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          composer install --no-interaction --no-progress
+          vendor/bin/phpunit
+
+      - name: Build zip
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          php bin/build.php
+          cp "build/mercury-schema-${{ steps.version.outputs.version }}.zip" build/mercury-schema.zip
+
+      - name: Release notes from readme.txt
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          # The changelog block for this version: from "= X.Y.Z =" to the next "= ... =".
+          awk -v v="= ${{ steps.version.outputs.version }} =" '
+            $0 == v { on = 1; next }
+            on && /^= .* =$/ { exit }
+            on { print }
+          ' readme.txt > notes.md
+          printf '\n**Download:** `mercury-schema.zip` below, then in WordPress go to Plugins → Add New → Upload Plugin.\n' >> notes.md
+          cat notes.md
+
+      - name: Publish release
+        if: steps.version.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          gh release create "v$v" \
+            "build/mercury-schema.zip" \
+            "build/mercury-schema-$v.zip" \
+            --title "Mercury Schema $v" \
+            --notes-file notes.md \
+            --target "$GITHUB_SHA" \
+            --latest
