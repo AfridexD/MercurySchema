@@ -19,7 +19,7 @@ Measured for UnlimitedSchema on WordPress 7.1 with a post carrying an Article an
 - **Schema data:** 0 extra queries. Everything lives in one `_unlimited_schema_data` meta row, which WordPress has already loaded with the post.
 - **Type definitions:** 1 query (a non-autoloaded option), only on singular pages that have an enabled schema.
 - **Dynamic values:** `{{author_name}}` and `{{site_logo}}` make WordPress load the author and logo if the theme hasn't already. Terms and author roles are only loaded when a schema has category or role conditions.
-- **Render time:** about 0.3 ms once warm.
+- **Render time:** 2.4 ms cold (including its queries), 0.3 ms warm. The brief's budget is 50 ms. Loading the plugin's class files is extra and depends on the server: it took 50 ms over a slow Docker-on-Windows file mount, and is negligible with OPcache.
 - **Front-end assets:** none. No CSS, no JavaScript, no external requests.
 
 Competitor query counts were not measured here. To compare fairly, install each plugin alone on the same site, add equivalent schema, and count queries with Query Monitor.
