@@ -55,7 +55,11 @@ services:
       - /var/lib/mysql
 
   tests:
-    build: ./tests
+    # Other versions: WP_IMAGE=wordpress:6.0-php8.0-apache docker compose build tests
+    build:
+      context: ./tests
+      args:
+        WP_IMAGE: ${WP_IMAGE:-wordpress:php8.2-apache}
     profiles: [test]
     depends_on: [testdb]
     working_dir: /plugin

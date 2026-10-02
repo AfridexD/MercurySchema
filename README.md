@@ -155,7 +155,17 @@ docker compose up -d                                   # WordPress at http://loc
 docker compose run --rm tests composer install
 docker compose run --rm tests composer test            # unit tests
 docker compose run --rm tests composer test:integration
+docker compose run --rm cli sh wp-content/plugins/unlimited-schema/bin/dev-setup.sh   # seed site (admin/admin, local only)
 ```
+
+Other WordPress/PHP versions (the test library is matched to the image's core automatically):
+
+```bash
+WP_IMAGE=wordpress:6.0-php8.0-apache docker compose build tests
+docker compose run --rm tests sh bin/test-all.sh
+```
+
+Verified: WordPress 6.0 on PHP 8.0, and WordPress 7.1 on PHP 8.2, 8.3 and 8.4.
 
 Layout:
 
