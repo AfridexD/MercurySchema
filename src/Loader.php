@@ -38,7 +38,7 @@ class Loader
 
     public function run(): void
     {
-        add_action('init', [$this, 'loadTextDomain']);
+        // Translations load automatically (WordPress 4.6+); no load_plugin_textdomain() needed.
         add_action('rest_api_init', [$this, 'registerRestRoutes']);
 
         if (is_admin()) {
@@ -53,11 +53,6 @@ class Loader
     {
         SchemaRegistry::seed();
         add_option(Settings::OPTION, Settings::defaults());
-    }
-
-    public function loadTextDomain(): void
-    {
-        load_plugin_textdomain('unlimited-schema', false, dirname(plugin_basename(UNLIMITED_SCHEMA_FILE)) . '/languages');
     }
 
     public function registerRestRoutes(): void

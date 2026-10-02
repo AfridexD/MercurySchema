@@ -79,8 +79,8 @@ class Validator
                 return is_string($value) || is_int($value) || is_float($value);
             case 'url':
                 return is_string($value)
-                    && filter_var($value, FILTER_VALIDATE_URL) !== false
-                    && in_array(strtolower((string) parse_url($value, PHP_URL_SCHEME)), ['http', 'https'], true);
+                    && preg_match('#^https?://#i', $value) === 1
+                    && filter_var($value, FILTER_VALIDATE_URL) !== false;
             case 'integer':
                 return is_int($value) || (is_string($value) && preg_match('/^-?\d+$/', $value) === 1);
             case 'number':
