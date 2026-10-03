@@ -91,9 +91,9 @@ pre.mermaid { margin: 0; background: transparent; }
 <div class="wrap">
 
 <header class="head">
-  <span class="eyebrow">Test &amp; security report · Mercury Schema 1.2.0 → 1.2.1</span>
+  <span class="eyebrow">Test &amp; security report · Mercury Schema 1.0.0 release candidate</span>
   <h1>All 22 schema types tested end to end. One leak found and fixed.</h1>
-  <p class="lede">Every schema type was added through the real block editor, checked on the live page as a visitor sees it, and attacked with injection payloads. Access control, request forgery and data leaks were probed for every role. One medium-severity issue turned up: password-protected posts leaked their text through structured data. It is fixed in 1.2.1, with a regression test.</p>
+  <p class="lede">Every schema type was added through the real block editor, checked on the live page as a visitor sees it, and attacked with injection payloads. Access control, request forgery and data leaks were probed for every role. One medium-severity issue turned up: password-protected posts leaked their text through structured data. It was fixed before the 1.0.0 release, with a regression test.</p>
   <div class="meta"><span>3 October 2026</span><span>WordPress 7.1.2 · PHP 8.2 (live) · 6.0/PHP 8.0 and 7.1/PHP 8.4 (suite)</span><span>Elementor 4.3.3 and Yoast SEO active</span></div>
 </header>
 
@@ -206,7 +206,7 @@ pre.mermaid { margin: 0; background: transparent; }
       <span class="chip warn sev">Medium · Fixed</span>
       <h3>Password-protected posts leaked their text through structured data</h3>
       <p>On a protected post, schemas using <code>{{post_excerpt}}</code> or <code>{{post_content}}</code> printed the protected text into the page source for visitors who had not entered the password: 14 occurrences on the test post, readable by anyone viewing the source or scraping. Locked posts now skip their own schemas, and site-wide schemas only use public details (title, link, dates). Visitors who enter the password get everything as before.</p>
-      <span class="status">Fixed in 1.2.1 · regression test added · verified 0 occurrences after the fix</span>
+      <span class="status">Fixed in 1.0.0 · regression test added · verified 0 occurrences after the fix</span>
     </article>
     <article class="finding">
       <span class="chip info sev">Low · Open</span>
@@ -217,7 +217,7 @@ pre.mermaid { margin: 0; background: transparent; }
     <article class="finding">
       <span class="chip pass sev">High · Fixed earlier</span>
       <h3>Editors could reach site-wide routes through URL casing</h3>
-      <p>Found in the previous audit and fixed in 1.2.0. Re-tested today: <code>/GLOBAL</code>, <code>/Global</code> and <code>/MERCURY-SCHEMA/V1/global</code> all return 403 for editors.</p>
+      <p>Found in the previous audit and fixed in an earlier build. Re-tested today: <code>/GLOBAL</code>, <code>/Global</code> and <code>/MERCURY-SCHEMA/V1/global</code> all return 403 for editors.</p>
       <span class="status">Still fixed · covered by a regression test</span>
     </article>
   </div>
@@ -238,7 +238,7 @@ pre.mermaid { margin: 0; background: transparent; }
         <tr><td>Unknown or extra fields</td><td>Extra keys on every type</td><td><span class="chip pass">Rejected</span> 400 in 22/22 types</td></tr>
         <tr><td>Oversized input</td><td>A 2 MB field; a 51st schema on one post</td><td><span class="chip pass">Rejected</span> 400 with a clear message</td></tr>
         <tr><td>Request forgery</td><td>Logged-in requests with no security token or a forged one</td><td><span class="chip pass">Blocked</span> 401 without a token, 403 with a forged one</td></tr>
-        <tr><td>Confidential content</td><td>Password-protected post, anonymous visitor</td><td><span class="chip pass">Blocked</span> After the 1.2.1 fix</td></tr>
+        <tr><td>Confidential content</td><td>Password-protected post, anonymous visitor</td><td><span class="chip pass">Blocked</span> After the fix</td></tr>
         <tr><td>Direct file access</td><td>Loading the plugin's PHP files by URL</td><td><span class="chip pass">Safe</span> Empty responses, nothing runs</td></tr>
       </tbody>
     </table>
@@ -296,7 +296,7 @@ pre.mermaid { margin: 0; background: transparent; }
   <span class="eyebrow">Next steps</span>
   <h2>Recommendations</h2>
   <ul class="plain">
-    <li><strong>Release 1.2.1.</strong> It is committed locally; pushing it publishes the release and updates the download button automatically.</li>
+    <li><strong>Released as 1.0.0.</strong> The first public release includes the fix; the download button serves it automatically.</li>
     <li><strong>Add code checks</strong> for currency and country fields.</li>
     <li><strong>Run Google's Rich Results Test</strong> on a staging site with real content before launch.</li>
     <li><strong>Keep Schema Types in mind:</strong> the test site currently has only Breadcrumbs enabled, so other schemas on it show as "Type off" and don't print.</li>

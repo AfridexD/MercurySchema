@@ -5,11 +5,11 @@
 #   1. runs the unit tests,
 #   2. builds the plugin zip with bin/build.php,
 #   3. creates release vX.Y.Z with two assets:
-#        mercury-schema.zip         (stable name, used by the download button)
-#        mercury-schema-X.Y.Z.zip   (versioned copy)
+#        Mercury-Schema.zip         (stable name, used by the download button)
+#        Mercury-Schema-X.Y.Z.zip   (versioned copy)
 #
 # Latest download, always:
-#   https://github.com/AfridexD/UnlimitedSchema/releases/latest/download/mercury-schema.zip
+#   https://github.com/AfridexD/MercurySchema/releases/latest/download/Mercury-Schema.zip
 
 name: Release
 
@@ -67,7 +67,7 @@ jobs:
         if: steps.version.outputs.exists == 'false'
         run: |
           php bin/build.php
-          cp "build/mercury-schema-${{ steps.version.outputs.version }}.zip" build/mercury-schema.zip
+          cp "build/Mercury-Schema-${{ steps.version.outputs.version }}.zip" build/Mercury-Schema.zip
 
       - name: Release notes from readme.txt
         if: steps.version.outputs.exists == 'false'
@@ -78,7 +78,7 @@ jobs:
             on && /^= .* =$/ { exit }
             on { print }
           ' readme.txt > notes.md
-          printf '\n**Download:** `mercury-schema.zip` below, then in WordPress go to Plugins → Add New → Upload Plugin.\n' >> notes.md
+          printf '\n**Download:** `Mercury-Schema.zip` below, then in WordPress go to Plugins → Add New → Upload Plugin.\n' >> notes.md
           cat notes.md
 
       - name: Publish release
@@ -88,8 +88,8 @@ jobs:
         run: |
           v="${{ steps.version.outputs.version }}"
           gh release create "v$v" \
-            "build/mercury-schema.zip" \
-            "build/mercury-schema-$v.zip" \
+            "build/Mercury-Schema.zip" \
+            "build/Mercury-Schema-$v.zip" \
             --title "Mercury Schema $v" \
             --notes-file notes.md \
             --target "$GITHUB_SHA" \

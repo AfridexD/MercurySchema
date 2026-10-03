@@ -4,14 +4,13 @@ Measured on 2026-10-02 from each plugin's current release on WordPress.org (`lat
 
 | Plugin | Version | Zip | Unpacked | Files | PHP files | PHP lines |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| **Mercury Schema** | 1.2.0 | **76 KB** | **248 KB** | **35** | 27 | **3,160** |
+| **Mercury Schema** | 1.0.0 | **76 KB** | **248 KB** | **35** | 27 | **3,160** |
 | WP SEO Structured Data Schema | latest | 162 KB | 582 KB | 71 | 14 | 6,620 |
 | All In One Schema Rich Snippets | 1.7.9 | 592 KB | 1,357 KB | 116 | 19 | 8,612 |
 | Schema (by Hesham) | 1.7.9.6 | 1,476 KB | 3,849 KB | 153 | 72 | 16,315 |
 | Schema & Structured Data for WP & AMP | 1.67 | 2,015 KB | 7,895 KB | 347 | 83 | 89,204 |
 
-Mercury Schema's zip is 2–27× smaller than these, its unpacked size 2–32× smaller, and it has 2–28× less PHP. Growth by version: 1.0.0 was 33 KB zipped; 1.1.0 (site-wide schemas, repeatable fields, live preview, WooCommerce values, redesigned editor) 52 KB; 1.2.0 (setup wizard, Schema Types screen, 11 more types, generated breadcrumbs and navigation, migration) 76 KB.
-
+Mercury Schema's zip is 2–27× smaller than these, its unpacked size 2–32× smaller, and it has 2–28× less PHP.
 ## Runtime cost
 
 Measured for Mercury Schema on WordPress 7.1 with a post carrying an Article and a Product schema:

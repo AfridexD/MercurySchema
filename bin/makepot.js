@@ -38,7 +38,7 @@ let out = `# Copyright (C) 2026 AfridexD
 msgid ""
 msgstr ""
 "Project-Id-Version: Mercury Schema ${version}\\n"
-"Report-Msgid-Bugs-To: https://github.com/AfridexD/UnlimitedSchema/issues\\n"
+"Report-Msgid-Bugs-To: https://github.com/AfridexD/MercurySchema/issues\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"

@@ -1,12 +1,12 @@
 # Mercury Schema
 
 <p>
-  <a href="https://github.com/AfridexD/UnlimitedSchema/releases/latest/download/mercury-schema.zip"><img src=".github/download-button.svg" alt="Download Mercury Schema (latest version)" width="372" height="64"></a>
+  <a href="https://github.com/AfridexD/MercurySchema/releases/latest/download/Mercury-Schema.zip"><img src=".github/download-button.svg" alt="Download Mercury Schema (latest version)" width="372" height="64"></a>
 </p>
 
-[All releases and changelogs](https://github.com/AfridexD/UnlimitedSchema/releases). Install: *Plugins → Add New → Upload Plugin* in WordPress.
+[All releases and changelogs](https://github.com/AfridexD/MercurySchema/releases). Install: *Plugins → Add New → Upload Plugin* in WordPress.
 
-Lightweight, conflict-free JSON-LD schema markup for WordPress, with a one-minute setup wizard. Formerly **UnlimitedSchema** (data migrates automatically on activation).
+Lightweight, conflict-free JSON-LD schema markup for WordPress, with a one-minute setup wizard.
 
 - **Small.** About 30 PHP files, no runtime dependencies, no build step. The release zip is about 75 KB.
 - **One meta row per post.** All of a post's schemas live in a single `_mercury_schema_data` JSON entry.
@@ -30,8 +30,6 @@ Requires PHP 8.0+ and WordPress 6.0+.
 2. **Configuration**: Basic (Organization, WebSite, WebPage, BreadcrumbList, Article), Smart (Basic plus Person, BlogPosting, FAQPage, HowTo, VideoObject, Product, Review, LocalBusiness) or Custom.
 3. **Schemas** (Custom only): switch each of the 22 types on or off.
 4. **Done**: finishing adds site-wide Organization and WebSite (front page), WebPage (posts and pages), BreadcrumbList (posts, pages and archives) and Article (posts) for every enabled type that has no site-wide schema yet.
-
-Sites upgrading from UnlimitedSchema skip the wizard and keep every type on.
 
 **Schema Types** (*Mercury Schema → Schema Types*): the same toggles, saved instantly. A switched-off type disappears from the editor and stops printing; its saved schemas are kept.
 
@@ -225,7 +223,7 @@ Releases are automatic. To ship a new version:
 2. Add a `= X.Y.Z =` section to the changelog in `readme.txt`.
 3. Push to `main`.
 
-`.github/workflows/release.yml` then checks that the three version numbers match, runs the unit tests, builds the zip with `bin/build.php`, and publishes GitHub Release `vX.Y.Z` with the changelog as notes. Pushes that don't change the version publish nothing. The download button links to `releases/latest/download/mercury-schema.zip`, which GitHub always resolves to the newest release.
+`.github/workflows/release.yml` then checks that the three version numbers match, runs the unit tests, builds the zip with `bin/build.php`, and publishes GitHub Release `vX.Y.Z` with the changelog as notes. Pushes that don't change the version publish nothing. The download button links to `releases/latest/download/Mercury-Schema.zip`, which GitHub always resolves to the newest release. The zip's inner folder is `mercury-schema`, the plugin's WordPress slug.
 
 ## Development
 

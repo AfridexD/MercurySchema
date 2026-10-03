@@ -4,7 +4,7 @@ Tags: schema, structured data, json-ld, rich results, seo
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.2.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,10 +49,6 @@ Site-wide schemas live under Mercury Schema → Site-wide Schemas and appear on 
 
 A required field is empty, often because a dynamic value has nothing to fill in (for example {{featured_image}} on a post without a featured image). Incomplete schema is not printed. Fill the field or set a featured image.
 
-= I used UnlimitedSchema before. What happens to my data? =
-
-Mercury Schema is the new name of UnlimitedSchema. When you activate it, your settings, site-wide schemas and post schemas are moved over automatically, every schema type stays on, and the old plugin is deactivated so nothing prints twice.
-
 = Does it work alongside Yoast SEO or Rank Math? =
 
 Yes. Mercury Schema only prints the schema you add, as separate script tags. Yoast already adds an Article to posts, and WooCommerce adds a Product on classic themes, so use one source per type. Developers can switch off Yoast's Article with the `wpseo_schema_needs_article` filter, or WooCommerce's Product with `woocommerce_structured_data_product`.
@@ -67,30 +63,14 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 
 == Changelog ==
 
-= 1.2.1 =
-* Security: password-protected posts no longer reveal their excerpt or content through structured data to visitors who haven't entered the password. Their own schemas are held back, and site-wide schemas only use public details such as the title and date.
-
-= 1.2.0 =
-* New name: UnlimitedSchema is now Mercury Schema, with automatic migration of existing data.
-* New: setup wizard with Basic, Smart and Custom presets, opened on first activation.
-* New: Schema Types screen to switch types on and off; switched-off types keep their data but don't print.
-* New: 11 schema types: Website, Web Page, Breadcrumbs, Site Navigation, Blog Posting, News Article, How-To, Image, Service, Course and Job Posting.
-* New: breadcrumbs and site navigation are generated automatically.
-* New: dynamic values {{post_content}} and {{site_language}}.
-* New: Mercury Schema admin menu.
-* New: edit schema from inside the Elementor editor (Mercury Schema button in the top bar).
-* Improved: the editor marks types already added to a page.
-
-= 1.1.0 =
-* New: editors can edit post schemas (previously administrators only). Site-wide schemas stay administrator-only.
-* New: site-wide schemas with display rules (front page, singular, archives, post types, categories, author roles).
-* New: FAQ, Recipe, Video and Software App types; Product gains aggregate rating.
-* New: repeatable fields for FAQ questions and recipe steps.
-* New: live JSON-LD preview with copy and "Test in Google" buttons.
-* New: WooCommerce price, currency, stock, SKU and rating values for Product schema.
-* New: redesigned editor with type picker, status badges, toggle switches, dynamic-value picker, duplicate, and two-step delete.
-* Improved: status reflects what will actually print on the post, including empty dynamic values.
-* Improved: clearer, field-specific error messages.
-
 = 1.0.0 =
-* Initial release.
+* First public release.
+* Setup wizard with Basic, Smart and Custom presets that adds the site-wide basics for you.
+* 22 schema types, including automatically generated breadcrumbs and site navigation.
+* Site-wide schemas with display rules; a post's own schema replaces a site-wide one of the same type.
+* Schema editor for the block editor, the classic editor and Elementor, with live preview, dynamic values and repeatable fields.
+* Schema Types screen to switch types on and off; switched-off types keep their data.
+* WooCommerce price, currency, stock, SKU and rating values for Product schema.
+* Status badges show whether each schema will print; incomplete schema is never printed.
+* Editors and administrators edit post schemas; site-wide schemas and setup are administrator-only.
+* Password-protected posts never reveal their content through structured data.

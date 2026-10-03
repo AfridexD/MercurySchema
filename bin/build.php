@@ -1,6 +1,6 @@
 <?php
 /**
- * Builds build/mercury-schema-<version>.zip, leaving out everything listed
+ * Builds build/Mercury-Schema-<version>.zip, leaving out everything listed
  * in .distignore. Needs only PHP with the zip extension.
  *
  *   docker compose run --rm tests php bin/build.php
@@ -26,7 +26,8 @@ $ignored = static function (string $rel) use ($ignore): bool {
 };
 
 @mkdir("$root/build");
-$zipPath = "$root/build/mercury-schema-$version.zip";
+// The download is named for the brand; the folder inside stays "mercury-schema" (the WordPress slug).
+$zipPath = "$root/build/Mercury-Schema-$version.zip";
 @unlink($zipPath);
 
 $zip = new ZipArchive();
