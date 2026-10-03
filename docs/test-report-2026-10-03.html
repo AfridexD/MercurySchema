@@ -1,0 +1,306 @@
+<title>Mercury Schema Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column with wide tables that scroll in their own frame; brand blue used sparingly for structure. */
+:root {
+  --bg: #F7F8FC; --surface: #FFFFFF; --ink: #0D1530; --muted: #4A5272; --line: #E2E6F2; --soft: #EEF2FD;
+  --accent: #1F4FD6; --accent-ink: #FFFFFF;
+  --pass: #0E7A3B; --pass-bg: #E6F6EC; --warn: #8A5A00; --warn-bg: #FFF4D6; --crit: #B42318; --crit-bg: #FDECEA; --info: #3B4A7A; --info-bg: #EEF1FA;
+  --display: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0B1022; --surface: #121933; --ink: #E8ECFA; --muted: #A3ABCB; --line: #252E52; --soft: #18214A;
+  --accent: #7FA3FF; --accent-ink: #0B1022;
+  --pass: #6FD99A; --pass-bg: #10301F; --warn: #F5C451; --warn-bg: #352A0C; --crit: #FF8A80; --crit-bg: #3A1514; --info: #B9C4F2; --info-bg: #1B2347;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0B1022; --surface: #121933; --ink: #E8ECFA; --muted: #A3ABCB; --line: #252E52; --soft: #18214A;
+  --accent: #7FA3FF; --accent-ink: #0B1022;
+  --pass: #6FD99A; --pass-bg: #10301F; --warn: #F5C451; --warn-bg: #352A0C; --crit: #FF8A80; --crit-bg: #3A1514; --info: #B9C4F2; --info-bg: #1B2347;
+  color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 15px/1.65 var(--body); padding-inline: 16px; padding-block: 40px 80px; }
+.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+h1, h2, h3 { font-family: var(--display); color: var(--ink); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 4.6vw, 44px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08; }
+h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.015em; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+code, .mono { font-family: var(--mono); font-size: 0.88em; }
+code { background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+section { display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.lede { font-size: 17px; color: var(--muted); max-width: 64ch; }
+.muted { color: var(--muted); }
+
+/* Header */
+.head { display: flex; flex-direction: column; gap: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font: 13px var(--mono); color: var(--muted); }
+
+/* Verdict strip */
+.verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.verdict div { background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.verdict b { font: 700 26px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.verdict span { font-size: 13px; color: var(--muted); }
+
+/* Tables */
+.table { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 11px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--soft); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.group td { background: var(--bg); font: 600 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-block: 8px; }
+.type { font-weight: 600; white-space: nowrap; }
+
+/* Status chips */
+.chip { display: inline-block; padding: 2px 8px; border-radius: 99px; font: 500 12px/1.5 var(--mono); white-space: nowrap; }
+.pass { background: var(--pass-bg); color: var(--pass); }
+.warn { background: var(--warn-bg); color: var(--warn); }
+.crit { background: var(--crit-bg); color: var(--crit); }
+.info { background: var(--info-bg); color: var(--info); }
+
+/* Findings */
+.findings { display: flex; flex-direction: column; gap: 12px; }
+.finding { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; }
+.finding .sev { grid-row: span 3; align-self: start; }
+.finding h3 { font-size: 16px; }
+.finding p { color: var(--muted); font-size: 14px; }
+.finding .status { font: 13px var(--mono); color: var(--ink); }
+
+/* Pipeline */
+.flow { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; overflow-x: auto; }
+ol.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: s; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+ol.steps li::before { content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--soft); color: var(--accent); font: 600 13px var(--mono); }
+ol.steps strong { display: block; }
+ol.steps span { color: var(--muted); font-size: 14px; }
+
+ul.plain { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+.note { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--muted); font-size: 14px; max-width: 72ch; }
+pre.mermaid { margin: 0; background: transparent; }
+@media (max-width: 560px) { .finding { grid-template-columns: 1fr; } .finding .sev { grid-row: auto; } }
+</style>
+
+<div class="wrap">
+
+<header class="head">
+  <span class="eyebrow">Test &amp; security report · Mercury Schema 1.2.0 → 1.2.1</span>
+  <h1>All 22 schema types tested end to end. One leak found and fixed.</h1>
+  <p class="lede">Every schema type was added through the real block editor, checked on the live page as a visitor sees it, and attacked with injection payloads. Access control, request forgery and data leaks were probed for every role. One medium-severity issue turned up: password-protected posts leaked their text through structured data. It is fixed in 1.2.1, with a regression test.</p>
+  <div class="meta"><span>3 October 2026</span><span>WordPress 7.1.2 · PHP 8.2 (live) · 6.0/PHP 8.0 and 7.1/PHP 8.4 (suite)</span><span>Elementor 4.3.3 and Yoast SEO active</span></div>
+</header>
+
+<div class="verdict" role="list">
+  <div role="listitem"><b>22 / 22</b><span>types created in the browser and printed valid JSON-LD</span></div>
+  <div role="listitem"><b>111</b><span>automated tests passing (63 unit, 48 integration)</span></div>
+  <div role="listitem"><b>0</b><span>scripts executed across all injection attempts</span></div>
+  <div role="listitem"><b>1 fixed</b><span>medium: protected-post content leak</span></div>
+  <div role="listitem"><b>1.4 ms</b><span>to render 22 schemas, 0 extra database queries</span></div>
+</div>
+
+<section>
+  <span class="eyebrow">How it was tested</span>
+  <h2>Method</h2>
+  <ul class="plain">
+    <li><strong>Automated suite:</strong> 63 unit tests (core logic, no WordPress) and 48 integration tests (REST, rendering, setup, migration) on WordPress 6.0/PHP 8.0 and 7.1/PHP 8.4.</li>
+    <li><strong>Browser:</strong> on a test post with a featured image and a two-level category, each type was added from the type picker, every field filled the way a user would, saved, and its status badge and live preview recorded.</li>
+    <li><strong>Live page:</strong> a checker fetched the published page as an anonymous visitor and inspected every JSON-LD block: valid JSON, <code>@context</code>, Google's required properties, absolute URLs, and no empty values, HTML or unfilled <code>{{tokens}}</code>.</li>
+    <li><strong>Attacks:</strong> script, image and quote payloads in every text field of all 22 types; <code>javascript:</code> links; unknown fields; payloads written straight to the database to bypass the sanitizer; each role against each endpoint; requests without or with forged security tokens; password-protected content.</li>
+  </ul>
+  <p class="note">Test posts, image, categories and users were deleted afterwards, and the site's own settings (only Breadcrumbs enabled, the five site-wide schemas, the plugin list) were restored exactly.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Results by type</span>
+  <h2>Every schema type</h2>
+  <p class="muted">"Start" is the badge the moment a type is added, filled only with automatic values. Types starting <em>Incomplete</em> have required fields with no possible default (a venue, a rating, an address), which is expected. "On the page" is the anonymous visitor's view.</p>
+  <div class="table">
+    <table>
+      <thead><tr><th>Type</th><th>Start</th><th>After filling</th><th>Live preview</th><th>On the page</th><th>Size</th><th>Injection</th></tr></thead>
+      <tbody>
+        <tr class="group"><td colspan="7">Site foundations</td></tr>
+        <tr><td class="type">Organization</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 5 properties</td><td class="num">229 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Website</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 4 properties</td><td class="num">172 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Web Page</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 7 properties</td><td class="num">403 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Breadcrumbs</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> Home › Testing › Guides › post</td><td class="num">499 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Person</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 5 properties</td><td class="num">234 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Site Navigation</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> ItemList, 6 menu links</td><td class="num">700 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr class="group"><td colspan="7">Content</td></tr>
+        <tr><td class="type">Article</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> replaced the site-wide Article</td><td class="num">471 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Blog Posting</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 7 properties</td><td class="num">475 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">News Article</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 7 properties</td><td class="num">475 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">FAQ</td><td><span class="chip warn">Incomplete</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 2 questions</td><td class="num">278 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">How-To</td><td><span class="chip warn">Incomplete</span></td><td><span class="chip pass">Ready</span>¹</td><td>Valid</td><td><span class="chip pass">Pass</span> 2 steps with images</td><td class="num">594 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Video</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 7 properties</td><td class="num">386 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Image</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> licence + credit</td><td class="num">434 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Recipe</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 16 properties</td><td class="num">886 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr class="group"><td colspan="7">Commerce</td></tr>
+        <tr><td class="type">Product</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> offer + rating</td><td class="num">513 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Review</td><td><span class="chip warn">Incomplete</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 5 properties</td><td class="num">352 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Service</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 7 properties</td><td class="num">413 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Software App</td><td><span class="chip warn">Incomplete</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 6 properties</td><td class="num">388 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr class="group"><td colspan="7">Local &amp; events</td></tr>
+        <tr><td class="type">Local Business</td><td><span class="chip warn">Incomplete</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> structured address</td><td class="num">418 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Event</td><td><span class="chip warn">Incomplete</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 7 properties</td><td class="num">442 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Course</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> 6 properties</td><td class="num">376 B</td><td><span class="chip pass">Blocked</span></td></tr>
+        <tr><td class="type">Job Posting</td><td><span class="chip pass">Ready</span></td><td><span class="chip pass">Ready</span></td><td>Valid</td><td><span class="chip pass">Pass</span> location + salary</td><td class="num">938 B</td><td><span class="chip pass">Blocked</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">¹ The first save of How-To was refused because the test script typed plain text into each step's optional image URL. The editor highlighted exactly those two fields with "Enter a full URL starting with https://". After correcting them it saved as Ready. This was the validator working, not a fault.</p>
+</section>
+
+<section>
+  <span class="eyebrow">After a schema is applied</span>
+  <h2>What happens next</h2>
+  <div class="flow">
+    <ol class="steps">
+      <li><div><strong>Saved in one place</strong><span>The editor sends the schema to the plugin's API. It checks the user may edit that post, checks field types, strips HTML, enforces size limits, and stores every schema for the post in a single database row. The badge then shows whether it will print, with tokens filled from the post.</span></div></li>
+      <li><div><strong>Nothing changes for visitors</strong><span>No scripts, styles or images are added to the page. The schema is invisible text in the page's code.</span></div></li>
+      <li><div><strong>Built fresh on every page view</strong><span>Site-wide schemas are merged with the post's own (a post's schema replaces a site-wide one of the same type). Schemas that are switched off, whose type is off, whose display rules don't match, or whose post is password-locked are skipped. Tokens like <code>{{post_title}}</code> are filled, the result is validated again, and incomplete schemas are held back. Breadcrumbs and navigation are built from the site's structure.</span></div></li>
+      <li><div><strong>Printed safely in the page head</strong><span>Each schema becomes one <code>&lt;script type="application/ld+json"&gt;</code> tag inside <code>&lt;head&gt;</code>, encoded so no text can close the tag. 22 schemas took 1.4 ms and added 10.4 KB.</span></div></li>
+      <li><div><strong>Search engines read it on their next crawl</strong><span>Google parses the JSON-LD, reports it under Enhancements in Search Console, and may show a rich result. Rich results are never guaranteed and usually take days to weeks to appear after a recrawl.</span></div></li>
+      <li><div><strong>Stays in sync</strong><span>Edits, token values (a new title or featured image) and deletions apply on the next page view. A page cache, if the site uses one, serves the old version until it refreshes.</span></div></li>
+    </ol>
+  </div>
+
+  <h3>What each type can earn in Google</h3>
+  <p class="muted">Based on Google Search Central's structured-data documentation as of writing. Google changes these features; check its current gallery before relying on one.</p>
+  <div class="table">
+    <table>
+      <thead><tr><th>Type</th><th>Search result effect</th></tr></thead>
+      <tbody>
+        <tr><td class="type">Article, Blog Posting, News Article</td><td><span class="chip pass">Rich result</span> Better title, image and date in Top stories, Discover and article results.</td></tr>
+        <tr><td class="type">Breadcrumbs</td><td><span class="chip pass">Rich result</span> Site trail in place of the URL in results (shown mainly on desktop).</td></tr>
+        <tr><td class="type">Product</td><td><span class="chip pass">Rich result</span> Price, stock and star rating in product snippets.</td></tr>
+        <tr><td class="type">Recipe</td><td><span class="chip pass">Rich result</span> Recipe cards with image, time and rating.</td></tr>
+        <tr><td class="type">Video</td><td><span class="chip pass">Rich result</span> Video thumbnail, duration and video results.</td></tr>
+        <tr><td class="type">Event</td><td><span class="chip pass">Rich result</span> Dates and venue in event listings.</td></tr>
+        <tr><td class="type">Job Posting</td><td><span class="chip pass">Rich result</span> Listing in Google's job search experience.</td></tr>
+        <tr><td class="type">Review</td><td><span class="chip pass">Rich result</span> Star rating snippet. Reviews a business writes about itself are not shown.</td></tr>
+        <tr><td class="type">Software App</td><td><span class="chip pass">Rich result</span> Rating and price; needs a rating or review to show.</td></tr>
+        <tr><td class="type">Image</td><td><span class="chip pass">Rich result</span> "Licensable" badge in Google Images when licence details are filled.</td></tr>
+        <tr><td class="type">Organization, Website</td><td><span class="chip info">Knowledge</span> Logo, site name and organization details in results and the knowledge panel.</td></tr>
+        <tr><td class="type">Local Business</td><td><span class="chip info">Knowledge</span> Supports business details; Google Business Profile is the main source for local results.</td></tr>
+        <tr><td class="type">FAQ</td><td><span class="chip warn">Limited</span> Since 2023, FAQ rich results only appear for well-known government and health sites. Still valid, readable data.</td></tr>
+        <tr><td class="type">How-To</td><td><span class="chip warn">Retired</span> Google stopped showing How-To rich results in 2023. Still valid schema.org data.</td></tr>
+        <tr><td class="type">Course</td><td><span class="chip warn">Reduced</span> Google retired some course result features in 2025; check current support.</td></tr>
+        <tr><td class="type">Web Page, Person, Service, Site Navigation</td><td><span class="chip info">Context only</span> No dedicated rich result; helps search engines and AI tools understand the page.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Security</span>
+  <h2>Findings</h2>
+  <div class="findings">
+    <article class="finding">
+      <span class="chip warn sev">Medium · Fixed</span>
+      <h3>Password-protected posts leaked their text through structured data</h3>
+      <p>On a protected post, schemas using <code>{{post_excerpt}}</code> or <code>{{post_content}}</code> printed the protected text into the page source for visitors who had not entered the password: 14 occurrences on the test post, readable by anyone viewing the source or scraping. Locked posts now skip their own schemas, and site-wide schemas only use public details (title, link, dates). Visitors who enter the password get everything as before.</p>
+      <span class="status">Fixed in 1.2.1 · regression test added · verified 0 occurrences after the fix</span>
+    </article>
+    <article class="finding">
+      <span class="chip info sev">Low · Open</span>
+      <h3>No format check for currency and country codes</h3>
+      <p>Fields such as Product currency, Job Posting salary currency and address country accept any text. Google expects ISO 4217 codes (USD) and ISO 3166 country codes (US), so free text causes warnings in Google's tools. This is a data-quality gap, not a security risk. Recommended fix: a pattern check on those fields.</p>
+      <span class="status">Not yet fixed</span>
+    </article>
+    <article class="finding">
+      <span class="chip pass sev">High · Fixed earlier</span>
+      <h3>Editors could reach site-wide routes through URL casing</h3>
+      <p>Found in the previous audit and fixed in 1.2.0. Re-tested today: <code>/GLOBAL</code>, <code>/Global</code> and <code>/MERCURY-SCHEMA/V1/global</code> all return 403 for editors.</p>
+      <span class="status">Still fixed · covered by a regression test</span>
+    </article>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">Security</span>
+  <h2>Controls verified</h2>
+  <div class="table">
+    <table>
+      <thead><tr><th>Attack</th><th>What was tried</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Stored script injection</td><td><code>&lt;/script&gt;&lt;script&gt;</code>, <code>&lt;img onerror&gt;</code> and quotes in every text field of all 22 types</td><td><span class="chip pass">Blocked</span> HTML stripped on save in 22/22 types</td></tr>
+        <tr><td>Breaking out of the JSON-LD tag</td><td>The same payloads, checked on the published page</td><td><span class="chip pass">Blocked</span> No injected tags on the page; every block parses</td></tr>
+        <tr><td>Bypassing the sanitizer</td><td>Raw payloads written straight to the database, including a line separator and JSON-closing text</td><td><span class="chip pass">Blocked</span> Output encoding turned every <code>&lt;</code> into <code><</code></td></tr>
+        <tr><td>Script in the editor</td><td>Opening posts holding those payloads; all 22 previews rendered</td><td><span class="chip pass">Blocked</span> Shown as plain text; nothing executed</td></tr>
+        <tr><td><code>javascript:</code> links</td><td>In the first URL field of every type that has one</td><td><span class="chip pass">Rejected</span> 400 in 17/17 types</td></tr>
+        <tr><td>Unknown or extra fields</td><td>Extra keys on every type</td><td><span class="chip pass">Rejected</span> 400 in 22/22 types</td></tr>
+        <tr><td>Oversized input</td><td>A 2 MB field; a 51st schema on one post</td><td><span class="chip pass">Rejected</span> 400 with a clear message</td></tr>
+        <tr><td>Request forgery</td><td>Logged-in requests with no security token or a forged one</td><td><span class="chip pass">Blocked</span> 401 without a token, 403 with a forged one</td></tr>
+        <tr><td>Confidential content</td><td>Password-protected post, anonymous visitor</td><td><span class="chip pass">Blocked</span> After the 1.2.1 fix</td></tr>
+        <tr><td>Direct file access</td><td>Loading the plugin's PHP files by URL</td><td><span class="chip pass">Safe</span> Empty responses, nothing runs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Who can do what (live site)</h3>
+  <div class="table">
+    <table>
+      <thead><tr><th>Action</th><th>Visitor</th><th>Subscriber</th><th>Contributor</th><th>Author</th><th>Editor</th><th>Admin</th></tr></thead>
+      <tbody>
+        <tr><td>Read schema types</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">200</span></td><td><span class="chip pass">200</span></td></tr>
+        <tr><td>Read a post's schemas</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">200</span></td><td><span class="chip pass">200</span></td></tr>
+        <tr><td>Add a schema to a post</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">201</span></td><td><span class="chip pass">201</span></td></tr>
+        <tr><td>Schemas on own draft</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">200</span></td><td><span class="chip pass">200</span></td></tr>
+        <tr><td>Preview</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">200</span></td><td><span class="chip pass">200</span></td></tr>
+        <tr><td>Site-wide schemas</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">200</span></td></tr>
+        <tr><td>Site-wide via <code>/GLOBAL</code></td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">201</span></td></tr>
+        <tr><td>Setup and Schema Types</td><td class="num">401</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td class="num">403</td><td><span class="chip pass">200</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">This matches the agreed rules: editors and admins edit post schemas, authors and below cannot (even on their own drafts), and only admins manage site-wide schemas and setup.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Performance</span>
+  <h2>Cost</h2>
+  <div class="table">
+    <table>
+      <thead><tr><th>Measurement</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Render 22 schemas on one page (warm, average of 20)</td><td class="num">1.43 ms · 0 queries · 10.4 KB</td></tr>
+        <tr><td>Editor: load a post's 22 schemas with status</td><td class="num">75 ms (median of 5)</td></tr>
+        <tr><td>Editor: save one schema</td><td class="num">68 ms (median of 5)</td></tr>
+        <tr><td>Editor: live preview</td><td class="num">71 ms (median of 5)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">Measured on a local Docker setup on Windows, which is slower than typical hosting. One save during the browser run took over six seconds; it did not recur in the five timed runs.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Limits of this audit</span>
+  <h2>Not covered</h2>
+  <ul class="plain">
+    <li>Google's Rich Results Test: it needs a public URL, and the test site is local.</li>
+    <li>WooCommerce product values: WooCommerce was deactivated on the test site, so they were not re-tested today (they passed in the 1.1 testing).</li>
+    <li>The Elementor 3.x fallback menu item: only Elementor 4.3 was available.</li>
+    <li>Multisite networks, browsers other than Chromium, and screen readers.</li>
+    <li>This was an in-house review. An independent security review is advisable before a wide public release.</li>
+  </ul>
+</section>
+
+<section>
+  <span class="eyebrow">Next steps</span>
+  <h2>Recommendations</h2>
+  <ul class="plain">
+    <li><strong>Release 1.2.1.</strong> It is committed locally; pushing it publishes the release and updates the download button automatically.</li>
+    <li><strong>Add code checks</strong> for currency and country fields.</li>
+    <li><strong>Run Google's Rich Results Test</strong> on a staging site with real content before launch.</li>
+    <li><strong>Keep Schema Types in mind:</strong> the test site currently has only Breadcrumbs enabled, so other schemas on it show as "Type off" and don't print.</li>
+  </ul>
+</section>
+
+</div>
