@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Mercury Schema
  * Description:       Lightweight, conflict-free JSON-LD schema markup for WordPress.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Author:            AfridexD
  * Author URI:        https://github.com/AfridexD
  * License:           GPLv2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('MERCURY_SCHEMA_VERSION', '1.2.0');
+define('MERCURY_SCHEMA_VERSION', '1.2.1');
 define('MERCURY_SCHEMA_FILE', __FILE__);
 define('MERCURY_SCHEMA_PATH', plugin_dir_path(__FILE__));
 define('MERCURY_SCHEMA_URL', plugin_dir_url(__FILE__));

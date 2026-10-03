@@ -4,7 +4,7 @@ Tags: schema, structured data, json-ld, rich results, seo
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ Yes. Schema is printed in the page head, independent of how the content was buil
 Editors and administrators can edit schema on posts they're allowed to edit. Authors and contributors can't. Site-wide schemas, schema types and the setup wizard are for administrators only. Developers can change this with the mercury_schema_rest_capability and mercury_schema_global_capability filters.
 
 == Changelog ==
+
+= 1.2.1 =
+* Security: password-protected posts no longer reveal their excerpt or content through structured data to visitors who haven't entered the password. Their own schemas are held back, and site-wide schemas only use public details such as the title and date.
 
 = 1.2.0 =
 * New name: UnlimitedSchema is now Mercury Schema, with automatic migration of existing data.

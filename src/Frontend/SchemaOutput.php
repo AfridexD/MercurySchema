@@ -137,7 +137,12 @@ class SchemaOutput
 
     private function documents(?\WP_Post $post, array $locations): array
     {
-        $own = $post ? $this->store->get((int) $post->ID)['schemas'] : []; // The single meta read for this post.
+        // A password-protected post the visitor hasn't unlocked must not reveal its
+        // content through structured data: skip its own schemas, and blank its
+        // content-derived tokens in site-wide schemas (see tokenValues()).
+        $locked = $post && post_password_required($post);
+
+        $own = $post && !$locked ? $this->store->get((int) $post->ID)['schemas'] : []; // The single meta read for this post.
         $own = array_values(array_filter($own, static fn($s) => !isset($s['enabled']) || $s['enabled']));
         $site = $this->global->get()['schemas']; // Autoloaded option: no query.
 
@@ -174,7 +179,7 @@ class SchemaOutput
 
             $data = $schema->getData();
             if (DataMapper::hasToken($data)) {
-                $tokens ??= $this->tokenValues($post);
+                $tokens ??= $this->tokenValues($post, $locked);
                 $data = DataMapper::resolve($data, $tokens);
             }
 
@@ -234,9 +239,10 @@ class SchemaOutput
 
     /**
      * Values for {{tokens}}. Post tokens are empty when there is no post
-     * (front page of posts, archives).
+     * (front page of posts, archives). With $locked (an unlocked-password
+     * post), content-derived tokens are empty too.
      */
-    private function tokenValues(?\WP_Post $post): array
+    private function tokenValues(?\WP_Post $post, bool $locked = false): array
     {
         $logoId = (int) get_theme_mod('custom_logo');
         $logo = $logoId ? wp_get_attachment_image_url($logoId, 'full') : '';
@@ -276,6 +282,10 @@ class SchemaOutput
                 'author_name'    => $authorId ? self::plain((string) get_the_author_meta('display_name', $authorId)) : '',
                 'author_url'     => $authorId ? (string) get_author_posts_url($authorId) : '',
             ]);
+            if ($locked) {
+                // Same as what WordPress shows on a locked page: title and dates only.
+                $values['post_excerpt'] = $values['post_content'] = $values['featured_image'] = '';
+            }
         }
 
         return (array) apply_filters(Hooks::TOKEN_VALUES, $values, $post);

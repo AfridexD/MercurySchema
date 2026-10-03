@@ -88,6 +88,32 @@ class PluginTest extends WP_UnitTestCase
         $this->assertCount(3, Loader::getInstance()->output()->buildJsonLd($this->postId));
     }
 
+    /**
+     * Regression: a password-protected post must not leak its excerpt or
+     * content through JSON-LD to visitors who haven't entered the password.
+     */
+    public function testPasswordProtectedPostDoesNotLeakContent(): void
+    {
+        wp_update_post(['ID' => $this->postId, 'post_password' => 'secret', 'post_excerpt' => 'SECRET excerpt', 'post_content' => 'SECRET body']);
+        $this->setSchemas([$this->article(['data' => ['headline' => '{{post_title}}', 'author' => 'Ada', 'description' => '{{post_excerpt}}']])]);
+        (new \MercurySchema\Helpers\GlobalStore())->save([
+            ['id' => 'site-page', 'type' => 'WebPage', 'enabled' => true, 'conditions' => [], 'data' => ['name' => '{{post_title}}', 'description' => '{{post_content}}']],
+        ]);
+
+        $locked = wp_json_encode(Loader::getInstance()->output()->buildJsonLd($this->postId));
+        $this->assertStringNotContainsString('SECRET', $locked);
+        $this->assertStringContainsString('WebPage', $locked, 'site-wide schemas still print, with public fields only');
+        $this->assertStringNotContainsString('"Article"', $locked, "the post's own schemas are held back");
+
+        add_filter('post_password_required', '__return_false'); // Visitor has entered the password.
+        $unlocked = wp_json_encode(Loader::getInstance()->output()->buildJsonLd($this->postId));
+        remove_filter('post_password_required', '__return_false');
+        $this->assertStringContainsString('SECRET excerpt', $unlocked);
+        $this->assertStringContainsString('"Article"', $unlocked);
+
+        (new \MercurySchema\Helpers\GlobalStore())->save([]);
+    }
+
     public function testFiltersCanVetoAndModify(): void
     {
         $this->setSchemas([$this->article()]);
