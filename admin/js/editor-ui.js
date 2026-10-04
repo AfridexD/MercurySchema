@@ -398,6 +398,7 @@
         c.addEventListener('input', function (e) {
             if (e.target !== sw) {
                 setDirty(true);
+                clearError(e.target);
             }
         });
         c.addEventListener('change', function (e) {
@@ -460,6 +461,23 @@
             }
         }
 
+        // Typing in a flagged field clears its error (and its repeater's); saving re-checks everything.
+        function clearError(target) {
+            for (var f = target.closest('.ms-field'); f && c.contains(f); f = f.parentNode.closest('.ms-field')) {
+                f.classList.remove('ms-invalid');
+                Array.prototype.forEach.call(f.children, function (n) {
+                    if (n.classList.contains('ms-field__error')) {
+                        n.textContent = '';
+                    } else if (n.classList.contains('ms-control')) {
+                        n.querySelectorAll('.ms-invalid').forEach(function (i) { i.classList.remove('ms-invalid'); });
+                    }
+                });
+            }
+            if (!c.unmatched && def.enabled !== false && !c.querySelector('.ms-invalid')) {
+                notice.hidden = true;
+            }
+        }
+
         function showErrors(errors, soft) {
             c.querySelectorAll('.ms-invalid').forEach(function (n) { n.classList.remove('ms-invalid'); });
             c.querySelectorAll('.ms-field__error').forEach(function (n) { n.textContent = ''; });
@@ -473,6 +491,7 @@
                     unmatched.push(humanError(e));
                 }
             });
+            c.unmatched = unmatched.length;
             notice.hidden = !errors || !errors.length;
             notice.className = 'ms-callout ' + (soft ? 'is-warn' : 'is-error');
             notice.textContent = '';
