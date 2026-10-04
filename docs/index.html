@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mercury Schema Help</title>
+<meta name="description" content="Step-by-step help for Mercury Schema, the lightweight WordPress plugin that adds structured data (schema markup) to your site.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a fixed left table of contents (like a manual's index tab) beside one readable column; each guide is its own page, switched by the address bar's #anchor. */
+:root {
+  --bg: #F7F8FC;
+  --surface: #FFFFFF;
+  --ink: #141A33;
+  --muted: #5A6283;
+  --line: #E1E5F0;
+  --brand: #1F4FD6;
+  --brand-soft: #E9EEFD;
+  --mark: #FF5A1F;          /* the orange of the screenshot callouts */
+  --tip-bg: #EAF7EF; --tip-ink: #13623A;
+  --note-bg: #EEF2FF; --note-ink: #2A3F9C;
+  --warn-bg: #FFF6E5; --warn-ink: #85520A;
+  --code-bg: #F0F2F8;
+  --shadow: 0 1px 2px rgba(20,26,51,.06), 0 8px 24px rgba(20,26,51,.06);
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --side: 272px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1222; --surface: #161B30; --ink: #E7EAF6; --muted: #9AA2C3; --line: #262E4A;
+    --brand: #7C9BFF; --brand-soft: #1D2650; --mark: #FF7A45;
+    --tip-bg: #10291D; --tip-ink: #7FD9A4; --note-bg: #182046; --note-ink: #A9BBFF;
+    --warn-bg: #2E2410; --warn-ink: #F2C46B; --code-bg: #1C2238;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1222; --surface: #161B30; --ink: #E7EAF6; --muted: #9AA2C3; --line: #262E4A;
+  --brand: #7C9BFF; --brand-soft: #1D2650; --mark: #FF7A45;
+  --tip-bg: #10291D; --tip-ink: #7FD9A4; --note-bg: #182046; --note-ink: #A9BBFF;
+  --warn-bg: #2E2410; --warn-ink: #F2C46B; --code-bg: #1C2238;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 80px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.65 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: var(--brand); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+img { max-width: 100%; height: auto; display: block; }
+
+/* ---------- Sidebar ---------- */
+.side {
+  position: fixed; inset: 0 auto 0 0; width: var(--side); overflow-y: auto;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 20px 32px;
+  background: var(--surface); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 20px;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand__mark { width: 38px; height: 38px; border-radius: 10px; background: #1F4FD6; display: grid; place-items: center; flex: none; }
+.brand__mark svg { width: 24px; height: 20px; }
+.brand__name { font: 700 19px/1.1 var(--font-display); letter-spacing: -.01em; }
+.brand__name small { display: block; font: 500 12px/1.4 var(--font-mono); color: var(--muted); letter-spacing: .02em; }
+.search { position: relative; }
+.search input {
+  width: 100%; padding: 9px 12px 9px 34px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--bg); color: var(--ink); font: 15px var(--font-body);
+}
+.search svg { position: absolute; left: 11px; top: 50%; translate: 0 -50%; width: 16px; height: 16px; color: var(--muted); }
+.nav { display: flex; flex-direction: column; gap: 18px; }
+.nav__group h2 { margin: 0 0 6px; font: 500 11px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.nav__group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+.nav a { display: block; padding: 6px 10px; border-radius: 7px; color: var(--ink); text-decoration: none; font-size: 15.5px; line-height: 1.35; }
+.nav a:hover { background: var(--bg); }
+.nav a[aria-current="page"] { background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+.nav__empty { color: var(--muted); font-size: 14px; padding: 0 10px; }
+.side__foot { margin-top: auto; font-size: 14px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+
+.topbar { display: none; }
+
+/* ---------- Main column ---------- */
+main { margin-left: var(--side); padding: 48px 48px 96px; }
+.page { max-width: 760px; margin: 0 auto; }
+.js .page { display: none; }
+.js .page.is-current { display: block; }
+.crumbs { font: 500 12px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; letter-spacing: -.015em; }
+h1 { font-size: clamp(30px, 4.2vw, 42px); line-height: 1.12; margin: 0 0 14px; font-weight: 700; }
+.lead { font-size: 20px; line-height: 1.55; color: var(--muted); margin: 0 0 28px; max-width: 62ch; }
+.page h2 { font-size: 25px; line-height: 1.25; margin: 48px 0 12px; font-weight: 700; }
+.page h3 { font-size: 19px; margin: 32px 0 8px; font-weight: 600; }
+.page p, .page li { max-width: 68ch; }
+.page p { margin: 0 0 16px; }
+.page ul, .page ol { padding-left: 1.3em; margin: 0 0 18px; }
+.page li { margin: 4px 0; }
+strong { font-weight: 700; }
+code, kbd { font: 500 .84em var(--font-mono); background: var(--code-bg); padding: .12em .4em; border-radius: 5px; white-space: nowrap; }
+.ui { font-weight: 700; }
+.path { font-weight: 600; white-space: nowrap; }
+.path::before { content: ""; }
+
+.page .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; padding: 0; list-style: none; }
+.page .toc li { margin: 0; }
+.toc a { display: inline-block; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); text-decoration: none; font-size: 14.5px; color: var(--ink); }
+.toc a:hover { border-color: var(--brand); color: var(--brand); }
+
+/* Numbered steps: the order is the point */
+ol.steps { list-style: none; padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: 14px; margin: 0 0 24px; }
+ol.steps > li { counter-increment: step; position: relative; padding-left: 46px; margin: 0; max-width: none; }
+ol.steps > li::before {
+  content: counter(step); position: absolute; left: 0; top: 0;
+  width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff;
+  display: grid; place-items: center; font: 700 15px/1 var(--font-body);
+}
+
+/* Screenshots */
+figure.shot { margin: 22px 0 28px; }
+figure.shot button { display: block; width: 100%; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; cursor: zoom-in; box-shadow: var(--shadow); }
+figure.shot img { width: 100%; }
+figure.shot figcaption { margin-top: 12px; font-size: 15.5px; color: var(--muted); }
+ol.legend { list-style: none; counter-reset: mark; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 8px; }
+ol.legend > li { counter-increment: mark; position: relative; padding-left: 36px; margin: 0; color: var(--ink); font-size: 16px; }
+ol.legend > li::before {
+  content: counter(mark); position: absolute; left: 0; top: 1px;
+  width: 24px; height: 24px; border-radius: 50%; background: var(--mark); color: #fff;
+  display: grid; place-items: center; font: 700 13px/1 var(--font-body);
+}
+
+/* Callouts */
+.callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: 10px; margin: 20px 0; font-size: 16px; }
+.callout p { margin: 0; }
+.callout p + p { margin-top: 8px; }
+.callout__label { flex: none; font: 600 11px/22px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; }
+.tip { background: var(--tip-bg); color: var(--tip-ink); }
+.note { background: var(--note-bg); color: var(--note-ink); }
+.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.callout a { color: inherit; }
+
+/* Cards on the welcome page */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 18px 0 8px; }
+.card { display: flex; flex-direction: column; gap: 6px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-decoration: none; color: var(--ink); min-width: 0; }
+.card:hover { border-color: var(--brand); }
+.card__num { font: 500 12px/1 var(--font-mono); color: var(--brand); letter-spacing: .06em; }
+.card strong { font: 600 18px/1.3 var(--font-display); }
+.card span { color: var(--muted); font-size: 15px; line-height: 1.5; }
+
+/* Search-result illustration */
+.serp { margin: 24px 0 8px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); font-family: Arial, Helvetica, sans-serif; }
+.serp__url { font-size: 13px; color: var(--muted); }
+.serp__title { font-size: 20px; color: var(--brand); margin: 2px 0 4px; line-height: 1.3; }
+.serp__meta { font-size: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.stars { color: #E7A100; letter-spacing: 1px; }
+.serp__desc { font-size: 14px; margin: 6px 0 10px; color: var(--ink); }
+.serp__faq { border-top: 1px solid var(--line); }
+.serp__faq div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.serp__faq div::after { content: "⌄"; color: var(--muted); }
+.serp-caption { font-size: 15px; color: var(--muted); margin: 10px 0 0; }
+
+.code { background: #10152B; color: #DDE3FF; border-radius: 10px; padding: 16px 18px; overflow-x: auto; font: 13.5px/1.6 var(--font-mono); margin: 16px 0 22px; }
+.code .k { color: #8FB0FF; } .code .s { color: #B6F0C5; } .code .c { color: #7F89B5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 18px 0 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 12px/1.3 var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 700; white-space: nowrap; }
+.group-row td { background: var(--brand-soft); color: var(--brand); font: 600 12px/1.3 var(--font-mono); text-transform: uppercase; letter-spacing: .08em; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 999px; font: 600 13px/1.6 var(--font-body); white-space: nowrap; }
+.pill--ok { background: #E3F6E8; color: #116B33; }
+.pill--warn { background: #FCF3D7; color: #8A5A00; }
+.pill--blue { background: #E6ECFF; color: #2140B8; }
+.pill--grey { background: #ECEEF3; color: #4A516B; }
+.yes { color: var(--tip-ink); font-weight: 700; }
+
+/* FAQ */
+details.qa { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 10px 0; }
+details.qa summary { cursor: pointer; padding: 14px 18px; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa summary::after { content: "+"; color: var(--brand); font: 700 20px/1 var(--font-body); }
+details.qa[open] summary::after { content: "−"; }
+details.qa > div { padding: 0 18px 6px; }
+
+/* Prev / next */
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); }
+.pager a { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; text-decoration: none; background: var(--surface); min-width: 0; }
+.pager a:hover { border-color: var(--brand); }
+.pager small { font: 500 12px/1.4 var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.pager span { color: var(--ink); font-weight: 700; }
+.pager .next { text-align: right; grid-column: 2; }
+
+/* Lightbox */
+dialog.zoom { padding: 0; border: 0; border-radius: 12px; max-width: min(96vw, 1600px); max-height: 94vh; background: #fff; overflow: auto; }
+dialog.zoom::backdrop { background: rgba(10,14,30,.75); }
+dialog.zoom img { max-width: none; width: auto; max-height: none; }
+dialog.zoom button { position: sticky; top: 8px; float: right; margin: 8px; padding: 6px 12px; border: 0; border-radius: 8px; background: #141A33; color: #fff; font: 600 14px var(--font-body); cursor: pointer; }
+
+@media (max-width: 920px) {
+  .side { position: fixed; inset: 0 auto 0 0; width: min(320px, 86vw); translate: -100% 0; transition: translate .2s ease; z-index: 20; box-shadow: var(--shadow); }
+  .side.is-open { translate: 0 0; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--line);
+  }
+  .topbar button { padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: 600 15px var(--font-body); }
+  main { margin-left: 0; padding: 28px 16px 72px; }
+  .lead { font-size: 18px; }
+  .pager { grid-template-columns: 1fr; }
+  .pager .next { grid-column: 1; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="brand" href="#welcome">
+    <span class="brand__mark" aria-hidden="true"><svg viewBox="0 -26 154 126"><g transform="translate(21,0) skewX(-12)"><polyline points="14,86 14,14 58,66 102,14 102,86" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/></g><path transform="translate(142,-10) scale(1.3)" d="M0,-10 C1.2,-2.4 2.4,-1.2 10,0 C2.4,1.2 1.2,2.4 0,10 C-1.2,2.4 -2.4,1.2 -10,0 C-2.4,-1.2 -1.2,-2.4 0,-10Z" fill="#fff"/></svg></span>
+    <span class="brand__name">Mercury Schema</span>
+  </a>
+  <button type="button" id="menu-toggle" aria-controls="side" aria-expanded="false">Menu</button>
+</div>
+
+<aside class="side" id="side">
+  <a class="brand" href="#welcome">
+    <span class="brand__mark" aria-hidden="true"><svg viewBox="0 -26 154 126"><g transform="translate(21,0) skewX(-12)"><polyline points="14,86 14,14 58,66 102,14 102,86" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/></g><path transform="translate(142,-10) scale(1.3)" d="M0,-10 C1.2,-2.4 2.4,-1.2 10,0 C2.4,1.2 1.2,2.4 0,10 C-1.2,2.4 -2.4,1.2 -10,0 C-2.4,-1.2 -1.2,-2.4 0,-10Z" fill="#fff"/></svg></span>
+    <span class="brand__name">Mercury Schema<small>Help · version 1.0</small></span>
+  </a>
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input type="search" id="search" placeholder="Search the help…" aria-label="Search the help">
+  </div>
+  <nav class="nav" id="nav" aria-label="Help topics"></nav>
+  <div class="side__foot">
+    <a href="https://github.com/AfridexD/MercurySchema/releases/latest/download/Mercury-Schema.zip">Download the plugin</a>
+    <a href="https://github.com/AfridexD/MercurySchema/issues">Report a problem</a>
+  </div>
+</aside>
+
+<main id="main">
+
+<!-- ================================================================ -->
+<article class="page" id="welcome" data-group="Getting started" data-title="Welcome">
+  <p class="crumbs">Getting started</p>
+  <h1>Welcome to Mercury Schema</h1>
+  <p class="lead">Mercury Schema adds <strong>schema markup</strong> to your WordPress site: small labels that tell Google, Bing and AI assistants exactly what each page is about. You don't need to write any code.</p>
+
+  <h2 id="what-is-schema">What is schema markup?</h2>
+  <p>When a person reads your recipe page, they can see the cooking time and the ingredients. A search engine sees a page of text. Schema markup spells out the details in a format search engines understand: "this is a recipe, it takes 25 minutes, it serves 4".</p>
+  <p>Search engines use these labels to show <strong>rich results</strong>: search listings with extras such as star ratings, prices, event dates or cooking times. Rich results stand out, so more people tend to click them.</p>
+
+  <div class="serp" aria-label="Example of a search result with extra details">
+    <div class="serp__url">sunrisebakery.example › recipes › pancakes</div>
+    <div class="serp__title">Classic Fluffy Pancakes</div>
+    <div class="serp__meta"><span class="stars" aria-label="4.8 out of 5 stars">★★★★★</span><span>4.8 (126 reviews)</span><span>·</span><span>25 min</span><span>·</span><span>320 cal</span></div>
+    <div class="serp__desc">Light, fluffy pancakes made with buttermilk. Ready in under half an hour…</div>
+  </div>
+  <p class="serp-caption">An example search result. The rating, cooking time and calories come from Recipe schema.</p>
+
+  <div class="callout note"><span class="callout__label">Note</span><p>Schema makes your pages <em>eligible</em> for rich results. Google decides when to show them, and it can take a few days or weeks after Google next visits your page.</p></div>
+
+  <h2 id="what-it-does">What Mercury Schema does for you</h2>
+  <ul>
+    <li><strong>Sets up the basics automatically.</strong> A one-minute setup adds your organization, website, page details and breadcrumbs to every page.</li>
+    <li><strong>Fills in details for you.</strong> New schemas take the title, date, author and featured image from your post, so most fields are already done.</li>
+    <li><strong>Never publishes broken markup.</strong> If a required detail is missing, the schema is marked <span class="pill pill--warn">Incomplete</span> and kept off your site until you fill it in.</li>
+    <li><strong>Stays light.</strong> No extra scripts or styles are loaded on your site, so pages don't get slower.</li>
+    <li><strong>Works with your tools.</strong> The block editor, the classic editor, Elementor and WooCommerce.</li>
+  </ul>
+
+  <h2 id="quick-start">Quick start</h2>
+  <p>Follow these guides in order and your site is set up in about ten minutes.</p>
+  <div class="cards">
+    <a class="card" href="#install"><span class="card__num">STEP 1</span><strong>Install the plugin</strong><span>Download it and upload it to WordPress.</span></a>
+    <a class="card" href="#setup"><span class="card__num">STEP 2</span><strong>Run the setup wizard</strong><span>Pick a starting point in one minute.</span></a>
+    <a class="card" href="#site-wide"><span class="card__num">STEP 3</span><strong>Add your logo and profiles</strong><span>Tell search engines who runs the site.</span></a>
+    <a class="card" href="#add-schema"><span class="card__num">STEP 4</span><strong>Add schema to a post</strong><span>FAQs, recipes, products and more.</span></a>
+  </div>
+
+  <h2 id="requirements">What you need</h2>
+  <ul>
+    <li>WordPress 6.0 or newer</li>
+    <li>PHP 8.0 or newer (your web host can tell you which version you have)</li>
+    <li>An <strong>Administrator</strong> account to install and set up the plugin</li>
+  </ul>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="install" data-group="Getting started" data-title="Install the plugin">
+  <p class="crumbs">Getting started</p>
+  <h1>Install the plugin</h1>
+  <p class="lead">Mercury Schema comes as a single zip file. You upload it to WordPress the same way as any other plugin.</p>
+
+  <h2 id="download">Download the plugin</h2>
+  <p><a href="https://github.com/AfridexD/MercurySchema/releases/latest/download/Mercury-Schema.zip"><strong>Download Mercury-Schema.zip</strong></a>. This link always gives you the newest version.</p>
+  <div class="callout warn"><span class="callout__label">Important</span><p>Don't unzip the file. WordPress needs the zip exactly as you downloaded it. Some Mac browsers unzip downloads automatically; if you see a folder instead of a zip, use the zip in your Trash or turn off "Open safe files after downloading" in Safari.</p></div>
+
+  <h2 id="upload">Upload it to WordPress</h2>
+  <ol class="steps">
+    <li>In your WordPress dashboard, go to <span class="path">Plugins › Add New Plugin</span>.</li>
+    <li>Click <span class="ui">Upload Plugin</span> at the top of the page.</li>
+    <li>Click <span class="ui">Choose File</span>, pick <code>Mercury-Schema.zip</code>, then click <span class="ui">Install Now</span>.</li>
+    <li>When the upload finishes, click <span class="ui">Activate Plugin</span>.</li>
+  </ol>
+  <p>WordPress takes you straight to the Mercury Schema setup wizard. Carry on with <a href="#setup">Run the setup wizard</a>.</p>
+
+  <h2 id="find-it">Finding Mercury Schema later</h2>
+  <p>Mercury Schema has its own blue item in the left-hand menu of your dashboard.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/setup-notice.png" alt="The WordPress Plugins screen. Mercury Schema appears in blue in the left menu, and a notice at the top says Mercury Schema is almost ready, with a Start setup button." loading="lazy" width="1890" height="888"></button>
+    <ol class="legend">
+      <li>The <span class="ui">Mercury Schema</span> menu item. Click it to open the plugin's screens.</li>
+      <li>If you skipped the wizard, this notice reminds you. Click <span class="ui">Start setup</span> to begin.</li>
+    </ol>
+  </figure>
+
+  <h2 id="update">Updating to a new version</h2>
+  <ol class="steps">
+    <li>Download the latest <code>Mercury-Schema.zip</code> from the same link.</li>
+    <li>Go to <span class="path">Plugins › Add New Plugin › Upload Plugin</span> and upload it.</li>
+    <li>WordPress asks whether to replace the current version. Click <span class="ui">Replace current with uploaded</span>.</li>
+  </ol>
+  <div class="callout tip"><span class="callout__label">Tip</span><p>Updating never deletes your schemas. Even deleting the plugin keeps them, so they come back if you install it again.</p></div>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="setup" data-group="Getting started" data-title="Run the setup wizard">
+  <p class="crumbs">Getting started</p>
+  <h1>Run the setup wizard</h1>
+  <p class="lead">The wizard picks the right schema types for your site and adds the site-wide basics for you. It takes about a minute, and you can change everything later.</p>
+
+  <h2 id="welcome-step">1. Getting Started</h2>
+  <p>The wizard opens by itself after you activate the plugin.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/wizard-1-welcome.png" alt="The first screen of the setup wizard, titled Get started with Mercury Schema, with a Start setup button and a Skip link." loading="lazy" width="1650" height="912"></button>
+    <ol class="legend">
+      <li>Click <span class="ui">Start setup</span> to choose your setup.</li>
+      <li>In a hurry? <span class="ui">Skip and use the Basic setup</span> finishes straight away with the Basic choice below.</li>
+    </ol>
+  </figure>
+
+  <h2 id="configuration">2. Choose your schema setup</h2>
+  <p>Pick one of three starting points.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/wizard-2-setup.png" alt="The Choose your schema setup screen with three cards: Basic with 5 schemas, Smart with 13 schemas marked Recommended, and Custom." loading="lazy" width="1650" height="1061"></button>
+    <ol class="legend">
+      <li><strong>Basic</strong> turns on the 5 schema types every site needs.</li>
+      <li><strong>Smart</strong> turns on 13 types, including FAQ, Product, Review and Local Business. This is the best choice for most sites.</li>
+      <li><strong>Custom</strong> lets you switch each type on or off yourself on the next screen.</li>
+      <li>Click <span class="ui">Finish setup</span> (or <span class="ui">Next</span> if you chose Custom).</li>
+    </ol>
+  </figure>
+  <div class="callout tip"><span class="callout__label">Not sure?</span><p>Choose <strong>Smart</strong>. A type that's switched on does nothing until you use it, so having extra types on costs nothing.</p></div>
+
+  <h2 id="custom">3. Schemas (Custom only)</h2>
+  <p>If you chose Custom, you now see every schema type with a switch.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/wizard-3-custom.png" alt="The Turn on the schemas you need screen, showing switches for Organization, Website, Web Page, Breadcrumbs, Person and Site Navigation." loading="lazy" width="1580" height="615"></button>
+    <ol class="legend">
+      <li><span class="ui">Enable all</span> switches every type on (or off) at once.</li>
+      <li>Click a card to switch that schema type on or off. Blue means on.</li>
+    </ol>
+  </figure>
+
+  <h2 id="done">4. Done</h2>
+  <p>That's it. Mercury Schema is now adding schema to your site.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/wizard-4-done.png" alt="The You're all set screen, listing the schemas added site-wide and three suggested next steps." loading="lazy" width="1650" height="846"></button>
+    <ol class="legend">
+      <li>The schemas the wizard added for the whole site: Organization and Website on your home page, Web Page and Breadcrumbs on your pages, and Article on your blog posts.</li>
+      <li><strong>Add schema to a post</strong> opens one of your posts. See <a href="#add-schema">Add schema to a post or page</a>.</li>
+      <li><strong>Review site-wide schemas</strong> is where you add your logo and social profiles. See <a href="#site-wide">Site-wide schemas</a>.</li>
+      <li><strong>Test with Google</strong> checks your home page in Google's free testing tool. See <a href="#testing">Test your schema</a>.</li>
+    </ol>
+  </figure>
+
+  <h2 id="rerun">Running the wizard again</h2>
+  <p>Go to <span class="path">Mercury Schema › Schema Types</span> and click <span class="ui">Run setup wizard again</span> at the bottom of the page. Your schemas and settings stay as they are until you finish the wizard.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/schema-types-rerun.png" alt="The Run setup wizard again button at the bottom of the Schema Types screen." loading="lazy" width="1671" height="237"></button>
+    <ol class="legend"><li><span class="ui">Run setup wizard again</span>.</li></ol>
+  </figure>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="schema-types" data-group="Using Mercury Schema" data-title="Choose your schema types">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Choose your schema types</h1>
+  <p class="lead">The Schema Types screen controls which kinds of schema your site uses. Switch on only what you need, so the list in the editor stays short.</p>
+
+  <p>Go to <span class="path">Mercury Schema › Schema Types</span>.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/schema-types.png" alt="The Schema Types screen with tabs at the top, an Enable all switch, and a card for each schema type with an on/off switch." loading="lazy" width="1674" height="806"></button>
+    <ol class="legend">
+      <li>The three Mercury Schema screens: <strong>Schema Types</strong>, <strong>Site-wide Schemas</strong> and <strong>Settings</strong>.</li>
+      <li>How many types are on. <span class="ui">Enable all</span> switches every type on or off.</li>
+      <li>Click any card to switch that type on or off. A grey switch means off.</li>
+    </ol>
+  </figure>
+  <p>Changes save straight away. You'll see a short confirmation in the corner of the screen.</p>
+
+  <h2 id="what-off-means">What happens when a type is off</h2>
+  <ul>
+    <li>It no longer appears in the <span class="ui">Add schema</span> list in the editor.</li>
+    <li>Any schema of that type that you already added stops appearing on your site. It shows a <span class="pill pill--grey">Type off</span> label in the editor.</li>
+    <li>Nothing is deleted. Switch the type back on and everything returns as it was.</li>
+  </ul>
+  <p>Not sure which types you need? See <a href="#type-guide">Which schema type should I use?</a></p>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="site-wide" data-group="Using Mercury Schema" data-title="Site-wide schemas">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Site-wide schemas</h1>
+  <p class="lead">Site-wide schemas describe your whole website: who runs it, what it's called, and how pages fit together. You set them up once and they appear on every matching page.</p>
+
+  <p>Go to <span class="path">Mercury Schema › Site-wide Schemas</span>. If you ran the setup wizard, five schemas are already here and marked <span class="pill pill--ok">Ready</span>.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/site-wide-list.png" alt="The Site-wide Schemas screen listing Organization, Website, Web Page, Breadcrumbs and Article, each marked Ready with an on/off switch and a menu button." loading="lazy" width="1613" height="729"></button>
+    <ol class="legend">
+      <li><span class="ui">Add schema</span> adds another site-wide schema, such as Local Business.</li>
+      <li>The status label. <span class="pill pill--ok">Ready</span> means it's complete and appearing on your site.</li>
+      <li>The switch turns a schema off without deleting it.</li>
+      <li>The <span class="ui">⋯</span> menu has <strong>Duplicate</strong>, <strong>Copy JSON-LD</strong> and <strong>Delete</strong>.</li>
+    </ol>
+  </figure>
+
+  <h2 id="organization">Add your logo and social profiles</h2>
+  <p>The <strong>Organization</strong> schema tells search engines who is behind the site. It's the most useful one to complete.</p>
+  <ol class="steps">
+    <li>Click <strong>Organization</strong> to open it.</li>
+    <li>Check the fields. Name, website, logo and description are filled in from your WordPress settings already.</li>
+    <li>Add your <strong>Email</strong> and <strong>Telephone</strong> if you want them shown.</li>
+    <li>In <strong>Profile URLs</strong>, paste the web address of each social profile, one per line.</li>
+    <li>Click <span class="ui">Save changes</span>.</li>
+  </ol>
+  <figure class="shot">
+    <button type="button"><img src="images/site-wide-organization.png" alt="The Organization schema opened, showing the Fields, Display rules and Preview tabs, fields for name, website, logo, description, email and telephone, and a Profile URLs box with two social links." loading="lazy" width="1593" height="932"></button>
+    <ol class="legend">
+      <li>Every schema has three tabs: <strong>Fields</strong> (the details), <strong>Display rules</strong> (where it appears) and <strong>Preview</strong> (what search engines will see).</li>
+      <li>The <code>{ }</code> button inserts a <a href="#dynamic-values">dynamic value</a>, a detail filled in automatically. <code>{{site_name}}</code> means "the site title from Settings › General".</li>
+      <li><strong>Profile URLs</strong>: one address per line, for example your Facebook, Instagram or LinkedIn page.</li>
+      <li><span class="ui">Save changes</span>. The button turns blue whenever you have unsaved changes.</li>
+    </ol>
+  </figure>
+  <div class="callout tip"><span class="callout__label">Tip</span><p>The logo comes from <span class="path">Appearance › Customize › Site Identity</span> (or <span class="path">Appearance › Editor</span> on block themes). If your theme has no logo set, paste the logo's address into <strong>Logo URL</strong> instead. You can copy it from the Media Library.</p></div>
+
+  <h2 id="display-rules">Choose where a schema appears</h2>
+  <p>Open the <strong>Display rules</strong> tab to limit where a site-wide schema is added.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/display-rules.png" alt="The Display rules tab, with Show on choices (Front page, Single posts and pages, Archives and blog index), post type choices, categories, author roles and post IDs." loading="lazy" width="1595" height="1005"></button>
+    <ol class="legend">
+      <li><strong>Show on</strong>: the home page, single posts and pages, or archive pages (categories, tags and the blog list). The Organization schema belongs on the <strong>Front page</strong>.</li>
+      <li><strong>Post types</strong>: only add it to posts, only to pages, and so on.</li>
+    </ol>
+  </figure>
+  <p>Below these you can also limit a schema to certain <strong>categories</strong>, to posts written by certain <strong>author roles</strong>, or to specific <strong>post IDs</strong>. Leave a group empty to mean "any".</p>
+  <div class="callout note"><span class="callout__label">Good to know</span><p>If a post has its own schema of the same type (for example its own Article), the post's version is used instead of the site-wide one on that page.</p></div>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="add-schema" data-group="Using Mercury Schema" data-title="Add schema to a post or page">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Add schema to a post or page</h1>
+  <p class="lead">Use the <strong>Schema Markup</strong> box to add schema for one post or page, such as an FAQ, a recipe or a product. Here we add an FAQ to a blog post.</p>
+
+  <h2 id="find-box">Find the Schema Markup box</h2>
+  <p>Open any post or page for editing. The <strong>Schema Markup</strong> box is below your content. In the block editor you may need to scroll down, or drag the <strong>Meta Boxes</strong> bar up.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/editor-location.png" alt="The WordPress block editor with a post open. The Schema Markup box is highlighted below the post content." loading="lazy" width="1920" height="1350"></button>
+  </figure>
+  <div class="callout note"><span class="callout__label">Can't see it?</span><p>Check that the post type is ticked under <a href="#settings">Settings</a>, and that you're an Administrator or Editor. <a href="#faq">More fixes in the FAQ.</a></p></div>
+
+  <figure class="shot">
+    <button type="button"><img src="images/editor-empty.png" alt="The Schema Markup box with no schema yet, an Add schema button, a list of site-wide schemas on this page, and quick buttons for Article, Product and FAQ." loading="lazy" width="1920" height="678"></button>
+    <ol class="legend">
+      <li><span class="ui">Add schema</span> opens the full list of schema types.</li>
+      <li>Site-wide schemas already on this page. You don't need to add these again.</li>
+      <li>Quick buttons for the most popular types.</li>
+    </ol>
+  </figure>
+
+  <h2 id="choose-type">Choose a schema type</h2>
+  <p>Click <span class="ui">Add schema</span>. Type in the search box to find a type, or click one from the list.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/editor-picker.png" alt="The list of schema types, with a search box at the top and cards for Organization, Website, Article, FAQ, Product and more." loading="lazy" width="1920" height="726"></button>
+    <ol class="legend">
+      <li>Search by name, for example "recipe" or "event".</li>
+      <li>Click a type to add it. Here we pick <strong>FAQ</strong>.</li>
+    </ol>
+  </figure>
+  <p>Types you switched off under <a href="#schema-types">Schema Types</a> aren't listed. A type that's already on the page is marked <strong>Added</strong>.</p>
+
+  <h2 id="fill-in">Fill in the details</h2>
+  <ol class="steps">
+    <li>Type your first question and its answer.</li>
+    <li>Click <span class="ui">Add question</span> for each extra question.</li>
+    <li>Click <span class="ui">Save changes</span>.</li>
+  </ol>
+  <figure class="shot">
+    <button type="button"><img src="images/faq-filled.png" alt="An FAQ schema with two questions and answers filled in, an Add question button and a Save changes button." loading="lazy" width="1920" height="1197"></button>
+    <ol class="legend">
+      <li>Each question has a <strong>Question</strong> and an <strong>Answer</strong>. Use the arrows to reorder questions and <strong>×</strong> to remove one.</li>
+      <li><span class="ui">Add question</span> adds another one.</li>
+      <li><span class="ui">Save changes</span> saves the schema.</li>
+    </ol>
+  </figure>
+  <p>Fields marked with a red <strong>*</strong> are required. Everything else is optional, but the more you fill in, the more search engines know.</p>
+  <div class="callout warn"><span class="callout__label">Important</span><p>The schema saves on its own when you click <span class="ui">Save changes</span> in the box. It doesn't wait for the post's <strong>Update</strong> or <strong>Publish</strong> button. Schema on a draft appears on your site once the post is published.</p></div>
+
+  <h2 id="statuses">Check the status</h2>
+  <p>After saving, the label at the top of the schema tells you whether it's working.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/faq-ready.png" alt="The FAQ schema header showing a green Ready label." loading="lazy" width="1920" height="185"></button>
+    <ol class="legend">
+      <li><span class="pill pill--ok">Ready</span>: the schema is complete and is being added to the page.</li>
+    </ol>
+  </figure>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Label</th><th>What it means</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pill--ok">Ready</span></td><td>Complete and appearing on your site.</td><td>Nothing.</td></tr>
+        <tr><td><span class="pill pill--blue">Unsaved</span></td><td>You changed something but haven't saved.</td><td>Click <span class="ui">Save changes</span>.</td></tr>
+        <tr><td><span class="pill pill--warn">Incomplete</span></td><td>A required detail is missing, so the schema is kept off your site.</td><td>Fill in the field shown in red.</td></tr>
+        <tr><td><span class="pill pill--grey">Disabled</span></td><td>You turned this schema's switch off.</td><td>Turn the switch back on.</td></tr>
+        <tr><td><span class="pill pill--grey">Type off</span></td><td>The whole schema type is switched off under Schema Types.</td><td>Switch the type on under <a href="#schema-types">Schema Types</a>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="incomplete">Fixing an Incomplete schema</h3>
+  <p>Mercury Schema never puts a broken schema on your site, because search engines can flag pages with broken markup. Instead it tells you what's missing.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/incomplete.png" alt="A Video schema marked Incomplete. A message says 1 required field is still empty, and the Thumbnail URL field is outlined in red with the text Thumbnail URL is required." loading="lazy" width="1920" height="885"></button>
+    <ol class="legend">
+      <li>The <span class="pill pill--warn">Incomplete</span> label.</li>
+      <li>A summary of the problem. The field that needs attention is outlined in red below it.</li>
+    </ol>
+  </figure>
+  <p>In this example the Video's <strong>Thumbnail URL</strong> uses the post's featured image, but the post doesn't have one. To fix it, either set a featured image on the post, or replace <code>{{featured_image}}</code> with the address of an image.</p>
+
+  <h2 id="preview">Preview what search engines see</h2>
+  <p>Open the <strong>Preview</strong> tab to see the finished schema with all dynamic values filled in.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/preview.png" alt="The Preview tab with a green message saying Valid, the generated code, and Copy and Test in Google buttons." loading="lazy" width="1599" height="978"></button>
+    <ol class="legend">
+      <li>A green <strong>Valid</strong> message, or a list of what to fix.</li>
+      <li>The code that's added to your page. You don't need to understand it.</li>
+      <li><span class="ui">Copy</span> copies the code. <span class="ui">Test in Google</span> opens Google's testing tool for this page (published pages only).</li>
+    </ol>
+  </figure>
+
+  <h2 id="manage">Turn off, copy or delete a schema</h2>
+  <figure class="shot">
+    <button type="button"><img src="images/card-actions.png" alt="A schema header with its on/off switch highlighted and the actions menu open, showing Duplicate, Copy JSON-LD and Delete." loading="lazy" width="1920" height="365"></button>
+    <ol class="legend">
+      <li>The switch stops the schema from appearing on your site without deleting it.</li>
+      <li>The <span class="ui">⋯</span> menu: <strong>Duplicate</strong> makes a copy, <strong>Copy JSON-LD</strong> copies the finished code, and <strong>Delete</strong> removes the schema. Click Delete twice to confirm.</li>
+    </ol>
+  </figure>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="dynamic-values" data-group="Using Mercury Schema" data-title="Dynamic values">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Dynamic values</h1>
+  <p class="lead">Dynamic values are placeholders that fill themselves in from your post or site, like <code>{{post_title}}</code>. They keep your schema up to date when you edit the post.</p>
+
+  <p>Most new schemas already use dynamic values, which is why fields such as the headline and date are filled in for you. When you change the post title, the schema changes too.</p>
+
+  <h2 id="insert">Insert a dynamic value</h2>
+  <ol class="steps">
+    <li>Click into a field where you want the value.</li>
+    <li>Click the <code>{ }</code> button at the right of the field.</li>
+    <li>Choose a value from the list.</li>
+  </ol>
+  <figure class="shot">
+    <button type="button"><img src="images/dynamic-values.png" alt="The Insert dynamic value menu, opened from the curly-brace button beside the Description field, listing Post title, Post excerpt, Post content, Post URL and more." loading="lazy" width="1551" height="659"></button>
+    <ol class="legend">
+      <li>The <code>{ }</code> button.</li>
+      <li>The list of values. The code on the right is what's inserted into the field.</li>
+    </ol>
+  </figure>
+  <p>You can also mix your own text with a dynamic value, for example <code>Recipe: {{post_title}}</code>.</p>
+
+  <h2 id="list">All dynamic values</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Value</th><th>Filled in with</th></tr></thead>
+      <tbody>
+        <tr><td><code>{{post_title}}</code></td><td>The post or page title</td></tr>
+        <tr><td><code>{{post_excerpt}}</code></td><td>The excerpt (the short summary in the post settings)</td></tr>
+        <tr><td><code>{{post_content}}</code></td><td>The post text, without formatting</td></tr>
+        <tr><td><code>{{post_url}}</code></td><td>The web address of the post</td></tr>
+        <tr><td><code>{{post_date}}</code></td><td>The date the post was published</td></tr>
+        <tr><td><code>{{post_modified}}</code></td><td>The date the post was last changed</td></tr>
+        <tr><td><code>{{featured_image}}</code></td><td>The address of the featured image</td></tr>
+        <tr><td><code>{{author_name}}</code></td><td>The author's display name</td></tr>
+        <tr><td><code>{{author_url}}</code></td><td>The address of the author's post list</td></tr>
+        <tr><td><code>{{site_name}}</code></td><td>Your site title (<span class="path">Settings › General</span>)</td></tr>
+        <tr><td><code>{{site_description}}</code></td><td>Your tagline (<span class="path">Settings › General</span>)</td></tr>
+        <tr><td><code>{{site_logo}}</code></td><td>The address of your site logo</td></tr>
+        <tr><td><code>{{home_url}}</code></td><td>Your home page address</td></tr>
+        <tr><td><code>{{site_language}}</code></td><td>Your site language, such as <code>en-US</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>With WooCommerce active, six more values are available for products: price, currency, stock status, SKU, average rating and review count. See <a href="#elementor">Elementor and WooCommerce</a>.</p>
+  <div class="callout note"><span class="callout__label">Good to know</span><p>If a value is empty (for example a post with no excerpt), the field is left out. If that field is required, the schema shows as <span class="pill pill--warn">Incomplete</span> until you fill it in some other way.</p></div>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="elementor" data-group="Using Mercury Schema" data-title="Elementor and WooCommerce">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Elementor and WooCommerce</h1>
+  <p class="lead">Mercury Schema works inside Elementor and reads product details from WooCommerce automatically.</p>
+
+  <h2 id="elementor-editor">Edit schema inside Elementor</h2>
+  <ol class="steps">
+    <li>Open your page with <span class="ui">Edit with Elementor</span>.</li>
+    <li>In Elementor's top bar, click the Mercury Schema <strong>M</strong> icon (<span class="ui">Schema Markup</span>).</li>
+    <li>Add and edit schemas in the window that opens, exactly as described in <a href="#add-schema">Add schema to a post or page</a>.</li>
+    <li>Close the window with the <strong>×</strong> to get back to your design.</li>
+  </ol>
+  <figure class="shot">
+    <button type="button"><img src="images/elementor-button.png" alt="Elementor's top bar with the Mercury Schema M icon highlighted, labelled Schema Markup." loading="lazy" width="1200" height="195"></button>
+    <ol class="legend"><li>The <span class="ui">Schema Markup</span> button in Elementor's top bar.</li></ol>
+  </figure>
+  <figure class="shot">
+    <button type="button"><img src="images/elementor-dialog.png" alt="The Schema Markup window open over the Elementor editor, showing an Article schema marked Ready, an Add schema button and a close button." loading="lazy" width="2160" height="1350"></button>
+    <ol class="legend">
+      <li><span class="ui">Add schema</span> works just like in the WordPress editor.</li>
+      <li>Close the window. Anything you saved is kept.</li>
+    </ol>
+  </figure>
+  <div class="callout note"><span class="callout__label">Good to know</span><p>Schema saves with its own <span class="ui">Save changes</span> button, separate from Elementor's <strong>Publish</strong>. On older Elementor versions you'll find <span class="ui">Schema Markup</span> in the Elementor menu (☰) instead of the top bar.</p></div>
+
+  <h2 id="woocommerce">WooCommerce products</h2>
+  <p>When WooCommerce is active, a new <strong>Product</strong> schema on a product fills itself in from the product: price, currency, stock status, SKU, average rating and number of reviews. When you change the price in WooCommerce, the schema follows.</p>
+  <ol class="steps">
+    <li>Check that <strong>Products</strong> is ticked under <a href="#settings">Mercury Schema › Settings</a>, so the Schema Markup box appears on products.</li>
+    <li>Open a product and add a <strong>Product</strong> schema.</li>
+    <li>Check the fields and click <span class="ui">Save changes</span>.</li>
+  </ol>
+  <div class="callout tip"><span class="callout__label">Tip</span><p>Want every product covered without opening each one? Add a Product schema under <span class="path">Mercury Schema › Site-wide Schemas</span> and set its display rules to the <strong>Product</strong> post type. Each product's own details are filled in automatically.</p></div>
+  <p>Ratings are only included once a product has at least one review.</p>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="testing" data-group="Using Mercury Schema" data-title="Test your schema">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Test your schema with Google</h1>
+  <p class="lead">Google's free Rich Results Test shows which rich results a page qualifies for. Use it after adding schema to an important page.</p>
+
+  <ol class="steps">
+    <li>Make sure the page is published and visible to the public.</li>
+    <li>In the schema's <strong>Preview</strong> tab, click <span class="ui">Test in Google</span>. Or go to <a href="https://search.google.com/test/rich-results">search.google.com/test/rich-results</a> and paste the page's address.</li>
+    <li>Wait for the test to finish (usually under a minute).</li>
+    <li>Look for green ticks next to each detected item, such as <strong>FAQ</strong>, <strong>Recipe</strong> or <strong>Breadcrumbs</strong>.</li>
+  </ol>
+
+  <h2 id="results">Reading the results</h2>
+  <ul>
+    <li><strong>Valid items</strong>: everything is fine.</li>
+    <li><strong>Warnings</strong> (orange): optional details are missing. The page can still get rich results; adding the details may help.</li>
+    <li><strong>Errors</strong> (red): something must be fixed. Mercury Schema checks required fields before printing, so this is rare. Check the schema's Preview tab first.</li>
+  </ul>
+  <div class="callout note"><span class="callout__label">Note</span><p>Some schema types, such as Organization, Website and Web Page, don't create a visible rich result. The test may not list them, but search engines still read them. You can see every schema on a page with the <a href="https://validator.schema.org/">Schema Markup Validator</a>.</p></div>
+
+  <h2 id="local-sites">Testing a site that isn't public yet</h2>
+  <p>Google can't reach a site on your own computer or behind a password. Use the <span class="ui">Copy</span> button in the Preview tab, then paste the code into the <strong>Code</strong> tab of the Rich Results Test.</p>
+
+  <h2 id="how-long">How long until rich results show up?</h2>
+  <p>Google has to visit your page again before it notices new schema. That usually takes a few days to a few weeks. To speed it up, use <strong>URL Inspection › Request indexing</strong> in <a href="https://search.google.com/search-console">Google Search Console</a>. Even then, Google decides when to show rich results.</p>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="type-guide" data-group="Reference" data-title="Which schema type should I use?">
+  <p class="crumbs">Reference</p>
+  <h1>Which schema type should I use?</h1>
+  <p class="lead">Mercury Schema has 22 schema types. Most sites only need a few. Find the kind of content you have, and add that type.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Type</th><th>Use it for</th><th>You need to fill in</th><th>Smart setup</th></tr></thead>
+      <tbody>
+        <tr class="group-row"><td colspan="4">Site foundations</td></tr>
+        <tr><td>Organization</td><td>Your business or brand, on the home page</td><td>Nothing. Add your logo and profiles.</td><td class="yes">On</td></tr>
+        <tr><td>Website</td><td>Your site's name in search results</td><td>Nothing</td><td class="yes">On</td></tr>
+        <tr><td>Web Page</td><td>Basic details for every page</td><td>Nothing</td><td class="yes">On</td></tr>
+        <tr><td>Breadcrumbs</td><td>The "Home › Blog › Post" trail shown in search results</td><td>Nothing, it's built automatically</td><td class="yes">On</td></tr>
+        <tr><td>Person</td><td>An author, founder or public figure</td><td>Nothing</td><td class="yes">On</td></tr>
+        <tr><td>Site Navigation</td><td>Your main menu links</td><td>Nothing, it reads your site menu</td><td>Off</td></tr>
+        <tr class="group-row"><td colspan="4">Content</td></tr>
+        <tr><td>Article</td><td>Blog posts, news and guides</td><td>Nothing</td><td class="yes">On</td></tr>
+        <tr><td>Blog Posting</td><td>Blog posts, if you prefer the more specific type</td><td>Nothing</td><td class="yes">On</td></tr>
+        <tr><td>News Article</td><td>Timely news reports</td><td>Nothing</td><td>Off</td></tr>
+        <tr><td>FAQ</td><td>A list of questions and answers</td><td>The questions and answers</td><td class="yes">On</td></tr>
+        <tr><td>How-To</td><td>Step-by-step instructions</td><td>The steps</td><td class="yes">On</td></tr>
+        <tr><td>Video</td><td>A video on the page</td><td>A thumbnail image, if the post has no featured image</td><td class="yes">On</td></tr>
+        <tr><td>Image</td><td>Credit and licence details for a photo</td><td>An image, if the post has no featured image</td><td>Off</td></tr>
+        <tr><td>Recipe</td><td>Recipes with ingredients and cooking times</td><td>An image, if the post has no featured image. Add ingredients, times and steps too.</td><td>Off</td></tr>
+        <tr class="group-row"><td colspan="4">Commerce</td></tr>
+        <tr><td>Product</td><td>Something you sell</td><td>Nothing. Add a price; WooCommerce fills it in for you.</td><td class="yes">On</td></tr>
+        <tr><td>Review</td><td>Your review of a product, book, place or other item</td><td>What you reviewed and your rating</td><td class="yes">On</td></tr>
+        <tr><td>Service</td><td>A service you offer, such as repairs or consulting</td><td>Nothing</td><td>Off</td></tr>
+        <tr><td>Software App</td><td>An app or game</td><td>The price (enter 0 if it's free)</td><td>Off</td></tr>
+        <tr class="group-row"><td colspan="4">Local &amp; events</td></tr>
+        <tr><td>Local Business</td><td>A shop, restaurant or office people can visit</td><td>The street address</td><td class="yes">On</td></tr>
+        <tr><td>Event</td><td>Concerts, classes, webinars and meetups</td><td>The start date and venue name</td><td>Off</td></tr>
+        <tr><td>Course</td><td>An online or in-person course</td><td>A description, if the post has no excerpt</td><td>Off</td></tr>
+        <tr><td>Job Posting</td><td>An open job, for Google's job listings</td><td>Nothing. Add the location and salary if you can.</td><td>Off</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>"Nothing" means the required details are filled in from your post or site automatically. You can still add more.</p>
+  <p>The <strong>Basic</strong> setup switches on Organization, Website, Web Page, Breadcrumbs and Article. Turn any type on or off under <a href="#schema-types">Schema Types</a>.</p>
+
+  <h2 id="dates-durations">Entering dates and times</h2>
+  <p>A few fields expect a particular format. The field shows an example, and you'll see a message if the format is wrong.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Field type</th><th>Format</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td>Date</td><td>Year-month-day</td><td><code>2026-11-14</code></td></tr>
+        <tr><td>Date and time</td><td>Date, then <code>T</code>, then the time and time zone</td><td><code>2026-11-14T19:30:00+00:00</code></td></tr>
+        <tr><td>Duration</td><td><code>PT</code>, then hours (<code>H</code>) and minutes (<code>M</code>)</td><td><code>PT30M</code> = 30 minutes, <code>PT1H15M</code> = 1 hour 15 minutes</td></tr>
+        <tr><td>Web address</td><td>The full address, starting with <code>https://</code></td><td><code>https://example.com/logo.png</code></td></tr>
+        <tr><td>Price</td><td>Numbers only, with a dot for decimals</td><td><code>19.99</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="faq-howto-note">A note on FAQ and How-To results</h2>
+  <p>Google now shows FAQ rich results mostly for well-known government and health websites, and no longer shows How-To rich results. These schemas are still worth adding: search engines and AI assistants use them to understand your questions and instructions, even when no extra result appears.</p>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="settings" data-group="Reference" data-title="Settings">
+  <p class="crumbs">Reference</p>
+  <h1>Settings</h1>
+  <p class="lead">Most sites never need to change these. Go to <span class="path">Mercury Schema › Settings</span>.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/settings.png" alt="The Settings screen with Post types checkboxes, Output location options and a Debug logging checkbox." loading="lazy" width="1647" height="860"></button>
+    <ol class="legend">
+      <li><strong>Post types</strong>: where the Schema Markup box appears. Posts and Pages are ticked by default. Tick <strong>Products</strong> if you use WooCommerce.</li>
+      <li><strong>Output location</strong>: where the code is placed on your pages. Keep <strong>Page head</strong> unless a support person asks you to change it.</li>
+      <li><strong>Debug logging</strong>: records why a schema wasn't added to a page, for troubleshooting. Leave it off normally.</li>
+    </ol>
+  </figure>
+  <p>Click <span class="ui">Save Changes</span> after changing anything.</p>
+
+  <h2 id="who-can-edit">Who can edit schema</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Role</th><th>What they can do</th></tr></thead>
+      <tbody>
+        <tr><td>Administrator</td><td>Everything: schema on any post, site-wide schemas, Schema Types and Settings</td></tr>
+        <tr><td>Editor</td><td>Add and edit schema on posts and pages</td></tr>
+        <tr><td>Author, Contributor</td><td>Can't edit schema. The Schema Markup box is hidden for them.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="faq" data-group="Help" data-title="FAQ and troubleshooting">
+  <p class="crumbs">Help</p>
+  <h1>FAQ and troubleshooting</h1>
+  <p class="lead">Answers to the questions people ask most. Click a question to open it.</p>
+
+  <h2 id="trouble">Something isn't working</h2>
+  <details class="qa"><summary>I can't see the Schema Markup box</summary><div>
+    <ul>
+      <li>Scroll below the post content. In the block editor, drag the <strong>Meta Boxes</strong> bar up, or open the <strong>⋮</strong> menu › <strong>Preferences › Panels</strong> and make sure <strong>Schema Markup</strong> is switched on.</li>
+      <li>Check that the post type is ticked under <a href="#settings">Mercury Schema › Settings</a>.</li>
+      <li>Check your role. Only Administrators and Editors can edit schema.</li>
+    </ul>
+  </div></details>
+  <details class="qa"><summary>My schema says Incomplete</summary><div>
+    <p>A required field is empty, so the schema is kept off your site. Open the schema and look for the field outlined in red. Often it's a dynamic value with nothing to fill in, such as <code>{{featured_image}}</code> on a post without a featured image. See <a href="#incomplete">Fixing an Incomplete schema</a>.</p>
+  </div></details>
+  <details class="qa"><summary>My schema says Type off</summary><div>
+    <p>The schema type has been switched off under <a href="#schema-types">Mercury Schema › Schema Types</a>. Switch it back on there. Your schema is still saved.</p>
+  </div></details>
+  <details class="qa"><summary>A schema type is missing from the Add schema list</summary><div>
+    <p>It's switched off. Go to <a href="#schema-types">Schema Types</a> and switch it on. The list also has a <strong>Manage schema types</strong> link at the bottom.</p>
+  </div></details>
+  <details class="qa"><summary>Breadcrumbs or Site Navigation don't appear on a page</summary><div>
+    <p>These build themselves, and are only added when there's something to show. Breadcrumbs need a page below the home page; they aren't added to the home page itself. Site Navigation needs a menu on your site.</p>
+  </div></details>
+  <details class="qa"><summary>Google's test doesn't find my schema</summary><div>
+    <ul>
+      <li>Is the page published and public? Schema isn't added to drafts or password-protected content.</li>
+      <li>Is the schema <span class="pill pill--ok">Ready</span> and its switch on?</li>
+      <li>Do the display rules allow this page? Check the <strong>Display rules</strong> tab.</li>
+      <li>Clear your caching plugin's cache, then test again.</li>
+    </ul>
+  </div></details>
+  <details class="qa"><summary>I use Yoast, Rank Math or another SEO plugin. Will they clash?</summary><div>
+    <p>Many SEO plugins add their own Organization, Website and Article schema. Having the same thing twice won't break your site, but it's tidier to have one source. Either switch those types off under <a href="#schema-types">Schema Types</a> and let your SEO plugin handle them, or turn off the schema output in your SEO plugin. Use Mercury Schema for the types your SEO plugin doesn't offer.</p>
+  </div></details>
+
+  <h2 id="general">General questions</h2>
+  <details class="qa"><summary>Will Mercury Schema slow down my site?</summary><div>
+    <p>No. It adds no scripts, styles or extra requests to your pages. Schema for a post is stored with the post, so WordPress already has it when the page loads.</p>
+  </div></details>
+  <details class="qa"><summary>Do I have to add schema to every post?</summary><div>
+    <p>No. The site-wide schemas from the setup wizard already cover every page. Add schema to individual posts only for special content, such as an FAQ, a recipe, a product or an event.</p>
+  </div></details>
+  <details class="qa"><summary>Can I add more than one schema to a page?</summary><div>
+    <p>Yes. For example, a recipe post can have a Recipe and an FAQ. Mercury Schema marks types already on the page as <strong>Added</strong> so you don't add one twice by mistake.</p>
+  </div></details>
+  <details class="qa"><summary>What happens if I deactivate or delete the plugin?</summary><div>
+    <p>The schema stops appearing on your site straight away. Your saved schemas are kept in the database, so if you install Mercury Schema again they come back. Deleting the plugin removes only its settings.</p>
+  </div></details>
+  <details class="qa"><summary>Does it work with the classic editor?</summary><div>
+    <p>Yes. The Schema Markup box appears below the content editor and works the same way.</p>
+  </div></details>
+  <details class="qa"><summary>I used UnlimitedSchema before. What happens to my schemas?</summary><div>
+    <p>Mercury Schema is the new name for UnlimitedSchema. When you activate it, your schemas and settings move over automatically and the old plugin is deactivated. You can then delete UnlimitedSchema.</p>
+  </div></details>
+
+  <h2 id="help">Still stuck?</h2>
+  <p><a href="https://github.com/AfridexD/MercurySchema/issues">Report a problem on GitHub</a>. Tell us what you were doing, what you expected and what happened instead. A screenshot helps.</p>
+</article>
+
+</main>
+
+<dialog class="zoom" id="zoom" aria-label="Enlarged screenshot">
+  <button type="button" id="zoom-close">Close</button>
+  <img id="zoom-img" alt="">
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+  var doc = document.documentElement;
+  doc.classList.add('js');
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var nav = document.getElementById('nav');
+  var side = document.getElementById('side');
+  var toggle = document.getElementById('menu-toggle');
+  var search = document.getElementById('search');
+  var links = {};
+
+  // Sidebar, grouped as the pages declare.
+  var groups = {};
+  pages.forEach(function (p) {
+    var g = p.getAttribute('data-group');
+    if (!groups[g]) {
+      var box = document.createElement('div');
+      box.className = 'nav__group';
+      var h = document.createElement('h2');
+      h.textContent = g;
+      var ul = document.createElement('ul');
+      box.append(h, ul);
+      nav.appendChild(box);
+      groups[g] = { box: box, ul: ul };
+    }
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + p.id;
+    a.textContent = p.getAttribute('data-title');
+    li.appendChild(a);
+    groups[g].ul.appendChild(li);
+    links[p.id] = li;
+  });
+  var empty = document.createElement('p');
+  empty.className = 'nav__empty';
+  empty.textContent = 'No topics match.';
+  empty.hidden = true;
+  nav.appendChild(empty);
+
+  // In-page contents and prev/next for each page.
+  pages.forEach(function (p, i) {
+    var heads = p.querySelectorAll('h2[id]');
+    if (heads.length > 2) {
+      var toc = document.createElement('ul');
+      toc.className = 'toc';
+      toc.setAttribute('aria-label', 'On this page');
+      heads.forEach(function (h) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + h.id;
+        a.textContent = h.textContent.replace(/^\d+\.\s*/, '');
+        li.appendChild(a);
+        toc.appendChild(li);
+      });
+      var lead = p.querySelector('.lead');
+      lead.parentNode.insertBefore(toc, lead.nextSibling);
+    }
+    var pager = document.createElement('nav');
+    pager.className = 'pager';
+    pager.setAttribute('aria-label', 'Previous and next topic');
+    [[pages[i - 1], 'Previous', 'prev'], [pages[i + 1], 'Next', 'next']].forEach(function (x) {
+      if (!x[0]) {
+        return;
+      }
+      var a = document.createElement('a');
+      a.href = '#' + x[0].id;
+      a.className = x[2];
+      var s = document.createElement('small');
+      s.textContent = x[1];
+      var t = document.createElement('span');
+      t.textContent = x[0].getAttribute('data-title');
+      a.append(s, t);
+      pager.appendChild(a);
+    });
+    p.appendChild(pager);
+  });
+
+  // Routing: #page or #heading-inside-a-page.
+  function show() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var target = id ? document.getElementById(id) : null;
+    var page = target ? (target.classList.contains('page') ? target : target.closest('.page')) : null;
+    page = page || pages[0];
+    pages.forEach(function (p) {
+      p.classList.toggle('is-current', p === page);
+      var a = links[p.id].querySelector('a');
+      if (p === page) {
+        a.setAttribute('aria-current', 'page');
+      } else {
+        a.removeAttribute('aria-current');
+      }
+    });
+    document.title = page.getAttribute('data-title') + ' · Mercury Schema Help';
+    if (target && target !== page) {
+      target.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
+    side.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+  window.addEventListener('hashchange', show);
+  show();
+
+  toggle.addEventListener('click', function () {
+    var open = side.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  // Search: filter topics by their full text.
+  var text = {};
+  pages.forEach(function (p) { text[p.id] = p.textContent.toLowerCase(); });
+  search.addEventListener('input', function () {
+    var q = search.value.trim().toLowerCase();
+    var any = false;
+    pages.forEach(function (p) {
+      var hit = !q || q.split(/\s+/).every(function (w) { return text[p.id].indexOf(w) !== -1; });
+      links[p.id].hidden = !hit;
+      any = any || hit;
+    });
+    Object.keys(groups).forEach(function (g) {
+      groups[g].box.hidden = !groups[g].ul.querySelector('li:not([hidden])');
+    });
+    empty.hidden = any;
+  });
+  search.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      var first = nav.querySelector('li:not([hidden]) a');
+      if (first) {
+        location.hash = first.getAttribute('href');
+      }
+    }
+  });
+
+  // Click a screenshot to see it full size.
+  var zoom = document.getElementById('zoom');
+  var zoomImg = document.getElementById('zoom-img');
+  document.querySelectorAll('figure.shot button').forEach(function (b) {
+    var img = b.querySelector('img');
+    b.setAttribute('aria-label', 'Enlarge: ' + img.alt);
+    b.addEventListener('click', function () {
+      if (!zoom.showModal) {
+        return;
+      }
+      zoomImg.src = img.src;
+      zoomImg.alt = img.alt;
+      zoomImg.style.width = Math.round(img.naturalWidth / 1.5) + 'px';
+      zoom.showModal();
+    });
+  });
+  document.getElementById('zoom-close').addEventListener('click', function () { zoom.close(); });
+  zoom.addEventListener('click', function (e) {
+    if (e.target === zoom) {
+      zoom.close();
+    }
+  });
+})();
+</script>
+</body>
+</html>
