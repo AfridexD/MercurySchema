@@ -25,6 +25,8 @@ Mercury Schema adds JSON-LD structured data to your site so search engines and A
 * No page-builder modules, no front-end JavaScript, no external requests.
 * A full REST API and filters for developers.
 
+New to schema? The [step-by-step help guide](https://afridexd.github.io/MercurySchema/) walks you through setup with screenshots.
+
 == Installation ==
 
 1. Upload the plugin to `/wp-content/plugins/mercury-schema` or install it from the Plugins screen.

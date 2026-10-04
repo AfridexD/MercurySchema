@@ -255,7 +255,10 @@
     function footer() {
         var custom = state.preset === 'custom';
         if (state.step === 4) {
-            return el('div', { 'class': 'msw-foot' }, [el('a', { 'class': 'msw-btn', href: cfg.urls.types, text: t.goTypes })]);
+            return el('div', { 'class': 'msw-foot' }, [
+                el('a', { 'class': 'msw-link', href: cfg.urls.docs, target: '_blank', rel: 'noopener noreferrer', text: t.docs + ' ↗' }),
+                el('a', { 'class': 'msw-btn', href: cfg.urls.types, text: t.goTypes })
+            ]);
         }
         var nextLabel = state.step === 3 || (state.step === 2 && !custom) ? t.finish : t.next;
         return el('div', { 'class': 'msw-foot' }, [

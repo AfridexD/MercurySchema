@@ -17,6 +17,8 @@ use MercurySchema\API\SchemaController;
 
 class AdminController
 {
+    public const DOCS_URL = 'https://afridexd.github.io/MercurySchema/';
+
     private Settings $settings;
 
     public function __construct()
@@ -31,6 +33,7 @@ class AdminController
         add_action('add_meta_boxes', [$this, 'addMetaBox']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
         add_filter('plugin_action_links_' . plugin_basename(MERCURY_SCHEMA_FILE), [$this, 'actionLinks']);
+        add_filter('plugin_row_meta', [$this, 'rowMeta'], 10, 2);
     }
 
     public static function postTypes(): array
@@ -122,6 +125,7 @@ class AdminController
                 'setup'    => Pages::url(Pages::SETUP),
                 'post'     => $firstPost ? get_edit_post_link($firstPost[0], 'raw') : admin_url('post-new.php'),
                 'test'     => 'https://search.google.com/test/rich-results?url=' . rawurlencode(home_url('/')),
+                'docs'     => self::DOCS_URL,
             ],
             'i18n'     => self::setupStrings(),
         ]);
@@ -279,6 +283,15 @@ class AdminController
         return $links;
     }
 
+    /** A "Documentation" link under the plugin's description on the Plugins screen. */
+    public function rowMeta(array $links, string $file): array
+    {
+        if ($file === plugin_basename(MERCURY_SCHEMA_FILE)) {
+            $links[] = '<a href="' . esc_url(self::DOCS_URL) . '" target="_blank" rel="noopener noreferrer">' . esc_html__('Documentation', 'mercury-schema') . '</a>';
+        }
+        return $links;
+    }
+
     private static function setupStrings(): array
     {
         return [
@@ -332,6 +345,7 @@ class AdminController
             'next'          => __('Next →', 'mercury-schema'),
             'finish'        => __('Finish setup', 'mercury-schema'),
             'goTypes'       => __('Go to Schema Types', 'mercury-schema'),
+            'docs'          => __('Read the help guide', 'mercury-schema'),
             'saving'        => __('Saving…', 'mercury-schema'),
             /* translators: %s: schema type label */
             'enabledToast'  => __('%s enabled', 'mercury-schema'),

@@ -6,6 +6,8 @@
 
 [All releases and changelogs](https://github.com/AfridexD/MercurySchema/releases). Install: *Plugins → Add New → Upload Plugin* in WordPress.
 
+**New to schema?** The [step-by-step help guide](https://afridexd.github.io/MercurySchema/) covers installing, the setup wizard and adding schema to your posts, with screenshots.
+
 Lightweight, conflict-free JSON-LD schema markup for WordPress, with a one-minute setup wizard.
 
 - **Small.** About 30 PHP files, no runtime dependencies, no build step. The release zip is about 75 KB.
