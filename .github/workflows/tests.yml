@@ -83,6 +83,10 @@ jobs:
         run: |
           curl -sSfL https://getcomposer.org/download/latest-stable/composer.phar -o /usr/local/bin/composer
           chmod +x /usr/local/bin/composer
+          # Use the WordPress test library made for this WordPress version.
+          wp=$(php -r 'include "/usr/src/wordpress/wp-includes/version.php"; echo $wp_version;')
+          echo "WordPress $wp"
+          composer require --dev --no-update --no-interaction "wp-phpunit/wp-phpunit:~$(echo "$wp" | cut -d. -f1-2).0"
           composer install --no-interaction --no-progress
 
       - name: Unit tests
