@@ -1,0 +1,92 @@
+# Checks every push and pull request, for free on GitHub's servers.
+#
+#   1. Plugin Check: WordPress.org's own review tool, run on the release zip.
+#   2. Tests: PHP syntax, unit tests and WordPress integration tests on the
+#      oldest and newest PHP and WordPress versions the plugin supports.
+#
+# Results: the Actions tab on GitHub, and a tick or cross beside each commit.
+
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plugin-check:
+    name: Plugin Check (WordPress.org)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip, mbstring
+
+      - name: Build the plugin as WordPress.org will see it
+        run: |
+          php bin/build.php
+          mkdir -p build/check
+          unzip -q build/Mercury-Schema-*.zip -d build/check
+
+      - name: JavaScript syntax
+        run: for f in admin/js/*.js; do node --check "$f"; done
+
+      - uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: build/check/mercury-schema
+          slug: mercury-schema
+
+  tests:
+    name: PHP ${{ matrix.php }} · WordPress ${{ matrix.wp }}
+    runs-on: ubuntu-latest
+    # The official WordPress image: the right PHP, with WordPress core in /usr/src/wordpress.
+    container: wordpress:${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.0', wp: '6.0',    image: '6.0-php8.0-apache' }
+          - { php: '8.1', wp: '6.4',    image: '6.4-php8.1-apache' }
+          - { php: '8.2', wp: '6.6',    image: '6.6-php8.2-apache' }
+          - { php: '8.3', wp: 'latest', image: 'php8.3-apache' }
+          - { php: '8.4', wp: 'latest', image: 'php8.4-apache' }
+    services:
+      db:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: wordpress_test
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WP_CORE_DIR: /usr/src/wordpress/
+      WP_DB_HOST: db
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP syntax
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
+
+      - name: Install Composer and test tools
+        run: |
+          curl -sSfL https://getcomposer.org/download/latest-stable/composer.phar -o /usr/local/bin/composer
+          chmod +x /usr/local/bin/composer
+          composer install --no-interaction --no-progress
+
+      - name: Unit tests
+        run: composer test
+
+      - name: WordPress integration tests
+        run: composer test:integration
