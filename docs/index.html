@@ -274,7 +274,7 @@ dialog.zoom button { position: sticky; top: 8px; float: right; margin: 8px; padd
     <li><strong>Fills in details for you.</strong> New schemas take the title, date, author and featured image from your post, so most fields are already done.</li>
     <li><strong>Never publishes broken markup.</strong> If a required detail is missing, the schema is marked <span class="pill pill--warn">Incomplete</span> and kept off your site until you fill it in.</li>
     <li><strong>Stays light.</strong> No extra scripts or styles are loaded on your site, so pages don't get slower.</li>
-    <li><strong>Works with your tools.</strong> The block editor, the classic editor, Elementor and WooCommerce.</li>
+    <li><strong>Works with your tools.</strong> The block editor, the classic editor, Elementor and other popular page builders, WooCommerce, and caching plugins.</li>
   </ul>
 
   <h2 id="quick-start">Quick start</h2>
@@ -615,15 +615,15 @@ dialog.zoom button { position: sticky; top: 8px; float: right; margin: 8px; padd
       </tbody>
     </table>
   </div>
-  <p>With WooCommerce active, six more values are available for products: price, currency, stock status, SKU, average rating and review count. See <a href="#elementor">Elementor and WooCommerce</a>.</p>
+  <p>With WooCommerce active, six more values are available for products: price, currency, stock status, SKU, average rating and review count. See <a href="#elementor">Page builders and WooCommerce</a>.</p>
   <div class="callout note"><span class="callout__label">Good to know</span><p>If a value is empty (for example a post with no excerpt), the field is left out. If that field is required, the schema shows as <span class="pill pill--warn">Incomplete</span> until you fill it in some other way.</p></div>
 </article>
 
 <!-- ================================================================ -->
-<article class="page" id="elementor" data-group="Using Mercury Schema" data-title="Elementor and WooCommerce">
+<article class="page" id="elementor" data-group="Using Mercury Schema" data-title="Page builders and WooCommerce">
   <p class="crumbs">Using Mercury Schema</p>
-  <h1>Elementor and WooCommerce</h1>
-  <p class="lead">Mercury Schema works inside Elementor and reads product details from WooCommerce automatically.</p>
+  <h1>Page builders and WooCommerce</h1>
+  <p class="lead">Mercury Schema works with the popular free page builders, has its own button inside Elementor, and reads product details from WooCommerce automatically.</p>
 
   <h2 id="elementor-editor">Edit schema inside Elementor</h2>
   <ol class="steps">
@@ -645,6 +645,25 @@ dialog.zoom button { position: sticky; top: 8px; float: right; margin: 8px; padd
   </figure>
   <div class="callout note"><span class="callout__label">Good to know</span><p>Schema saves with its own <span class="ui">Save changes</span> button, separate from Elementor's <strong>Publish</strong>. On older Elementor versions you'll find <span class="ui">Schema Markup</span> in the Elementor menu (☰) instead of the top bar.</p></div>
 
+  <h2 id="other-builders">Other page builders</h2>
+  <p>With any other builder, add schema on the page's normal WordPress edit screen: open <span class="path">Pages › All Pages</span>, click the page's title (not "Edit with…"), and use the <strong>Schema Markup</strong> box. Your schema appears on the published page however it was built.</p>
+  <p>We test Mercury Schema with these free builders and block plugins:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Builder</th><th>Where to edit schema</th></tr></thead>
+      <tbody>
+        <tr><td>Elementor</td><td>The <strong>M</strong> button inside Elementor, or the edit screen</td></tr>
+        <tr><td>Beaver Builder</td><td>The page's WordPress edit screen</td></tr>
+        <tr><td>Page Builder by SiteOrigin</td><td>The page's WordPress edit screen</td></tr>
+        <tr><td>Brizy</td><td>The page's WordPress edit screen</td></tr>
+        <tr><td>Kadence Blocks, Spectra, GenerateBlocks, Otter Blocks</td><td>The block editor, below your content</td></tr>
+        <tr><td>Block editor and Classic Editor</td><td>Below your content</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout tip"><span class="callout__label">Tip</span><p>Dynamic values like <code>{{post_excerpt}}</code> read the text your builder saves. If a description comes out empty, write a short <strong>Excerpt</strong> for the page in its WordPress edit screen. Mercury Schema uses the excerpt first.</p></div>
+  <p>Paid builders such as Divi, Bricks, Oxygen and WPBakery should work the same way, using the WordPress edit screen, but we haven't tested them.</p>
+
   <h2 id="woocommerce">WooCommerce products</h2>
   <p>When WooCommerce is active, a new <strong>Product</strong> schema on a product fills itself in from the product: price, currency, stock status, SKU, average rating and number of reviews. When you change the price in WooCommerce, the schema follows.</p>
   <ol class="steps">
@@ -654,6 +673,62 @@ dialog.zoom button { position: sticky; top: 8px; float: right; margin: 8px; padd
   </ol>
   <div class="callout tip"><span class="callout__label">Tip</span><p>Want every product covered without opening each one? Add a Product schema under <span class="path">Mercury Schema › Site-wide Schemas</span> and set its display rules to the <strong>Product</strong> post type. Each product's own details are filled in automatically.</p></div>
   <p>Ratings are only included once a product has at least one review.</p>
+</article>
+
+<!-- ================================================================ -->
+<article class="page" id="other-schema" data-group="Using Mercury Schema" data-title="Use one source of schema">
+  <p class="crumbs">Using Mercury Schema</p>
+  <h1>Use one source of schema</h1>
+  <p class="lead">Search engines should get each kind of schema from one place only. If an SEO plugin, your theme or another schema plugin also adds schema, the same details can appear twice, which can confuse search engines.</p>
+
+  <h2 id="recommendation">Our recommendation</h2>
+  <p>Use Mercury Schema as the <strong>only</strong> source of schema on your site. Keep your SEO plugin for the jobs it's best at, such as titles, meta descriptions and sitemaps, but turn its schema off.</p>
+  <div class="callout warn"><span class="callout__label">Important</span><p>Don't run two schema plugins at the same time. If you used another schema plugin before, deactivate it once your schema is set up in Mercury Schema.</p></div>
+
+  <h2 id="warning">Mercury Schema warns you</h2>
+  <p>When it finds a popular SEO or schema plugin on your site, Mercury Schema shows a warning at the top of its screens and on the last step of the setup wizard.</p>
+  <figure class="shot">
+    <button type="button"><img src="images/duplicate-warning.png" alt="A yellow warning at the top of the Schema Types screen saying Yoast SEO also adds schema to your pages, with a link to this guide." loading="lazy" width="1671" height="354"></button>
+    <ol class="legend">
+      <li>The warning names the plugin that also adds schema, says what to do, and links back to this page.</li>
+    </ol>
+  </figure>
+
+  <h2 id="turn-off">Turn off schema in your SEO plugin</h2>
+  <p>We checked what each popular SEO plugin adds with its default settings, and how to switch it off. If your plugin has a setting, use it. If it doesn't, switch off the same types in Mercury Schema instead (see the next section).</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Plugin</th><th>Schema it adds</th><th>How to turn it off</th></tr></thead>
+      <tbody>
+        <tr><td>Yoast SEO</td><td>Website, Web Page, Breadcrumbs, Article, and Organization or Person</td><td>No setting. Switch off these types in Mercury Schema.</td></tr>
+        <tr><td>Rank Math SEO</td><td>Several types, once you finish its setup</td><td><span class="path">Rank Math SEO › Dashboard</span>, then turn off the <strong>Schema (Structured Data)</strong> module.</td></tr>
+        <tr><td>All in One SEO</td><td>Organization, Website, Web Page, Breadcrumbs, Blog Posting</td><td>No setting. Switch off these types in Mercury Schema.</td></tr>
+        <tr><td>SEOPress</td><td>Website, on the home page</td><td><span class="path">SEO › Titles &amp; Metas › Advanced</span>: turn off the sitelinks search box.</td></tr>
+        <tr><td>The SEO Framework</td><td>Website, Web Page, Organization</td><td><span class="path">SEO › Settings › Schema.org</span>: untick <strong>Output structured data</strong>.</td></tr>
+        <tr><td>Slim SEO</td><td>Website, Web Page, Organization, Breadcrumbs, Article, Person</td><td><span class="path">Settings › Slim SEO › General</span>: untick <strong>Schema</strong>.</td></tr>
+        <tr><td>Squirrly SEO</td><td>Schema once its features are set up</td><td>Turn off its JSON-LD or structured data option in Squirrly's settings.</td></tr>
+        <tr><td>Other schema plugins</td><td>Whatever you set up in them</td><td>Deactivate the plugin once your schema is in Mercury Schema.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>SEO plugins change between versions, so after changing a setting, <a href="#check">check a page</a> to be sure.</p>
+
+  <h2 id="switch-ours">Or switch off the same types in Mercury Schema</h2>
+  <p>If your SEO plugin can't turn its schema off, let it handle the basic types and use Mercury Schema for everything else, such as FAQs, recipes, products and events.</p>
+  <ol class="steps">
+    <li>Go to <span class="path">Mercury Schema › Schema Types</span>.</li>
+    <li>Switch off the types your SEO plugin already adds. For Yoast SEO, that's usually <strong>Website</strong>, <strong>Web Page</strong>, <strong>Breadcrumbs</strong>, <strong>Article</strong> and <strong>Organization</strong>.</li>
+    <li>Keep the other types on, and add them to your posts as usual.</li>
+  </ol>
+  <p>Nothing is deleted when you switch a type off, so you can change your mind later.</p>
+
+  <h2 id="check">Check a page for duplicates</h2>
+  <ol class="steps">
+    <li>Open the <a href="https://validator.schema.org/">Schema Markup Validator</a> and paste the address of one of your pages.</li>
+    <li>Look at the list of detected items. Each type, such as <strong>Organization</strong> or <strong>BreadcrumbList</strong>, should appear once.</li>
+    <li>If one appears twice, find where the second copy comes from: an SEO plugin, another schema plugin, or your theme.</li>
+  </ol>
+  <div class="callout note"><span class="callout__label">Themes</span><p>A few themes add their own schema too. If you find a duplicate and no plugin explains it, look in your theme's settings for a "schema" or "structured data" option and turn it off.</p></div>
 </article>
 
 <!-- ================================================================ -->
@@ -808,7 +883,11 @@ dialog.zoom button { position: sticky; top: 8px; float: right; margin: 8px; padd
     </ul>
   </div></details>
   <details class="qa"><summary>I use Yoast, Rank Math or another SEO plugin. Will they clash?</summary><div>
-    <p>Many SEO plugins add their own Organization, Website and Article schema. Having the same thing twice won't break your site, but it's tidier to have one source. Either switch those types off under <a href="#schema-types">Schema Types</a> and let your SEO plugin handle them, or turn off the schema output in your SEO plugin. Use Mercury Schema for the types your SEO plugin doesn't offer.</p>
+    <p>They work side by side without errors: we test Mercury Schema with Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework, Slim SEO and Squirrly SEO. But most SEO plugins also add schema, so the same details can appear twice. Use one source of schema: turn off schema in your SEO plugin, or switch off the matching types in Mercury Schema. <a href="#other-schema">See how for each plugin.</a></p>
+  </div></details>
+  <details class="qa"><summary>Does it work with caching and speed plugins?</summary><div>
+    <p>Yes. We test Mercury Schema with LiteSpeed Cache, W3 Total Cache, WP Super Cache, WP Fastest Cache, Autoptimize, WP-Optimize, Jetpack Boost, Breeze and Hummingbird. Their minify, combine and "delay JavaScript" options leave schema alone, because schema is data for search engines, not a script that runs.</p>
+    <p>After changing your schema, clear your caching plugin's cache so visitors and search engines see the new version.</p>
   </div></details>
 
   <h2 id="general">General questions</h2>
