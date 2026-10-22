@@ -357,6 +357,13 @@
                 el('span', { 'class': 'msw-summary' }, [el('span', { 'class': 'msw-dot' }), fmt(t.summary, presetName, (res.enabled_types || []).length)])
             ]),
             added.length ? el('p', { 'class': 'msw-added' }, [el('strong', { text: t.addedSiteWide + ' ' }), added.map(label).join(', ')]) : null,
+            cfg.sources ? el('p', { 'class': 'ms-sources', role: 'note' }, [
+                el('span', { 'class': 'dashicons dashicons-warning', 'aria-hidden': 'true' }),
+                el('span', {}, [
+                    el('strong', { text: cfg.sources.title + ' ' }), cfg.sources.text + ' ',
+                    el('a', { href: cfg.sources.url, target: '_blank', rel: 'noopener noreferrer', text: cfg.sources.link })
+                ])
+            ]) : null,
             el('div', { 'class': 'msw-guides' }, t.guides.map(function (g) {
                 return el('a', { 'class': 'msw-guide', href: cfg.urls[g.url], target: g.external ? '_blank' : null, rel: g.external ? 'noopener noreferrer' : null }, [
                     el('span', { 'class': 'msw-guide__tag', text: g.tag }),

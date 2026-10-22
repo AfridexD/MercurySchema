@@ -1,4 +1,4 @@
-// Minimal .pot extractor for __(), _e(), esc_html__(), esc_html_e(), esc_attr__() with the plugin text domain.
+// Minimal .pot extractor for __(), _e(), _n(), esc_html__(), esc_html_e(), esc_attr__() with the plugin text domain.
 // Usage: node bin/makepot.js .   (dev tool; not shipped)
 const fs = require('fs');
 const path = require('path');
@@ -15,20 +15,28 @@ const files = [];
 })(root);
 
 const re = /\b(?:__|_e|esc_html__|esc_html_e|esc_attr__|esc_attr_e)\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'mercury-schema'\s*\)/g;
+// _n( 'singular', 'plural', $count, 'mercury-schema' )
+const reN = /\b_n\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*[^,]+?,\s*'mercury-schema'\s*\)/g;
 const entries = new Map();
 for (const file of files.sort()) {
   const src = fs.readFileSync(file, 'utf8');
   const lines = src.split('\n');
   lines.forEach((line, i) => {
+    const ref = path.relative(root, file).replace(/\\/g, '/') + ':' + (i + 1);
+    const prev = lines[i - 1] || '';
+    const comment = /translators:/.test(prev) ? prev.trim().replace(/^\/\*\s*|\s*\*\/$/g, '') : null;
+    const add = (msg, plural) => {
+      if (!entries.has(msg)) entries.set(msg, { refs: [], comment, plural });
+      entries.get(msg).refs.push(ref);
+    };
     let m;
     re.lastIndex = 0;
     while ((m = re.exec(line))) {
-      const msg = m[1].replace(/\\'/g, "'");
-      const ref = path.relative(root, file).replace(/\\/g, '/') + ':' + (i + 1);
-      const prev = lines[i - 1] || '';
-      const comment = /translators:/.test(prev) ? prev.trim().replace(/^\/\*\s*|\s*\*\/$/g, '') : null;
-      if (!entries.has(msg)) entries.set(msg, { refs: [], comment });
-      entries.get(msg).refs.push(ref);
+      add(m[1].replace(/\\'/g, "'"), null);
+    }
+    reN.lastIndex = 0;
+    while ((m = reN.exec(line))) {
+      add(m[1].replace(/\\'/g, "'"), m[2].replace(/\\'/g, "'"));
     }
   });
 }
@@ -43,11 +51,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
 "X-Domain: mercury-schema\\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n"
 `;
 for (const [msg, e] of entries) {
   out += '\n';
   if (e.comment) out += `#. ${e.comment}\n`;
-  out += `#: ${e.refs.join(' ')}\nmsgid "${esc(msg)}"\nmsgstr ""\n`;
+  out += `#: ${e.refs.join(' ')}\nmsgid "${esc(msg)}"\n`;
+  out += e.plural ? `msgid_plural "${esc(e.plural)}"\nmsgstr[0] ""\nmsgstr[1] ""\n` : 'msgstr ""\n';
 }
 fs.mkdirSync(path.join(root, 'languages'), { recursive: true });
 fs.writeFileSync(path.join(root, 'languages', 'mercury-schema.pot'), out);

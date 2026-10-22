@@ -42,6 +42,9 @@ class Hooks
     /** filter( string[] $post_types ) — post types that get the metabox. */
     public const POST_TYPES = 'mercury_schema_post_types';
 
+    /** filter( string[] $names ) — names of active plugins that also print schema, shown in the duplicate-schema warning. */
+    public const OTHER_SOURCES = 'mercury_schema_other_sources';
+
     /** filter( bool $enabled ) — force debug logging on or off. */
     public const LOGGING_ENABLED = 'mercury_schema_logging_enabled';
 

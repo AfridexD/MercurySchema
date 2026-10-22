@@ -145,6 +145,7 @@ class Pages
         </nav>
         <hr class="wp-header-end"><?php // WordPress moves admin notices here instead of into our header. ?>
         <?php
+        OtherSchemaSources::renderNotice();
     }
 
     public function renderTypes(): void

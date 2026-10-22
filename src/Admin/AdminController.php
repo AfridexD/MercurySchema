@@ -119,6 +119,7 @@ class AdminController
             'nonce'    => wp_create_nonce('wp_rest'),
             'version'  => MERCURY_SCHEMA_VERSION,
             'logo'     => Brand::mark('#fff'),
+            'sources'  => OtherSchemaSources::warning(),
             'urls'     => [
                 'types'    => Pages::url(Pages::TYPES),
                 'siteWide' => Pages::url(Pages::SITE_WIDE),

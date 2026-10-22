@@ -112,6 +112,7 @@
 .msw-summary { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--bg); font: 12px ui-monospace, Menlo, Consolas, monospace; }
 .msw-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--msb); }
 .msw-added { margin: -8px 0 22px !important; }
+.msw-body .ms-sources { max-width: none; margin: 0 0 22px; }
 .msw-guides { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .msw-guide { display: flex; flex-direction: column; gap: 10px; padding: 24px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; transition: border-color .15s; }
 .msw-guide:hover { border-color: var(--msb); color: var(--ink); }
