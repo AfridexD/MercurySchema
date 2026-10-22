@@ -51,6 +51,22 @@ class PluginTest extends WP_UnitTestCase
         $this->assertSame('A short summary.', $docs[0]['description']);
     }
 
+    public function testPageBuilderShortcodesKeepTheirText(): void
+    {
+        // WPBakery- and Divi-style content: the whole page wrapped in shortcodes; then Brizy's
+        // compiled HTML, saved unfiltered the way an administrator's builder save is.
+        kses_remove_filters();
+        wp_update_post(['ID' => $this->postId, 'post_excerpt' => '', 'post_content' =>
+            '[vc_row][vc_column width="1/2"][vc_column_text]<p>Fresh <b>bread</b> daily.</p>[/vc_column_text][/vc_column][/vc_row]'
+            . "\n[et_pb_section fullwidth=\"on\"][et_pb_text]Open 7&nbsp;days.[/et_pb_text][/et_pb_section][gallery ids=\"1,2\"]"
+            . '<div class="brz-root__container">{{ brizy_dc_post_title }}<style>.brz{color:red}</style></div><!-- version:1 -->']);
+        kses_init_filters();
+        $this->setSchemas([$this->article(['data' => ['headline' => 'x', 'author' => 'Ada', 'description' => '{{post_excerpt}}']])]);
+
+        $docs = Loader::getInstance()->output()->buildJsonLd($this->postId);
+        $this->assertSame('Fresh bread daily. Open 7 days.', str_replace("\u{a0}", ' ', $docs[0]['description']));
+    }
+
     public function testMarkupCannotBreakOutOfScriptTag(): void
     {
         $this->setSchemas([$this->article(['data' => ['headline' => 'x</script><b>', 'author' => 'Ada']])]);

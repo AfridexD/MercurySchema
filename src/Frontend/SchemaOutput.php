@@ -265,16 +265,15 @@ class SchemaOutput
         ];
 
         if ($post) {
-            $excerpt = has_excerpt($post)
-                ? $post->post_excerpt
-                : wp_trim_words(strip_shortcodes($post->post_content), 55, '…');
+            $content = self::text($post->post_content);
+            $excerpt = has_excerpt($post) ? self::plain($post->post_excerpt) : wp_trim_words($content, 55, '…');
             $authorId = (int) $post->post_author;
 
             $values = array_merge($values, [
                 'post_title'     => self::plain($post->post_title),
-                'post_excerpt'   => self::plain($excerpt),
-                // Plain text, whitespace collapsed, capped below the validator's text limit.
-                'post_content'   => mb_substr(trim(preg_replace('/\s+/u', ' ', self::plain(strip_shortcodes($post->post_content)))), 0, 5000),
+                'post_excerpt'   => $excerpt,
+                // Capped below the validator's text limit.
+                'post_content'   => mb_substr($content, 0, 5000),
                 'post_url'       => (string) get_permalink($post),
                 'post_date'      => (string) get_post_time('c', true, $post),
                 'post_modified'  => (string) get_post_modified_time('c', true, $post),
@@ -294,5 +293,17 @@ class SchemaOutput
     private static function plain(string $text): string
     {
         return trim(html_entity_decode(wp_strip_all_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    }
+
+    /**
+     * Plain text of post content, whitespace collapsed. Shortcode tags are removed but the
+     * text they wrap is kept: page builders such as WPBakery and Divi wrap whole pages in
+     * shortcodes, and strip_shortcodes() would drop the page text with them. Builder
+     * placeholders such as Brizy's {{brizy_dc_post_title}} are removed too.
+     */
+    private static function text(string $content): string
+    {
+        $content = (string) preg_replace(['/\[\/?[a-z][\w-]*(?:\s[^\]]*)?\/?\]/i', '/\{\{.*?\}\}/s'], ' ', $content);
+        return trim((string) preg_replace('/\s+/u', ' ', self::plain($content)));
     }
 }
