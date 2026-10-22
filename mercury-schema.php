@@ -4,8 +4,8 @@
  * Description:       Lightweight JSON-LD schema markup with a one-minute setup.
  * Version:           1.0.1
  * Plugin URI:        https://github.com/AfridexD/MercurySchema
- * Author:            AfridexD
- * Author URI:        https://github.com/AfridexD
+ * Author:            MohammadAfride
+ * Author URI:        https://profiles.wordpress.org/mohammadafride/
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       mercury-schema

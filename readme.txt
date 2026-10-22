@@ -1,6 +1,6 @@
-=== Mercury Schema ===
+=== Mercury Schema – Structured Data & Rich Snippets ===
 Contributors: mohammadafride
-Tags: schema, structured data, json-ld, rich results, seo
+Tags: schema, schema markup, structured data, rich snippets, json-ld
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -8,48 +8,82 @@ Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight JSON-LD structured data with a one-minute setup. No front-end scripts, one database row per post.
+Add schema markup to WordPress in one minute. Qualify for rich snippets in Google and help AI search understand your content. No coding needed.
 
 == Description ==
 
-Mercury Schema adds JSON-LD structured data to your site so search engines and AI answers understand it, without slowing your site down.
+**Mercury Schema adds structured data to your WordPress site, so Google, Bing and AI assistants understand exactly what each page is about, and can show it as rich snippets: star ratings, FAQs, recipe cards, product prices, event dates and more.**
 
-* A one-minute setup wizard. Pick Basic, Smart or Custom and the site-wide basics (organization, website, pages and breadcrumbs) are set up for you.
-* 22 schema types: Organization, Website, Web Page, Breadcrumbs, Person, Site Navigation, Article, Blog Posting, News Article, FAQ, How-To, Video, Image, Recipe, Product, Review, Service, Software App, Local Business, Event, Course and Job Posting.
-* Breadcrumbs and navigation are built automatically from your page hierarchy and menu.
-* Site-wide schemas with display rules (front page, posts and pages, archives, post types, categories, author roles). A post's own schema replaces a site-wide one of the same type.
-* Dynamic values like {{post_title}} and {{featured_image}} keep schema in sync with your content.
-* WooCommerce aware: Product schema picks up price, currency, stock status, SKU and rating from the product.
-* Live preview of the exact JSON-LD search engines will see, with a one-click Google Rich Results test.
-* Clear status on every schema. Incomplete schema is never printed, so it can't hurt your rich results.
-* No page-builder modules, no front-end JavaScript, no external requests.
-* A full REST API and filters for developers.
+No coding and no confusing settings. A one-minute setup wizard adds the essentials to your whole site, and every new schema fills itself in from your post's title, date, author and featured image.
 
-New to schema? The [step-by-step help guide](https://afridexd.github.io/MercurySchema/) walks you through setup with screenshots.
+[Read the step-by-step help guide](https://afridexd.github.io/MercurySchema/) (with screenshots) to see how it works.
 
-= Works with =
+= What is schema markup? =
 
-Tested with the block editor, the Classic Editor, Elementor and other popular page builders, WooCommerce, and popular caching and speed plugins. The help guide lists exactly which ones.
+Schema markup is a small piece of code, written in the JSON-LD format, that describes your content in a language search engines understand: "this is a recipe, it takes 25 minutes, it has a 4.8-star rating". Search engines use it to show richer listings, which stand out and attract more clicks. It also helps AI search tools describe your business and content correctly.
+
+= Why Mercury Schema? =
+
+* **Set up in one minute.** Pick Basic, Smart or Custom, and your organization, website, page and breadcrumb details are added to every page for you.
+* **Fills itself in.** Dynamic values such as the post title, publish date and featured image keep your structured data in sync whenever you edit a post.
+* **Never prints broken markup.** If a required detail is missing, the schema is marked Incomplete and kept off your site until you add it, with a clear message saying what to fix.
+* **See exactly what Google sees.** A live preview shows the finished JSON-LD, with a one-click link to Google's Rich Results Test.
+* **Fast by design.** Nothing is loaded on the front end: no scripts, no styles, no external requests. Each post's markup is stored in a single database row.
+* **Works with your tools.** The block editor, the Classic Editor, Elementor (with its own button inside the builder), other popular page builders, WooCommerce and caching plugins.
+* **Warns about duplicates.** If a popular SEO or schema plugin also adds markup, Mercury Schema tells you and shows how to keep one source.
+* **Every feature is free.** No upsells, no ads in your dashboard, no account to create.
+
+= 22 schema types =
+
+* **Site foundations:** Organization, Website, Web Page, Breadcrumbs (built automatically), Person, Site Navigation (read from your menu).
+* **Content:** Article, Blog Posting, News Article, FAQ, How-To, Video, Image, Recipe.
+* **Commerce:** Product (with WooCommerce price, stock and ratings filled in), Review, Service, Software App.
+* **Local and events:** Local Business, Event, Course, Job Posting.
+
+Switch any type on or off under Schema Types to keep the editor tidy. Switched-off types keep their saved data.
+
+= Who is it for? =
+
+* Bloggers and publishers who want articles, FAQs and how-to guides to stand out in search.
+* Small businesses that want their name, logo, address and phone number shown correctly.
+* Online stores using WooCommerce that want product prices, stock and ratings in search results.
+* Recipe, event and course sites that rely on rich results for traffic.
+* Agencies that need lightweight, predictable structured data on client sites.
 
 = Use one source of schema =
 
-Many SEO plugins add some schema of their own. Search engines should get each kind of schema from one place, so Mercury Schema tells you when it finds a popular SEO or schema plugin on your site, and the help guide shows how to turn off the overlap.
+Many SEO plugins add some structured data of their own. Search engines should get each kind of schema from one place, so Mercury Schema tells you when it finds a popular SEO or schema plugin on your site. The help guide lists what each one adds and how to turn off the overlap.
 
 = Privacy =
 
-Mercury Schema does not collect personal data, set cookies, track visitors or contact any outside service. Schema is built on your own server from content you already have. The "Test in Google" buttons only open Google's Rich Results Test when you click them.
+Mercury Schema does not collect personal data, set cookies, track visitors or contact any outside service. Your markup is built on your own server from content you already have. The "Test in Google" buttons only open Google's Rich Results Test when you click them.
 
-= Source code =
+= Help and source code =
 
-All code ships unminified. Development happens on [GitHub](https://github.com/AfridexD/MercurySchema), where you can report issues and follow changes.
+* [Step-by-step help guide](https://afridexd.github.io/MercurySchema/) with screenshots.
+* Questions? Ask in this plugin's support forum.
+* All code ships unminified. Development happens on [GitHub](https://github.com/AfridexD/MercurySchema), where developers will also find the REST API and filters.
 
 == Installation ==
 
-1. Upload the plugin to `/wp-content/plugins/mercury-schema` or install it from the Plugins screen.
-2. Activate it. The setup wizard opens automatically.
-3. Choose a preset. Then fine-tune site-wide schemas under Mercury Schema → Site-wide Schemas, or edit any post and use the Schema Markup box.
+1. In your WordPress dashboard, go to Plugins → Add New Plugin and search for "Mercury Schema".
+2. Click Install Now, then Activate. The setup wizard opens automatically.
+3. Pick Basic, Smart or Custom and click Finish setup. Your site-wide structured data is now live.
+4. To add an FAQ, recipe, product or other schema to a post, open it and use the Schema Markup box below the content.
 
 == Frequently Asked Questions ==
+
+= Do I need to know how to code? =
+
+No. You pick schema types from a list and fill in plain fields. Most fields fill themselves in from your post, and the help guide walks you through every screen.
+
+= Will schema markup improve my Google rankings? =
+
+Schema markup is not a direct ranking factor, and no plugin can guarantee rich snippets: Google decides when to show them. What structured data does is help search engines understand your pages and make them eligible for rich results, which stand out and tend to get more clicks.
+
+= Does it slow down my site? =
+
+No. Mercury Schema adds no scripts, styles or external requests to your pages. The markup is a few lines of text in the page head, built from data WordPress has already loaded.
 
 = What do the setup presets do? =
 
