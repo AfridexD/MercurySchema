@@ -1,4 +1,4 @@
-=== Mercury Schema – Structured Data & Rich Snippets ===
+=== Mercury Schema ===
 Contributors: mohammadafride
 Tags: schema, schema markup, structured data, rich snippets, json-ld
 Requires at least: 6.0
