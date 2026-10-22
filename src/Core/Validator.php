@@ -9,6 +9,8 @@
 
 namespace MercurySchema\Core;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Helpers\DataMapper;
 
 class Validator

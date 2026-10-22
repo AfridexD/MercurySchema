@@ -10,6 +10,8 @@
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 class PostMetaStore
 {
     public const META_KEY = '_mercury_schema_data';

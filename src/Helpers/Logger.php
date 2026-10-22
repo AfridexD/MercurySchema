@@ -8,6 +8,8 @@
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Admin\Settings;
 use MercurySchema\API\Hooks;
 
@@ -16,7 +18,7 @@ class Logger
     public static function enabled(): bool
     {
         $enabled = (defined('WP_DEBUG') && WP_DEBUG) || Settings::get('debug');
-        return (bool) apply_filters(Hooks::LOGGING_ENABLED, $enabled);
+        return (bool) apply_filters('mercury_schema_logging_enabled', $enabled);
     }
 
     public static function log(string $message, array $context = []): void

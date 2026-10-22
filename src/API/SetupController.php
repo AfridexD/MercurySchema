@@ -8,6 +8,8 @@
 
 namespace MercurySchema\API;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Core\Schema;
 use MercurySchema\Frontend\SchemaRegistry;
 use MercurySchema\Helpers\GlobalStore;
@@ -108,7 +110,7 @@ class SetupController
             $before = SetupState::enabledTypes();
             SetupState::saveEnabledTypes($types);
             if ($before !== SetupState::enabledTypes()) {
-                do_action(Hooks::TYPES_UPDATED, SetupState::enabledTypes(), $before);
+                do_action('mercury_schema_types_updated', SetupState::enabledTypes(), $before);
             }
         }
         if (is_string($preset)) {

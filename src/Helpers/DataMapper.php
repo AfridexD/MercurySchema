@@ -10,6 +10,8 @@
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 class DataMapper
 {
     public const TOKEN_PATTERN = '/\{\{\s*([a-z0-9_]+)\s*\}\}/';

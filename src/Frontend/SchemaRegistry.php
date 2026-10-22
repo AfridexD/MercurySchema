@@ -12,6 +12,8 @@
 
 namespace MercurySchema\Frontend;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\API\Hooks;
 use MercurySchema\Core\SchemaType;
 use MercurySchema\Core\Validator;
@@ -32,9 +34,9 @@ class SchemaRegistry
     {
         if ($this->types === null) {
             $this->types = [];
-            $definitions = apply_filters(Hooks::DEFINITIONS, $this->loadDefinitions());
+            $definitions = apply_filters('mercury_schema_definitions', $this->loadDefinitions());
             foreach ((array) $definitions as $name => $definition) {
-                $definition = apply_filters(Hooks::TYPE_DEFINITION, $definition, $name);
+                $definition = apply_filters('mercury_schema_type_definition', $definition, $name);
                 if (is_string($name) && is_array($definition)) {
                     $this->types[$name] = new SchemaType($name, $definition);
                 }

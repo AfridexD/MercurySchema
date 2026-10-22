@@ -18,6 +18,8 @@
 
 namespace MercurySchema\Core;
 
+defined('ABSPATH') || exit;
+
 class SchemaType
 {
     public const FIELD_TYPES = ['string', 'text', 'url', 'integer', 'number', 'date', 'duration', 'enum', 'array', 'objects'];

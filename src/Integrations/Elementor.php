@@ -9,6 +9,8 @@
 
 namespace MercurySchema\Integrations;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Admin\AdminController;
 use MercurySchema\Admin\Brand;
 

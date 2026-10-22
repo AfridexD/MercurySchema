@@ -17,6 +17,8 @@
 
 namespace MercurySchema\Core;
 
+defined('ABSPATH') || exit;
+
 class ConditionEvaluator
 {
     public const KEYS = ['post_types', 'categories', 'user_roles', 'post_ids', 'locations'];

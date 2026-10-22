@@ -7,6 +7,8 @@
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 class SetupState
 {
     public const COMPLETE = 'mercury_schema_setup_complete';

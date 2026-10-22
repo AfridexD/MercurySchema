@@ -9,6 +9,8 @@
 
 namespace MercurySchema\Core;
 
+defined('ABSPATH') || exit;
+
 class Schema
 {
     private string $id;

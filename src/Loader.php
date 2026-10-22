@@ -8,6 +8,8 @@
 
 namespace MercurySchema;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Admin\AdminController;
 use MercurySchema\Admin\Settings;
 use MercurySchema\API\REST;

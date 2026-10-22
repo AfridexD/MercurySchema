@@ -10,6 +10,8 @@
 
 namespace MercurySchema\Integrations;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\API\Hooks;
 
 class WooCommerce

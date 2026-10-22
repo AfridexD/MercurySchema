@@ -1,11 +1,15 @@
 <?php
 /**
- * Every public filter and action the plugin fires, in one place.
+ * Every public filter and action the plugin fires, in one place. Where the
+ * plugin fires a hook it writes the name out in full, so tools such as Plugin
+ * Check can see the mercury_schema_ prefix; keep both in sync.
  *
  * @package MercurySchema
  */
 
 namespace MercurySchema\API;
+
+defined('ABSPATH') || exit;
 
 class Hooks
 {

@@ -8,6 +8,8 @@
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 class GlobalStore
 {
     public const OPTION = 'mercury_schema_global';

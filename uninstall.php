@@ -22,3 +22,4 @@ foreach ([
     delete_option($mercury_schema_option);
 }
 delete_transient('mercury_schema_activation_redirect');
+delete_metadata('user', 0, 'mercury_schema_hide_setup_notice', '', true);

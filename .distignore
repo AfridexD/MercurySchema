@@ -16,3 +16,18 @@ docker-compose.yml
 bin
 /.wordpress-org
 /docs
+README.md
+# AI-assistant folders and files: never shipped (Plugin Check flags them).
+.claude
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.cursor
+.cursorrules
+.windsurf
+.windsurfrules
+.aider*
+.copilot
+.github
+.vscode
+.idea

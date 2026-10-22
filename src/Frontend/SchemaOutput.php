@@ -8,6 +8,8 @@
 
 namespace MercurySchema\Frontend;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\API\Hooks;
 use MercurySchema\Core\ConditionEvaluator;
 use MercurySchema\Core\Schema;
@@ -36,7 +38,7 @@ class SchemaOutput
      */
     public function render(): void
     {
-        if (is_admin() || is_feed() || !apply_filters(Hooks::OUTPUT_ENABLED, true)) {
+        if (is_admin() || is_feed() || !apply_filters('mercury_schema_output_enabled', true)) {
             return;
         }
 
@@ -53,7 +55,12 @@ class SchemaOutput
             $locations[] = 'archive';
         }
 
-        echo $this->markup($this->documents($post, $locations)); // phpcs:ignore WordPress.Security.EscapeOutput -- JSON encoded with JSON_HEX_TAG.
+        foreach ($this->documents($post, $locations) as $jsonLd) {
+            $json = self::encode($jsonLd);
+            if ($json !== null) {
+                wp_print_inline_script_tag($json, ['type' => 'application/ld+json']);
+            }
+        }
     }
 
     /**
@@ -127,12 +134,19 @@ class SchemaOutput
     {
         $html = '';
         foreach ($documents as $jsonLd) {
-            $json = wp_json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
-            if ($json !== false) {
-                $html .= '<script type="application/ld+json">' . $json . "</script>\n";
+            $json = self::encode($jsonLd);
+            if ($json !== null) {
+                $html .= wp_get_inline_script_tag($json, ['type' => 'application/ld+json']);
             }
         }
         return $html;
+    }
+
+    /** JSON for a script tag. JSON_HEX_TAG turns < and > into < and >, so it cannot close the tag. */
+    private static function encode(array $jsonLd): ?string
+    {
+        $json = wp_json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+        return $json === false ? null : $json;
     }
 
     private function documents(?\WP_Post $post, array $locations): array
@@ -173,7 +187,7 @@ class SchemaOutput
 
             $context = $this->conditionContext($post, $locations, $schema->getConditions(), $context);
             $shouldRender = $this->evaluator->evaluate($schema->getConditions(), $context);
-            if (!apply_filters(Hooks::SHOULD_RENDER, $shouldRender, $schema, $postId)) {
+            if (!apply_filters('mercury_schema_should_render', $shouldRender, $schema, $postId)) {
                 continue;
             }
 
@@ -198,7 +212,7 @@ class SchemaOutput
                 }
             }
 
-            $jsonLd = apply_filters(Hooks::JSON_LD_OUTPUT, $jsonLd, $postId, $schema);
+            $jsonLd = apply_filters('mercury_schema_json_ld_output', $jsonLd, $postId, $schema);
             if (is_array($jsonLd) && $jsonLd) {
                 $output[] = $jsonLd;
             }
@@ -234,7 +248,7 @@ class SchemaOutput
             $context['user_roles'] = $author ? (array) $author->roles : [];
         }
 
-        return apply_filters(Hooks::CONDITION_CONTEXT, $context, $post);
+        return apply_filters('mercury_schema_condition_context', $context, $post);
     }
 
     /**
@@ -287,7 +301,7 @@ class SchemaOutput
             }
         }
 
-        return (array) apply_filters(Hooks::TOKEN_VALUES, $values, $post);
+        return (array) apply_filters('mercury_schema_token_values', $values, $post);
     }
 
     private static function plain(string $text): string

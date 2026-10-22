@@ -11,6 +11,8 @@
 
 namespace MercurySchema\Admin;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\API\Hooks;
 use MercurySchema\API\REST;
 use MercurySchema\API\SchemaController;
@@ -38,7 +40,7 @@ class AdminController
 
     public static function postTypes(): array
     {
-        return (array) apply_filters(Hooks::POST_TYPES, (array) Settings::get('post_types'));
+        return (array) apply_filters('mercury_schema_post_types', (array) Settings::get('post_types'));
     }
 
     public static function canManage(): bool
@@ -164,7 +166,7 @@ class AdminController
      */
     public static function tokens(): array
     {
-        return (array) apply_filters(Hooks::TOKENS, [
+        return (array) apply_filters('mercury_schema_tokens', [
             'post_title'       => __('Post title', 'mercury-schema'),
             'post_excerpt'     => __('Post excerpt', 'mercury-schema'),
             'post_content'     => __('Post content (plain text)', 'mercury-schema'),

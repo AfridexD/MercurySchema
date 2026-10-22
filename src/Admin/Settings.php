@@ -8,6 +8,8 @@
 
 namespace MercurySchema\Admin;
 
+defined('ABSPATH') || exit;
+
 class Settings
 {
     public const OPTION = 'mercury_schema_settings';

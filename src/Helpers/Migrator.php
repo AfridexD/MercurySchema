@@ -1,18 +1,20 @@
 <?php
 /**
  * One-time migration from the plugin's previous name (UnlimitedSchema).
- * Runs on activation; safe to run repeatedly.
+ * Runs on activation; safe to run repeatedly. It moves the old data and leaves
+ * the old plugin alone: with its data moved, it has nothing left to print.
  *
  * @package MercurySchema
  */
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Admin\Settings;
 
 class Migrator
 {
-    public const LEGACY_PLUGIN = 'unlimited-schema/unlimited-schema.php';
     private const LEGACY_META_KEY = '_unlimited_schema_data';
 
     /** Legacy option => [new option, autoload]. */
@@ -22,18 +24,12 @@ class Migrator
     ];
 
     /**
-     * @return array{options: int, meta_rows: int, deactivated_legacy: bool}
+     * @return array{options: int, meta_rows: int}
      */
     public static function run(): array
     {
         global $wpdb;
-        $report = ['options' => 0, 'meta_rows' => 0, 'deactivated_legacy' => false];
-
-        // Two copies active at once would print every schema twice.
-        if (function_exists('is_plugin_active') && is_plugin_active(self::LEGACY_PLUGIN)) {
-            deactivate_plugins(self::LEGACY_PLUGIN, true);
-            $report['deactivated_legacy'] = true;
-        }
+        $report = ['options' => 0, 'meta_rows' => 0];
 
         foreach (self::OPTIONS as $legacy => [$option, $autoload]) {
             $value = get_option($legacy, null);

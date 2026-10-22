@@ -36,6 +36,6 @@ class MigratorTest extends WP_UnitTestCase
         $this->assertSame([], (new PostMetaStore())->get($b)['schemas']);
 
         $again = Migrator::run();
-        $this->assertSame(['options' => 0, 'meta_rows' => 0, 'deactivated_legacy' => false], $again, 'safe to run twice');
+        $this->assertSame(['options' => 0, 'meta_rows' => 0], $again, 'safe to run twice');
     }
 }

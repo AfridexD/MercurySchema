@@ -10,6 +10,8 @@
 
 namespace MercurySchema\API;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Core\Schema;
 use MercurySchema\Core\SchemaType;
 use MercurySchema\Frontend\SchemaOutput;
@@ -42,13 +44,13 @@ class SchemaController
     /** Capability to edit post schemas: editors and admins by default, not authors. */
     public static function postCapability(): string
     {
-        return (string) apply_filters(Hooks::REST_CAPABILITY, 'edit_others_posts');
+        return (string) apply_filters('mercury_schema_rest_capability', 'edit_others_posts');
     }
 
     /** Capability to edit site-wide schemas: admins by default. */
     public static function globalCapability(): string
     {
-        return (string) apply_filters(Hooks::GLOBAL_CAPABILITY, 'manage_options');
+        return (string) apply_filters('mercury_schema_global_capability', 'manage_options');
     }
 
     /**
@@ -213,7 +215,7 @@ class SchemaController
         if (!$this->write($postId, $remaining)) {
             return $this->saveFailed();
         }
-        do_action(Hooks::SCHEMA_DELETED, $schemaId, $postId);
+        do_action('mercury_schema_schema_deleted', $schemaId, $postId);
         return new WP_REST_Response(['success' => true, 'deleted' => $schemaId]);
     }
 
@@ -278,7 +280,7 @@ class SchemaController
         if (!$this->write($postId, $schemas)) {
             return $this->saveFailed();
         }
-        do_action(Hooks::SCHEMA_SAVED, $saved, $postId);
+        do_action('mercury_schema_schema_saved', $saved, $postId);
         return $saved;
     }
 

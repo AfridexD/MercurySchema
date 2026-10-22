@@ -9,6 +9,8 @@
 
 namespace MercurySchema\Admin;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\API\Hooks;
 
 class OtherSchemaSources
@@ -52,7 +54,7 @@ class OtherSchemaSources
                 $found[] = self::PLUGINS[$folder];
             }
         }
-        return array_values(array_unique((array) apply_filters(Hooks::OTHER_SOURCES, $found)));
+        return array_values(array_unique((array) apply_filters('mercury_schema_other_sources', $found)));
     }
 
     /** "Yoast SEO", "Yoast SEO and Rank Math SEO", "A, B and C". */

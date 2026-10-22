@@ -7,6 +7,8 @@
 
 namespace MercurySchema\Helpers;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\Core\ConditionEvaluator;
 use MercurySchema\Core\SchemaType;
 

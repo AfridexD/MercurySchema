@@ -9,6 +9,8 @@
 
 namespace MercurySchema\Admin;
 
+defined('ABSPATH') || exit;
+
 use MercurySchema\API\SchemaController;
 use MercurySchema\Helpers\SetupState;
 
@@ -30,6 +32,7 @@ class Pages
     {
         add_action('admin_menu', [$this, 'addMenu']);
         add_action('admin_init', [$this, 'activationRedirect']);
+        add_action('admin_init', [$this, 'dismissSetupNotice']);
         add_action('admin_notices', [$this, 'setupNotice']);
         add_action('admin_enqueue_scripts', [$this, 'menuIconStyle']);
         add_action('in_admin_header', [$this, 'quietWizard'], 1000);
@@ -91,21 +94,39 @@ class Pages
         exit;
     }
 
+    /** User meta set when a user dismisses the "almost ready" notice. */
+    public const HIDE_NOTICE = 'mercury_schema_hide_setup_notice';
+
     public function setupNotice(): void
     {
         $screen = get_current_screen();
         $where = ['dashboard', 'plugins'];
         if (SetupState::isComplete() || !current_user_can(SchemaController::globalCapability())
-            || self::current() === self::SETUP || !$screen || (!in_array($screen->id, $where, true) && self::current() === '')) {
+            || self::current() === self::SETUP || !$screen || (!in_array($screen->id, $where, true) && self::current() === '')
+            || get_user_meta(get_current_user_id(), self::HIDE_NOTICE, true)) {
             return;
         }
         printf(
-            '<div class="notice notice-info"><p><strong>%s</strong> %s <a class="button button-primary" style="margin-left:8px" href="%s">%s</a></p></div>',
+            '<div class="notice notice-info"><p><strong>%s</strong> %s <a class="button button-primary" style="margin-left:8px" href="%s">%s</a> <a style="margin-left:8px" href="%s">%s</a></p></div>',
             esc_html__('Mercury Schema is almost ready.', 'mercury-schema'),
             esc_html__('Pick the schema types for your site in a one-minute setup.', 'mercury-schema'),
             esc_url(self::url(self::SETUP)),
-            esc_html__('Start setup', 'mercury-schema')
+            esc_html__('Start setup', 'mercury-schema'),
+            esc_url(wp_nonce_url(add_query_arg('mercury_schema_hide_notice', '1'), 'mercury_schema_hide_notice')),
+            esc_html__('Dismiss', 'mercury-schema')
         );
+    }
+
+    /** Handles the notice's Dismiss link: remembered per user. */
+    public function dismissSetupNotice(): void
+    {
+        if (!isset($_GET['mercury_schema_hide_notice'], $_GET['_wpnonce'])
+            || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'mercury_schema_hide_notice')) {
+            return;
+        }
+        update_user_meta(get_current_user_id(), self::HIDE_NOTICE, 1);
+        wp_safe_redirect(remove_query_arg(['mercury_schema_hide_notice', '_wpnonce']));
+        exit;
     }
 
     /** A highlighted, brand-blue menu item with the white Mercury mark. */
@@ -132,7 +153,7 @@ class Pages
         ];
         ?>
         <header class="ms-page__head">
-            <span class="ms-logo" aria-hidden="true"><?php echo Brand::mark('#fff'); // phpcs:ignore WordPress.Security.EscapeOutput -- static SVG. ?></span>
+            <span class="ms-logo" aria-hidden="true"><?php echo wp_kses(Brand::mark('#fff'), Brand::allowedSvg()); ?></span>
             <div>
                 <h1><?php esc_html_e('Mercury Schema', 'mercury-schema'); ?> <span class="ms-page__ver"><?php echo esc_html(MERCURY_SCHEMA_VERSION); ?></span></h1>
                 <p><?php esc_html_e('Structured data that helps search engines and AI answers understand your site.', 'mercury-schema'); ?></p>

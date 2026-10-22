@@ -7,6 +7,8 @@
 
 namespace MercurySchema\API;
 
+defined('ABSPATH') || exit;
+
 use WP_REST_Server;
 
 class REST

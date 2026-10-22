@@ -11,6 +11,8 @@
 
 namespace MercurySchema\Frontend;
 
+defined('ABSPATH') || exit;
+
 class Generators
 {
     private const MAX_ITEMS = 50;
