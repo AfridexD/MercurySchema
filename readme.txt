@@ -1,10 +1,10 @@
 === Mercury Schema ===
-Contributors: afridexd
+Contributors: mohammadafride
 Tags: schema, structured data, json-ld, rich results, seo
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,22 @@ Mercury Schema adds JSON-LD structured data to your site so search engines and A
 * A full REST API and filters for developers.
 
 New to schema? The [step-by-step help guide](https://afridexd.github.io/MercurySchema/) walks you through setup with screenshots.
+
+= Works with =
+
+Tested with the block editor, the Classic Editor, Elementor and other popular page builders, WooCommerce, and popular caching and speed plugins. The help guide lists exactly which ones.
+
+= Use one source of schema =
+
+Many SEO plugins add some schema of their own. Search engines should get each kind of schema from one place, so Mercury Schema tells you when it finds a popular SEO or schema plugin on your site, and the help guide shows how to turn off the overlap.
+
+= Privacy =
+
+Mercury Schema does not collect personal data, set cookies, track visitors or contact any outside service. Schema is built on your own server from content you already have. The "Test in Google" buttons only open Google's Rich Results Test when you click them.
+
+= Source code =
+
+All code ships unminified. Development happens on [GitHub](https://github.com/AfridexD/MercurySchema), where you can report issues and follow changes.
 
 == Installation ==
 
@@ -51,9 +67,13 @@ Site-wide schemas live under Mercury Schema → Site-wide Schemas and appear on 
 
 A required field is empty, often because a dynamic value has nothing to fill in (for example {{featured_image}} on a post without a featured image). Incomplete schema is not printed. Fill the field or set a featured image.
 
-= Does it work alongside Yoast SEO or Rank Math? =
+= Does it work alongside Yoast SEO, Rank Math or another SEO plugin? =
 
-Yes. Mercury Schema only prints the schema you add, as separate script tags. Yoast already adds an Article to posts, and WooCommerce adds a Product on classic themes, so use one source per type. Developers can switch off Yoast's Article with the `wpseo_schema_needs_article` filter, or WooCommerce's Product with `woocommerce_structured_data_product`.
+Yes, they run side by side without errors. Most SEO plugins also add some schema (often Website, Web Page, Breadcrumbs, Organization and Article), so use one source per type: turn off schema in your SEO plugin where it has a setting, or switch off the same types under Mercury Schema → Schema Types. Mercury Schema shows a warning when it finds a popular SEO or schema plugin, and the [help guide](https://afridexd.github.io/MercurySchema/#other-schema) lists what each one adds and how to turn it off. WooCommerce also adds Product schema on classic themes; developers can switch that off with the `woocommerce_structured_data_product` filter.
+
+= Does it work with caching plugins? =
+
+Yes. Schema is data for search engines, not a script that runs, and caching plugins' minify, combine and "delay JavaScript" options leave it alone. After changing schema, clear your cache so visitors see the new version.
 
 = Does it work with Elementor and other page builders? =
 
@@ -63,7 +83,26 @@ Yes. Schema is printed in the page head, independent of how the content was buil
 
 Editors and administrators can edit schema on posts they're allowed to edit. Authors and contributors can't. Site-wide schemas, schema types and the setup wizard are for administrators only. Developers can change this with the mercury_schema_rest_capability and mercury_schema_global_capability filters.
 
+== Screenshots ==
+
+1. The one-minute setup wizard: choose Basic, Smart or Custom.
+2. Add schema to any post or page from the Schema Markup box.
+3. Fill in an FAQ. The status shows Ready when the schema is complete.
+4. Preview the exact JSON-LD that search engines will see.
+5. Schema Types: switch each type on or off. Changes save instantly.
+6. Site-wide schemas, such as your Organization, with display rules.
+7. Edit schema without leaving the Elementor editor.
+
 == Changelog ==
+
+= 1.0.1 =
+* New: a warning when a popular SEO or schema plugin also adds schema, with a link to how to keep one source.
+* New: links to the help guide on the Plugins screen and at the end of the setup wizard.
+* Fix: page text from shortcode-based page builders (such as WPBakery and Divi) and Brizy now comes through in descriptions.
+* Fix: a required-field error now clears as soon as you fill in the field.
+* Change: the setup notice can be dismissed.
+* Change: upgrading from UnlimitedSchema moves your data but no longer switches the old plugin off for you.
+* Tested with WordPress 7.1 and PHP 8.0 to 8.4.
 
 = 1.0.0 =
 * First public release.
@@ -76,3 +115,8 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 * Status badges show whether each schema will print; incomplete schema is never printed.
 * Editors and administrators edit post schemas; site-wide schemas and setup are administrator-only.
 * Password-protected posts never reveal their content through structured data.
+
+== Upgrade Notice ==
+
+= 1.0.1 =
+Warns about duplicate schema from other SEO plugins, keeps page-builder text in descriptions, and lets you dismiss the setup notice.

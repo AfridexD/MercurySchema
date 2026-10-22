@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Mercury Schema 1.0.0\n"
+"Project-Id-Version: Mercury Schema 1.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/AfridexD/MercurySchema/issues\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,7 @@ msgstr ""
 "X-Domain: mercury-schema\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: admin/views/metabox.php:14 src/Admin/AdminController.php:268 src/Admin/Pages.php:155 src/Admin/Pages.php:163 src/Admin/Pages.php:178
+#: admin/views/metabox.php:14 src/Admin/AdminController.php:270 src/Admin/Pages.php:176 src/Admin/Pages.php:184 src/Admin/Pages.php:199
 msgid "Loading…"
 msgstr ""
 
@@ -18,816 +18,820 @@ msgstr ""
 msgid "Mercury Schema needs JavaScript to edit schema markup."
 msgstr ""
 
-#: src/API/SchemaController.php:61
+#: src/API/SchemaController.php:63
 msgid "You are not allowed to manage site-wide schema markup."
 msgstr ""
 
-#: src/API/SchemaController.php:69
+#: src/API/SchemaController.php:71
 msgid "You are not allowed to manage schema markup."
 msgstr ""
 
-#: src/API/SchemaController.php:74
+#: src/API/SchemaController.php:76
 msgid "You are not allowed to edit this post."
 msgstr ""
 
-#: src/API/SchemaController.php:255
+#: src/API/SchemaController.php:257
 msgid "Schema data is invalid."
 msgstr ""
 
 #. translators: %d: maximum number of schemas
-#: src/API/SchemaController.php:267
+#: src/API/SchemaController.php:269
 msgid "A page can have at most %d schemas."
 msgstr ""
 
-#: src/API/SchemaController.php:323
+#: src/API/SchemaController.php:325
 msgid "Post not found."
 msgstr ""
 
 #. translators: %s: schema type name
-#: src/API/SchemaController.php:335
+#: src/API/SchemaController.php:337
 msgid "Unknown schema type: %s"
 msgstr ""
 
-#: src/API/SchemaController.php:336
+#: src/API/SchemaController.php:338
 msgid "Schema type is required."
 msgstr ""
 
-#: src/API/SchemaController.php:354
+#: src/API/SchemaController.php:356
 msgid "Schema not found."
 msgstr ""
 
-#: src/API/SchemaController.php:359
+#: src/API/SchemaController.php:361
 msgid "Could not save schema data."
 msgstr ""
 
-#: src/API/SetupController.php:64
+#: src/API/SetupController.php:66
 msgid "You are not allowed to configure Mercury Schema."
 msgstr ""
 
 #. translators: %s: comma-separated type names
-#: src/API/SetupController.php:106
+#: src/API/SetupController.php:108
 msgid "Unknown schema types: %s"
 msgstr ""
 
-#: src/Admin/AdminController.php:62 src/Integrations/Elementor.php:63 src/Integrations/Elementor.php:64
+#: src/Admin/AdminController.php:64 src/Integrations/Elementor.php:65 src/Integrations/Elementor.php:66
 msgid "Schema Markup"
 msgstr ""
 
-#: src/Admin/AdminController.php:154
+#: src/Admin/AdminController.php:156
 msgid "Front page"
 msgstr ""
 
-#: src/Admin/AdminController.php:155
+#: src/Admin/AdminController.php:157
 msgid "Single posts & pages"
 msgstr ""
 
-#: src/Admin/AdminController.php:156
+#: src/Admin/AdminController.php:158
 msgid "Archives & blog index"
 msgstr ""
 
-#: src/Admin/AdminController.php:168
+#: src/Admin/AdminController.php:170
 msgid "Post title"
 msgstr ""
 
-#: src/Admin/AdminController.php:169
+#: src/Admin/AdminController.php:171
 msgid "Post excerpt"
 msgstr ""
 
-#: src/Admin/AdminController.php:170
+#: src/Admin/AdminController.php:172
 msgid "Post content (plain text)"
 msgstr ""
 
-#: src/Admin/AdminController.php:171
+#: src/Admin/AdminController.php:173
 msgid "Post URL"
 msgstr ""
 
-#: src/Admin/AdminController.php:172
+#: src/Admin/AdminController.php:174
 msgid "Publish date"
 msgstr ""
 
-#: src/Admin/AdminController.php:173
+#: src/Admin/AdminController.php:175
 msgid "Last modified date"
 msgstr ""
 
-#: src/Admin/AdminController.php:174
+#: src/Admin/AdminController.php:176
 msgid "Featured image URL"
 msgstr ""
 
-#: src/Admin/AdminController.php:175
+#: src/Admin/AdminController.php:177
 msgid "Author name"
 msgstr ""
 
-#: src/Admin/AdminController.php:176
+#: src/Admin/AdminController.php:178
 msgid "Author archive URL"
 msgstr ""
 
-#: src/Admin/AdminController.php:177
+#: src/Admin/AdminController.php:179
 msgid "Site title"
 msgstr ""
 
-#: src/Admin/AdminController.php:178
+#: src/Admin/AdminController.php:180
 msgid "Site tagline"
 msgstr ""
 
-#: src/Admin/AdminController.php:179
+#: src/Admin/AdminController.php:181
 msgid "Site logo URL"
 msgstr ""
 
-#: src/Admin/AdminController.php:180
+#: src/Admin/AdminController.php:182
 msgid "Home page URL"
 msgstr ""
 
-#: src/Admin/AdminController.php:181
+#: src/Admin/AdminController.php:183
 msgid "Site language (e.g. en-US)"
 msgstr ""
 
-#: src/Admin/AdminController.php:188
+#: src/Admin/AdminController.php:190
 msgid "Structured data for this page"
 msgstr ""
 
-#: src/Admin/AdminController.php:189
+#: src/Admin/AdminController.php:191
 msgid "Helps search engines understand this content and show rich results."
 msgstr ""
 
-#: src/Admin/AdminController.php:190
+#: src/Admin/AdminController.php:192
 msgid "Site-wide schemas"
 msgstr ""
 
-#: src/Admin/AdminController.php:191
+#: src/Admin/AdminController.php:193
 msgid "Added to every page that matches their display rules. A page’s own schema of the same type replaces these."
 msgstr ""
 
-#: src/Admin/AdminController.php:192
+#: src/Admin/AdminController.php:194
 msgid "Add schema"
 msgstr ""
 
-#: src/Admin/AdminController.php:193
+#: src/Admin/AdminController.php:195
 msgid "Search schema types…"
 msgstr ""
 
-#: src/Admin/AdminController.php:194 src/Integrations/Elementor.php:67
+#: src/Admin/AdminController.php:196 src/Integrations/Elementor.php:69
 msgid "Close"
 msgstr ""
 
-#: src/Admin/AdminController.php:195
+#: src/Admin/AdminController.php:197
 msgid "No schema yet"
 msgstr ""
 
-#: src/Admin/AdminController.php:196
+#: src/Admin/AdminController.php:198
 msgid "Add a schema type and it fills itself in from this post. Popular choices:"
 msgstr ""
 
-#: src/Admin/AdminController.php:197
+#: src/Admin/AdminController.php:199
 msgid "Describe your organization once and it appears across the site. Popular choices:"
 msgstr ""
 
-#: src/Admin/AdminController.php:198
+#: src/Admin/AdminController.php:200
 msgid "Site-wide on this page:"
 msgstr ""
 
-#: src/Admin/AdminController.php:199
+#: src/Admin/AdminController.php:201
 msgid "Replaced by this page’s own schema of the same type."
 msgstr ""
 
-#: src/Admin/AdminController.php:200
+#: src/Admin/AdminController.php:202
 msgid "replaced"
 msgstr ""
 
-#: src/Admin/AdminController.php:201
+#: src/Admin/AdminController.php:203
 msgid "Manage"
 msgstr ""
 
 #. translators: %s: schema type label
-#: src/Admin/AdminController.php:203
+#: src/Admin/AdminController.php:205
 msgid "This replaces the site-wide %s schema on this page."
 msgstr ""
 
 #. translators: %s: schema type label
-#: src/Admin/AdminController.php:205
+#: src/Admin/AdminController.php:207
 msgid "%s schema added."
 msgstr ""
 
-#: src/Admin/AdminController.php:206
+#: src/Admin/AdminController.php:208
 msgid "Schema duplicated."
 msgstr ""
 
-#: src/Admin/AdminController.php:207
+#: src/Admin/AdminController.php:209
 msgid "Enabled"
 msgstr ""
 
-#: src/Admin/AdminController.php:208
+#: src/Admin/AdminController.php:210
 msgid "Disabled"
 msgstr ""
 
-#: src/Admin/AdminController.php:209
+#: src/Admin/AdminController.php:211
 msgid "Schema enabled."
 msgstr ""
 
-#: src/Admin/AdminController.php:210
+#: src/Admin/AdminController.php:212
 msgid "Schema disabled. It will not be printed."
 msgstr ""
 
-#: src/Admin/AdminController.php:211
+#: src/Admin/AdminController.php:213
 msgid "Schema actions"
 msgstr ""
 
-#: src/Admin/AdminController.php:212
+#: src/Admin/AdminController.php:214
 msgid "Duplicate"
 msgstr ""
 
-#: src/Admin/AdminController.php:213
+#: src/Admin/AdminController.php:215
 msgid "Copy JSON-LD"
 msgstr ""
 
-#: src/Admin/AdminController.php:214
+#: src/Admin/AdminController.php:216
 msgid "Delete"
 msgstr ""
 
-#: src/Admin/AdminController.php:215
+#: src/Admin/AdminController.php:217
 msgid "Click again to delete"
 msgstr ""
 
-#: src/Admin/AdminController.php:216
+#: src/Admin/AdminController.php:218
 msgid "Schema deleted."
 msgstr ""
 
-#: src/Admin/AdminController.php:217
+#: src/Admin/AdminController.php:219
 msgid "Fields"
 msgstr ""
 
-#: src/Admin/AdminController.php:218
+#: src/Admin/AdminController.php:220
 msgid "Display rules"
 msgstr ""
 
-#: src/Admin/AdminController.php:219
+#: src/Admin/AdminController.php:221
 msgid "Preview"
 msgstr ""
 
-#: src/Admin/AdminController.php:220
+#: src/Admin/AdminController.php:222
 msgid "Save changes"
 msgstr ""
 
-#: src/Admin/AdminController.php:221
+#: src/Admin/AdminController.php:223
 msgid "Saved. Ready for rich results."
 msgstr ""
 
-#: src/Admin/AdminController.php:222
+#: src/Admin/AdminController.php:224
 msgid "Saved, but some required fields are empty. It won’t be printed until they’re filled."
 msgstr ""
 
-#: src/Admin/AdminController.php:223
+#: src/Admin/AdminController.php:225
 msgid "Unsaved"
 msgstr ""
 
-#: src/Admin/AdminController.php:224
+#: src/Admin/AdminController.php:226
 msgid "Ready"
 msgstr ""
 
-#: src/Admin/AdminController.php:225
+#: src/Admin/AdminController.php:227
 msgid "Incomplete"
 msgstr ""
 
 #. translators: %s: number of problems
-#: src/Admin/AdminController.php:227
+#: src/Admin/AdminController.php:229
 msgid "%s required field(s) still empty. This schema is not printed until they are filled."
 msgstr ""
 
 #. translators: %s: number of problems
-#: src/Admin/AdminController.php:229
+#: src/Admin/AdminController.php:231
 msgid "Couldn’t save: %s field(s) need fixing."
 msgstr ""
 
 #. translators: %s: field label
-#: src/Admin/AdminController.php:231
+#: src/Admin/AdminController.php:233
 msgid "%s is required."
 msgstr ""
 
 #. translators: %s: field label
-#: src/Admin/AdminController.php:233
+#: src/Admin/AdminController.php:235
 msgid "%s has an invalid value."
 msgstr ""
 
-#: src/Admin/AdminController.php:234
+#: src/Admin/AdminController.php:236
 msgid "Enter a full URL starting with https://"
 msgstr ""
 
-#: src/Admin/AdminController.php:235
+#: src/Admin/AdminController.php:237
 msgid "Use a date like 2026-10-02 or 2026-10-02T18:30:00+00:00."
 msgstr ""
 
-#: src/Admin/AdminController.php:236
+#: src/Admin/AdminController.php:238
 msgid "Use an ISO 8601 duration like PT30M (30 minutes) or PT1H15M."
 msgstr ""
 
-#: src/Admin/AdminController.php:237
+#: src/Admin/AdminController.php:239
 msgid "Enter a number, like 19.99."
 msgstr ""
 
-#: src/Admin/AdminController.php:238
+#: src/Admin/AdminController.php:240
 msgid "Enter a whole number."
 msgstr ""
 
-#: src/Admin/AdminController.php:239
+#: src/Admin/AdminController.php:241
 msgid "Choose one of the listed options."
 msgstr ""
 
-#: src/Admin/AdminController.php:240
+#: src/Admin/AdminController.php:242
 msgid "Added"
 msgstr ""
 
 #. translators: %s: number of hidden schema types
-#: src/Admin/AdminController.php:242
+#: src/Admin/AdminController.php:244
 msgid "%s more types are switched off."
 msgstr ""
 
-#: src/Admin/AdminController.php:243
+#: src/Admin/AdminController.php:245
 msgid "Manage schema types"
 msgstr ""
 
-#: src/Admin/AdminController.php:244
+#: src/Admin/AdminController.php:246
 msgid "Type off"
 msgstr ""
 
-#: src/Admin/AdminController.php:245
+#: src/Admin/AdminController.php:247
 msgid "This schema type is switched off, so it isn’t printed. Its data is kept."
 msgstr ""
 
-#: src/Admin/AdminController.php:246
+#: src/Admin/AdminController.php:248
 msgid "Nothing to build on this page: breadcrumbs need a page below the home page, and navigation needs a site menu."
 msgstr ""
 
 #. translators: %s: field label
-#: src/Admin/AdminController.php:248
+#: src/Admin/AdminController.php:250
 msgid "%s is too long. Shorten it or split it up."
 msgstr ""
 
 #. translators: %s: field key
-#: src/Admin/AdminController.php:250
+#: src/Admin/AdminController.php:252
 msgid "“%s” is not a field of this schema type."
 msgstr ""
 
 #. translators: %s: number of questions
-#: src/Admin/AdminController.php:252
+#: src/Admin/AdminController.php:254
 msgid "%s question(s)"
 msgstr ""
 
-#: src/Admin/AdminController.php:253
+#: src/Admin/AdminController.php:255
 msgid "Item"
 msgstr ""
 
 #. translators: %s: item label, e.g. "question"
-#: src/Admin/AdminController.php:255
+#: src/Admin/AdminController.php:257
 msgid "Add %s"
 msgstr ""
 
-#: src/Admin/AdminController.php:256
+#: src/Admin/AdminController.php:258
 msgid "Move up"
 msgstr ""
 
-#: src/Admin/AdminController.php:257
+#: src/Admin/AdminController.php:259
 msgid "Move down"
 msgstr ""
 
-#: src/Admin/AdminController.php:258
+#: src/Admin/AdminController.php:260
 msgid "Remove"
 msgstr ""
 
-#: src/Admin/AdminController.php:259
+#: src/Admin/AdminController.php:261
 msgid "Insert dynamic value"
 msgstr ""
 
-#: src/Admin/AdminController.php:260
+#: src/Admin/AdminController.php:262
 msgid "Optionally limit when this schema is printed. Leave everything empty to always print it on this page."
 msgstr ""
 
-#: src/Admin/AdminController.php:261
+#: src/Admin/AdminController.php:263
 msgid "Choose where this schema appears. Empty groups mean no restriction."
 msgstr ""
 
-#: src/Admin/AdminController.php:262
+#: src/Admin/AdminController.php:264
 msgid "Show on"
 msgstr ""
 
-#: src/Admin/AdminController.php:263 src/Admin/Settings.php:69
+#: src/Admin/AdminController.php:265 src/Admin/Settings.php:71
 msgid "Post types"
 msgstr ""
 
-#: src/Admin/AdminController.php:264
+#: src/Admin/AdminController.php:266
 msgid "Categories (slugs or IDs)"
 msgstr ""
 
-#: src/Admin/AdminController.php:265
+#: src/Admin/AdminController.php:267
 msgid "Author roles"
 msgstr ""
 
-#: src/Admin/AdminController.php:266
+#: src/Admin/AdminController.php:268
 msgid "Only these post IDs"
 msgstr ""
 
-#: src/Admin/AdminController.php:267
+#: src/Admin/AdminController.php:269
 msgid "Comma-separated."
 msgstr ""
 
-#: src/Admin/AdminController.php:269
+#: src/Admin/AdminController.php:271
 msgid "Valid. This is the JSON-LD search engines will see."
 msgstr ""
 
 #. translators: %s: number of problems
-#: src/Admin/AdminController.php:271
+#: src/Admin/AdminController.php:273
 msgid "%s problem(s). This schema won’t be printed until they’re fixed:"
 msgstr ""
 
-#: src/Admin/AdminController.php:272
+#: src/Admin/AdminController.php:274
 msgid "Dynamic values are filled in from this post. The preview uses your unsaved changes."
 msgstr ""
 
-#: src/Admin/AdminController.php:273
+#: src/Admin/AdminController.php:275
 msgid "Post-based dynamic values are filled in per page on the live site."
 msgstr ""
 
-#: src/Admin/AdminController.php:274
+#: src/Admin/AdminController.php:276
 msgid "Copy"
 msgstr ""
 
-#: src/Admin/AdminController.php:275
+#: src/Admin/AdminController.php:277
 msgid "Copied to clipboard."
 msgstr ""
 
-#: src/Admin/AdminController.php:276
+#: src/Admin/AdminController.php:278
 msgid "Test in Google"
 msgstr ""
 
-#: src/Admin/AdminController.php:277 src/Admin/AdminController.php:359
+#: src/Admin/AdminController.php:279 src/Admin/AdminController.php:361
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: src/Admin/AdminController.php:283 src/Admin/AdminController.php:323 src/Admin/Pages.php:73 src/Admin/Pages.php:73 src/Admin/Pages.php:129
+#: src/Admin/AdminController.php:285 src/Admin/AdminController.php:325 src/Admin/Pages.php:76 src/Admin/Pages.php:76 src/Admin/Pages.php:150
 msgid "Schema Types"
 msgstr ""
 
-#: src/Admin/AdminController.php:291
+#: src/Admin/AdminController.php:293
 msgid "Documentation"
 msgstr ""
 
-#: src/Admin/AdminController.php:299
+#: src/Admin/AdminController.php:301
 msgid "Getting Started"
 msgstr ""
 
-#: src/Admin/AdminController.php:299
+#: src/Admin/AdminController.php:301
 msgid "Configuration"
 msgstr ""
 
-#: src/Admin/AdminController.php:299
+#: src/Admin/AdminController.php:301
 msgid "Schemas"
 msgstr ""
 
-#: src/Admin/AdminController.php:299
+#: src/Admin/AdminController.php:301
 msgid "Done"
 msgstr ""
 
-#: src/Admin/AdminController.php:300
+#: src/Admin/AdminController.php:302
 msgid "Skipped"
 msgstr ""
 
-#: src/Admin/AdminController.php:301
+#: src/Admin/AdminController.php:303
 msgid "Get started with Mercury Schema"
 msgstr ""
 
-#: src/Admin/AdminController.php:302
+#: src/Admin/AdminController.php:304
 msgid "This short setup adds the right structured data to your site, so search engines and AI answers understand it. It takes about a minute."
 msgstr ""
 
-#: src/Admin/AdminController.php:304
+#: src/Admin/AdminController.php:306
 msgid "Site-wide basics set up for you: organization, website, pages and breadcrumbs"
 msgstr ""
 
-#: src/Admin/AdminController.php:305
+#: src/Admin/AdminController.php:307
 msgid "Works with the block editor, classic editor, Elementor and WooCommerce"
 msgstr ""
 
-#: src/Admin/AdminController.php:306
+#: src/Admin/AdminController.php:308
 msgid "Tiny footprint: no front-end scripts, one database row per post"
 msgstr ""
 
-#: src/Admin/AdminController.php:308 src/Admin/Pages.php:107
+#: src/Admin/AdminController.php:310 src/Admin/Pages.php:114
 msgid "Start setup"
 msgstr ""
 
-#: src/Admin/AdminController.php:309
+#: src/Admin/AdminController.php:311
 msgid "Skip and use the Basic setup"
 msgstr ""
 
-#: src/Admin/AdminController.php:310
+#: src/Admin/AdminController.php:312
 msgid "Choose your schema setup"
 msgstr ""
 
-#: src/Admin/AdminController.php:311
+#: src/Admin/AdminController.php:313
 msgid "Pick a starting point. You can switch any schema type on or off later under Schema Types."
 msgstr ""
 
-#: src/Admin/AdminController.php:313
+#: src/Admin/AdminController.php:315
 msgid "Basic"
 msgstr ""
 
-#: src/Admin/AdminController.php:313
+#: src/Admin/AdminController.php:315
 msgid "The core schemas every site needs. Lightweight and zero configuration."
 msgstr ""
 
-#: src/Admin/AdminController.php:314
+#: src/Admin/AdminController.php:316
 msgid "Smart"
 msgstr ""
 
-#: src/Admin/AdminController.php:314
+#: src/Admin/AdminController.php:316
 msgid "Our pick for most sites. Covers content, products and local search to qualify for more rich results."
 msgstr ""
 
-#: src/Admin/AdminController.php:315
+#: src/Admin/AdminController.php:317
 msgid "Custom"
 msgstr ""
 
-#: src/Admin/AdminController.php:315
+#: src/Admin/AdminController.php:317
 msgid "Hand-pick every schema type Mercury outputs. For sites with specific structured data needs."
 msgstr ""
 
-#: src/Admin/AdminController.php:317
+#: src/Admin/AdminController.php:319
 msgid "Recommended"
 msgstr ""
 
 #. translators: %s: number of schema types
-#: src/Admin/AdminController.php:319
+#: src/Admin/AdminController.php:321
 msgid "%s schemas"
 msgstr ""
 
-#: src/Admin/AdminController.php:320
+#: src/Admin/AdminController.php:322
 msgid "You choose"
 msgstr ""
 
-#: src/Admin/AdminController.php:321
+#: src/Admin/AdminController.php:323
 msgid "Turn on the schemas you need"
 msgstr ""
 
-#: src/Admin/AdminController.php:322
+#: src/Admin/AdminController.php:324
 msgid "Switched-off types are hidden from the editor and not printed. Their saved data is kept."
 msgstr ""
 
-#: src/Admin/AdminController.php:324
+#: src/Admin/AdminController.php:326
 msgid "Choose which schema types your site uses. Changes save instantly."
 msgstr ""
 
-#: src/Admin/AdminController.php:325
+#: src/Admin/AdminController.php:327
 msgid "Enable all"
 msgstr ""
 
 #. translators: 1: enabled count, 2: total count
-#: src/Admin/AdminController.php:327
+#: src/Admin/AdminController.php:329
 msgid "%1$s / %2$s on"
 msgstr ""
 
-#: src/Admin/AdminController.php:329
+#: src/Admin/AdminController.php:331
 msgid "Site foundations"
 msgstr ""
 
-#: src/Admin/AdminController.php:330 src/Admin/AdminController.php:341
+#: src/Admin/AdminController.php:332 src/Admin/AdminController.php:343
 msgid "Content"
 msgstr ""
 
-#: src/Admin/AdminController.php:331
+#: src/Admin/AdminController.php:333
 msgid "Commerce"
 msgstr ""
 
-#: src/Admin/AdminController.php:332
+#: src/Admin/AdminController.php:334
 msgid "Local & events"
 msgstr ""
 
-#: src/Admin/AdminController.php:333
+#: src/Admin/AdminController.php:335
 msgid "Other"
 msgstr ""
 
-#: src/Admin/AdminController.php:335
+#: src/Admin/AdminController.php:337
 msgid "You’re all set"
 msgstr ""
 
-#: src/Admin/AdminController.php:336
+#: src/Admin/AdminController.php:338
 msgid "Mercury Schema is live on your site. Here’s what to do next."
 msgstr ""
 
 #. translators: 1: preset name, 2: number of schema types
-#: src/Admin/AdminController.php:338
+#: src/Admin/AdminController.php:340
 msgid "%1$s · %2$s schemas active"
 msgstr ""
 
-#: src/Admin/AdminController.php:339
+#: src/Admin/AdminController.php:341
 msgid "Added site-wide for you:"
 msgstr ""
 
-#: src/Admin/AdminController.php:341
+#: src/Admin/AdminController.php:343
 msgid "Add schema to a post"
 msgstr ""
 
-#: src/Admin/AdminController.php:341
+#: src/Admin/AdminController.php:343
 msgid "Open a post and use the Schema Markup box to add an FAQ, recipe, product and more."
 msgstr ""
 
-#: src/Admin/AdminController.php:341
+#: src/Admin/AdminController.php:343
 msgid "Open a post"
 msgstr ""
 
-#: src/Admin/AdminController.php:342
+#: src/Admin/AdminController.php:344
 msgid "Site-wide"
 msgstr ""
 
-#: src/Admin/AdminController.php:342
+#: src/Admin/AdminController.php:344
 msgid "Review site-wide schemas"
 msgstr ""
 
-#: src/Admin/AdminController.php:342
+#: src/Admin/AdminController.php:344
 msgid "Fill in your logo, social profiles and contact details for the Organization schema."
 msgstr ""
 
-#: src/Admin/AdminController.php:342
+#: src/Admin/AdminController.php:344
 msgid "Review schemas"
 msgstr ""
 
-#: src/Admin/AdminController.php:343
+#: src/Admin/AdminController.php:345
 msgid "Testing"
 msgstr ""
 
-#: src/Admin/AdminController.php:343
+#: src/Admin/AdminController.php:345
 msgid "Test with Google"
 msgstr ""
 
-#: src/Admin/AdminController.php:343
+#: src/Admin/AdminController.php:345
 msgid "Check your home page in Google’s Rich Results Test once the site is public."
 msgstr ""
 
-#: src/Admin/AdminController.php:343
+#: src/Admin/AdminController.php:345
 msgid "Open the test"
 msgstr ""
 
-#: src/Admin/AdminController.php:345
+#: src/Admin/AdminController.php:347
 msgid "← Previous"
 msgstr ""
 
-#: src/Admin/AdminController.php:346
+#: src/Admin/AdminController.php:348
 msgid "Next →"
 msgstr ""
 
-#: src/Admin/AdminController.php:347
+#: src/Admin/AdminController.php:349
 msgid "Finish setup"
 msgstr ""
 
-#: src/Admin/AdminController.php:348
+#: src/Admin/AdminController.php:350
 msgid "Go to Schema Types"
 msgstr ""
 
-#: src/Admin/AdminController.php:349
+#: src/Admin/AdminController.php:351
 msgid "Read the help guide"
 msgstr ""
 
-#: src/Admin/AdminController.php:350
+#: src/Admin/AdminController.php:352
 msgid "Saving…"
 msgstr ""
 
 #. translators: %s: schema type label
-#: src/Admin/AdminController.php:352
+#: src/Admin/AdminController.php:354
 msgid "%s enabled"
 msgstr ""
 
 #. translators: %s: schema type label
-#: src/Admin/AdminController.php:354
+#: src/Admin/AdminController.php:356
 msgid "%s switched off"
 msgstr ""
 
-#: src/Admin/AdminController.php:355
+#: src/Admin/AdminController.php:357
 msgid "All schema types enabled"
 msgstr ""
 
-#: src/Admin/AdminController.php:356
+#: src/Admin/AdminController.php:358
 msgid "All schema types switched off"
 msgstr ""
 
-#: src/Admin/AdminController.php:357
+#: src/Admin/AdminController.php:359
 msgid "Run setup wizard again"
 msgstr ""
 
-#: src/Admin/AdminController.php:358
+#: src/Admin/AdminController.php:360
 msgid "Run the setup wizard again? Your schemas and enabled types are kept until you finish it."
 msgstr ""
 
 #. translators: 1: comma-separated plugin names, 2: last plugin name
-#: src/Admin/OtherSchemaSources.php:66
+#: src/Admin/OtherSchemaSources.php:68
 msgid "%1$s and %2$s"
 msgstr ""
 
 #. translators: %s: plugin name(s), e.g. "Yoast SEO"
-#: src/Admin/OtherSchemaSources.php:83
+#: src/Admin/OtherSchemaSources.php:85
 msgid "%s also adds schema to your pages."
 msgid_plural "%s also add schema to your pages."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/OtherSchemaSources.php:86
+#: src/Admin/OtherSchemaSources.php:88
 msgid "Search engines should get each kind of schema from one place only. Turn off schema in the other plugin, or switch off the matching types under Schema Types."
 msgstr ""
 
-#: src/Admin/OtherSchemaSources.php:87
+#: src/Admin/OtherSchemaSources.php:89
 msgid "How to avoid duplicate schema ↗"
 msgstr ""
 
-#: src/Admin/Pages.php:42 src/Admin/Pages.php:43 src/Admin/Pages.php:77 src/Admin/Pages.php:77
+#: src/Admin/Pages.php:45 src/Admin/Pages.php:46 src/Admin/Pages.php:80 src/Admin/Pages.php:80
 msgid "Setup Wizard"
 msgstr ""
 
-#: src/Admin/Pages.php:72 src/Admin/Pages.php:72 src/Admin/Pages.php:137
+#: src/Admin/Pages.php:75 src/Admin/Pages.php:75 src/Admin/Pages.php:158
 msgid "Mercury Schema"
 msgstr ""
 
-#: src/Admin/Pages.php:74 src/Admin/Pages.php:74 src/Admin/Pages.php:130
+#: src/Admin/Pages.php:77 src/Admin/Pages.php:77 src/Admin/Pages.php:151
 msgid "Site-wide Schemas"
 msgstr ""
 
-#: src/Admin/Pages.php:75 src/Admin/Pages.php:75 src/Admin/Pages.php:131
+#: src/Admin/Pages.php:78 src/Admin/Pages.php:78 src/Admin/Pages.php:152
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Pages.php:104
+#: src/Admin/Pages.php:111
 msgid "Mercury Schema is almost ready."
 msgstr ""
 
-#: src/Admin/Pages.php:105
+#: src/Admin/Pages.php:112
 msgid "Pick the schema types for your site in a one-minute setup."
 msgstr ""
 
-#: src/Admin/Pages.php:138
+#: src/Admin/Pages.php:116
+msgid "Dismiss"
+msgstr ""
+
+#: src/Admin/Pages.php:159
 msgid "Structured data that helps search engines and AI answers understand your site."
 msgstr ""
 
-#: src/Admin/Pages.php:141
+#: src/Admin/Pages.php:162
 msgid "Mercury Schema sections"
 msgstr ""
 
-#: src/Admin/Pages.php:156 src/Admin/Pages.php:164 src/Admin/Pages.php:179
+#: src/Admin/Pages.php:177 src/Admin/Pages.php:185 src/Admin/Pages.php:200
 msgid "Mercury Schema needs JavaScript for this screen."
 msgstr ""
 
-#: src/Admin/Settings.php:78
+#: src/Admin/Settings.php:80
 msgid "Show the Schema Markup box on these post types."
 msgstr ""
 
-#: src/Admin/Settings.php:83
+#: src/Admin/Settings.php:85
 msgid "Output location"
 msgstr ""
 
-#: src/Admin/Settings.php:85
+#: src/Admin/Settings.php:87
 msgid "Page head (recommended)"
 msgstr ""
 
-#: src/Admin/Settings.php:86
+#: src/Admin/Settings.php:88
 msgid "Page footer"
 msgstr ""
 
-#: src/Admin/Settings.php:90
+#: src/Admin/Settings.php:92
 msgid "Debug logging"
 msgstr ""
 
-#: src/Admin/Settings.php:92
+#: src/Admin/Settings.php:94
 msgid "Log skipped or invalid schemas to the PHP error log"
 msgstr ""
 
-#: src/Frontend/Generators.php:63 src/Frontend/Generators.php:173
+#: src/Frontend/Generators.php:65 src/Frontend/Generators.php:175
 msgid "Home"
 msgstr ""
 
 #. translators: %s: post title
-#: src/Integrations/Elementor.php:66
+#: src/Integrations/Elementor.php:68
 msgid "Mercury Schema · %s"
 msgstr ""
 
 #. translators: %s: post title
-#: src/Integrations/Elementor.php:66
+#: src/Integrations/Elementor.php:68
 msgid "(no title)"
 msgstr ""
 
-#: src/Integrations/WooCommerce.php:46
+#: src/Integrations/WooCommerce.php:48
 msgid "Product price"
 msgstr ""
 
-#: src/Integrations/WooCommerce.php:47
+#: src/Integrations/WooCommerce.php:49
 msgid "Store currency"
 msgstr ""
 
-#: src/Integrations/WooCommerce.php:48
+#: src/Integrations/WooCommerce.php:50
 msgid "Product stock status"
 msgstr ""
 
-#: src/Integrations/WooCommerce.php:49
+#: src/Integrations/WooCommerce.php:51
 msgid "Product SKU"
 msgstr ""
 
-#: src/Integrations/WooCommerce.php:50
+#: src/Integrations/WooCommerce.php:52
 msgid "Product average rating"
 msgstr ""
 
-#: src/Integrations/WooCommerce.php:51
+#: src/Integrations/WooCommerce.php:53
 msgid "Product review count"
 msgstr ""
