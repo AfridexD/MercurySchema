@@ -1,14 +1,14 @@
 # Mercury Schema
 
 <p>
-  <a href="https://github.com/AfridexD/MercurySchema/releases/latest/download/Mercury-Schema.zip"><img src=".github/download-button.svg" alt="Download Mercury Schema (latest version)" width="372" height="64"></a>
+  <a href="https://wordpress.org/plugins/mercury-schema/"><img src=".github/download-button.svg" alt="Get Mercury Schema free on WordPress.org" width="372" height="64"></a>
 </p>
 
-[All releases and changelogs](https://github.com/AfridexD/MercurySchema/releases). Install: *Plugins → Add New → Upload Plugin* in WordPress.
+**Install:** in WordPress, go to *Plugins → Add New Plugin*, search for **Mercury Schema**, then click *Install Now* and *Activate*. Updates arrive through WordPress like any other plugin. ([Zip downloads and changelogs](https://github.com/AfridexD/MercurySchema/releases) are also on GitHub.)
 
 **New to schema?** The [step-by-step help guide](https://afridexd.github.io/MercurySchema/) covers installing, the setup wizard and adding schema to your posts, with screenshots.
 
-Lightweight, conflict-free JSON-LD schema markup for WordPress, with a one-minute setup wizard.
+Lightweight JSON-LD schema markup for WordPress, with a one-minute setup wizard.
 
 - **Small.** About 30 PHP files, no runtime dependencies, no build step. The release zip is about 75 KB.
 - **One meta row per post.** All of a post's schemas live in a single `_mercury_schema_data` JSON entry.
@@ -225,7 +225,7 @@ Releases are automatic. To ship a new version:
 2. Add a `= X.Y.Z =` section to the changelog in `readme.txt`.
 3. Push to `main`.
 
-`.github/workflows/release.yml` then checks that the three version numbers match, runs the unit tests, builds the zip with `bin/build.php`, and publishes GitHub Release `vX.Y.Z` with the changelog as notes. Pushes that don't change the version publish nothing. The download button links to `releases/latest/download/Mercury-Schema.zip`, which GitHub always resolves to the newest release. The zip's inner folder is `mercury-schema`, the plugin's WordPress slug.
+`.github/workflows/release.yml` then checks that the three version numbers match, runs the unit tests, builds the zip with `bin/build.php`, and publishes GitHub Release `vX.Y.Z` with the changelog as notes. Pushes that don't change the version publish nothing. The same run then uploads that version to WordPress.org with `.github/workflows/deploy.yml` (code to SVN `trunk` and `tags/X.Y.Z`, `.wordpress-org/` to SVN `assets`), using the `SVN_USERNAME` and `SVN_PASSWORD` repository secrets. Deploy can also be run by hand from the Actions tab, as a dry run by default. `releases/latest/download/Mercury-Schema.zip` always resolves to the newest GitHub release; the zip's inner folder is `mercury-schema`, the plugin's WordPress slug.
 
 ## Development
 
@@ -258,7 +258,7 @@ src/Integrations  WooCommerce tokens; Elementor editor button (each loaded only 
 admin/         vanilla JS/CSS: editor-ui (schema editor), setup (wizard and Schema Types)
 ```
 
-`php bin/build.php` makes the release zip. It strips indentation and comment-only lines from the JS and CSS (keeping line breaks, so behaviour cannot change); the editor JS ships at about 27 KB.
+`php bin/build.php` makes the release zip from the files as written (WordPress.org requires readable, unminified code), leaving out everything in `.distignore`.
 
 ## License
 
