@@ -7,6 +7,7 @@
 #   3. creates release vX.Y.Z with two assets:
 #        Mercury-Schema.zip         (stable name, used by the download button)
 #        Mercury-Schema-X.Y.Z.zip   (versioned copy)
+#   4. uploads the same version to WordPress.org (deploy.yml).
 #
 # Latest download, always:
 #   https://github.com/AfridexD/MercurySchema/releases/latest/download/Mercury-Schema.zip
@@ -28,6 +29,8 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.version.outputs.exists == 'false' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -94,3 +97,9 @@ jobs:
             --notes-file notes.md \
             --target "$GITHUB_SHA" \
             --latest
+
+  wordpress-org:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit

@@ -1,0 +1,63 @@
+# Uploads the plugin to WordPress.org (SVN): code to trunk and tags/<version>,
+# and .wordpress-org/ (icon, banners, screenshots) to the assets folder.
+#
+# Runs:
+#   - automatically after release.yml publishes a new version, and
+#   - by hand: Actions → "Deploy to WordPress.org" → Run workflow
+#     ("Dry run" is ticked by default: every step except the final upload).
+#
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#   SVN_USERNAME  your WordPress.org username (case sensitive)
+#   SVN_PASSWORD  the SVN password from your WordPress.org profile
+# Files listed in .distignore are not uploaded.
+
+name: Deploy to WordPress.org
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run: check everything but do not upload'
+        type: boolean
+        default: true
+  workflow_call:
+    secrets:
+      SVN_USERNAME:
+        required: true
+      SVN_PASSWORD:
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wporg-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read plugin version
+        id: version
+        run: |
+          version=$(sed -n "s/.*define('MERCURY_SCHEMA_VERSION', '\([^']*\)').*/\1/p" mercury-schema.php)
+          stable=$(sed -n 's/^Stable tag: *\(.*\)$/\1/p' readme.txt | tr -d '[:space:]')
+          if [ -z "$version" ] || [ "$version" != "$stable" ]; then
+            echo "::error::Version mismatch: plugin '$version', readme Stable tag '$stable'"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Deploying Mercury Schema $version (dry run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }})"
+
+      - name: Upload to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          dry-run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: mercury-schema
+          VERSION: ${{ steps.version.outputs.version }}
