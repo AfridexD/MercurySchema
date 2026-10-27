@@ -4,7 +4,7 @@ Tags: schema, schema markup, structured data, rich snippets, json-ld
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,8 @@ Add schema markup to WordPress in one minute. Qualify for rich snippets in Googl
 == Description ==
 
 **Mercury Schema adds structured data to your WordPress site, so Google, Bing and AI assistants understand exactly what each page is about, and can show it as rich snippets: star ratings, FAQs, recipe cards, product prices, event dates and more.**
+
+https://youtu.be/PHBBxyaH15Y
 
 No coding and no confusing settings. A one-minute setup wizard adds the essentials to your whole site, and every new schema fills itself in from your post's title, date, author and featured image.
 
@@ -129,6 +131,9 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 
 == Changelog ==
 
+= 1.0.2 =
+* New: a short demo video on the plugin page.
+
 = 1.0.1 =
 * New: a warning when a popular SEO or schema plugin also adds schema, with a link to how to keep one source.
 * New: links to the help guide on the Plugins screen and at the end of the setup wizard.
@@ -151,6 +156,9 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 * Password-protected posts never reveal their content through structured data.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+Adds a demo video to the plugin page. No code changes.
 
 = 1.0.1 =
 Warns about duplicate schema from other SEO plugins, keeps page-builder text in descriptions, and lets you dismiss the setup notice.
