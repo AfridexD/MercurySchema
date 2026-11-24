@@ -2,9 +2,9 @@
 Contributors: mohammadafride
 Tags: schema, schema markup, structured data, rich snippets, json-ld
 Requires at least: 6.0
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 8.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Add schema markup to WordPress in one minute. Qualify for rich snippets in Googl
 
 == Description ==
 
-**Mercury Schema adds structured data to your WordPress site, so Google, Bing and AI assistants understand exactly what each page is about, and can show it as rich snippets: star ratings, FAQs, recipe cards, product prices, event dates and more.**
+**Mercury Schema adds structured data to your WordPress site, so Google, Bing and AI assistants understand exactly what each page is about, and can show it as rich snippets: star ratings, recipe cards, product prices, event dates and more.**
 
 https://youtu.be/PHBBxyaH15Y
 
@@ -46,7 +46,7 @@ Switch any type on or off under Schema Types to keep the editor tidy. Switched-o
 
 = Who is it for? =
 
-* Bloggers and publishers who want articles, FAQs and how-to guides to stand out in search.
+* Bloggers and publishers who want their articles, FAQs and how-to guides understood by search engines and AI assistants.
 * Small businesses that want their name, logo, address and phone number shown correctly.
 * Online stores using WooCommerce that want product prices, stock and ratings in search results.
 * Recipe, event and course sites that rely on rich results for traffic.
@@ -131,6 +131,10 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 
 == Changelog ==
 
+= 1.0.3 =
+* Tested with WordPress 7.2.
+* Updated the plugin description: Google no longer shows FAQ rich results (since May 2026). FAQ schema still helps search engines and AI assistants understand your questions and answers.
+
 = 1.0.2 =
 * New: a short demo video on the plugin page.
 
@@ -156,6 +160,9 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 * Password-protected posts never reveal their content through structured data.
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+Confirms compatibility with WordPress 7.2. No code changes.
 
 = 1.0.2 =
 Adds a demo video to the plugin page. No code changes.
