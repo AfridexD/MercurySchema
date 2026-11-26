@@ -117,7 +117,7 @@ class AdminController
         $firstPost = get_posts(['post_type' => 'post', 'post_status' => 'publish', 'numberposts' => 1, 'fields' => 'ids']);
         wp_localize_script('mercury-schema-setup', 'MercurySchemaSetup', [
             'mode'     => $mode,
-            'restUrl'  => esc_url_raw(rest_url(REST::NAMESPACE . '/')),
+            'restUrl'  => esc_url_raw(rest_url(REST::ROUTE_NAMESPACE . '/')),
             'nonce'    => wp_create_nonce('wp_rest'),
             'version'  => MERCURY_SCHEMA_VERSION,
             'logo'     => Brand::mark('#fff'),
@@ -147,7 +147,7 @@ class AdminController
         }
 
         wp_localize_script('mercury-schema-admin', 'MercurySchemaData', $scope + [
-            'restUrl'   => esc_url_raw(rest_url(REST::NAMESPACE . '/')),
+            'restUrl'   => esc_url_raw(rest_url(REST::ROUTE_NAMESPACE . '/')),
             'nonce'     => wp_create_nonce('wp_rest'),
             'tokens'    => self::tokens(),
             'postTypes' => $postTypes,

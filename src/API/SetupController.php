@@ -35,7 +35,7 @@ class SetupController
     {
         $permission = [$this, 'checkPermission'];
 
-        register_rest_route(REST::NAMESPACE, '/setup', [
+        register_rest_route(REST::ROUTE_NAMESPACE, '/setup', [
             [
                 'methods'             => WP_REST_Server::READABLE,
                 'callback'            => [$this, 'status'],
@@ -53,7 +53,7 @@ class SetupController
             ],
         ]);
 
-        register_rest_route(REST::NAMESPACE, '/setup/reset', [
+        register_rest_route(REST::ROUTE_NAMESPACE, '/setup/reset', [
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => [$this, 'reset'],
             'permission_callback' => $permission,

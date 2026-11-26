@@ -13,7 +13,7 @@ use WP_REST_Server;
 
 class REST
 {
-    public const NAMESPACE = 'mercury-schema/v1';
+    public const ROUTE_NAMESPACE = 'mercury-schema/v1';
 
     private SchemaController $controller;
 
@@ -29,13 +29,13 @@ class REST
         $postId = ['type' => 'integer', 'required' => true, 'minimum' => 1];
         $schemaId = ['type' => 'string', 'required' => true, 'pattern' => '^[A-Za-z0-9_-]+$'];
 
-        register_rest_route(self::NAMESPACE, '/schemas', [
+        register_rest_route(self::ROUTE_NAMESPACE, '/schemas', [
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => [$c, 'listTypes'],
             'permission_callback' => $permission,
         ]);
 
-        register_rest_route(self::NAMESPACE, '/schema-types', [
+        register_rest_route(self::ROUTE_NAMESPACE, '/schema-types', [
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => [$c, 'getTypes'],
             'permission_callback' => $permission,
@@ -48,7 +48,7 @@ class REST
             '/global'                   => [[], [$c, 'checkGlobalPermission']],
         ];
         foreach ($scopes as $route => [$scopeArgs, $scopePermission]) {
-            register_rest_route(self::NAMESPACE, $route, [
+            register_rest_route(self::ROUTE_NAMESPACE, $route, [
                 [
                     'methods'             => WP_REST_Server::READABLE,
                     'callback'            => [$c, 'getPostSchemas'],
@@ -68,7 +68,7 @@ class REST
                 ],
             ]);
 
-            register_rest_route(self::NAMESPACE, $route . '/(?P<schema_id>[A-Za-z0-9_-]+)', [
+            register_rest_route(self::ROUTE_NAMESPACE, $route . '/(?P<schema_id>[A-Za-z0-9_-]+)', [
                 [
                     'methods'             => WP_REST_Server::EDITABLE,
                     'callback'            => [$c, 'updateSchema'],
@@ -90,7 +90,7 @@ class REST
             ]);
         }
 
-        register_rest_route(self::NAMESPACE, '/preview', [
+        register_rest_route(self::ROUTE_NAMESPACE, '/preview', [
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => [$c, 'preview'],
             'permission_callback' => $permission,
@@ -101,7 +101,7 @@ class REST
             ],
         ]);
 
-        register_rest_route(self::NAMESPACE, '/validate', [
+        register_rest_route(self::ROUTE_NAMESPACE, '/validate', [
             'methods'             => WP_REST_Server::CREATABLE,
             'callback'            => [$c, 'validate'],
             'permission_callback' => $permission,

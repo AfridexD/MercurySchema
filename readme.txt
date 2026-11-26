@@ -132,7 +132,8 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 == Changelog ==
 
 = 1.0.3 =
-* Tested with WordPress 7.2.
+* Tested with WordPress 7.2 and PHP 8.6.
+* Fix: no deprecation notice on PHP 8.6.
 * Updated the plugin description: Google no longer shows FAQ rich results (since May 2026). FAQ schema still helps search engines and AI assistants understand your questions and answers.
 
 = 1.0.2 =
@@ -162,7 +163,7 @@ Editors and administrators can edit schema on posts they're allowed to edit. Aut
 == Upgrade Notice ==
 
 = 1.0.3 =
-Confirms compatibility with WordPress 7.2. No code changes.
+Compatible with WordPress 7.2 and PHP 8.6.
 
 = 1.0.2 =
 Adds a demo video to the plugin page. No code changes.
